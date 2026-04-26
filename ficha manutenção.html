@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Manutenção — Máquina de Costura</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<!-- Firebase SDKs -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ════════════════════════════════════════════════════════
+// ⚙️  CONFIGURAÇÃO DO FIREBASE
+// Substitua pelos seus dados após criar o projeto no Firebase
+// ════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyCuYQG4MqIo8xha1YDOcZ_Jqx-EsO4rw3Y",
+  authDomain: "manutencao-maquina-cf53e.firebaseapp.com",
+  databaseURL: "https://manutencao-maquina-cf53e-default-rtdb.firebaseio.com",
+  projectId: "manutencao-maquina-cf53e",
+  storageBucket: "manutencao-maquina-cf53e.firebasestorage.app",
+  messagingSenderId: "416211412422",
+  appId: "1:416211412422:web:cc898849a9657a36097ec7",
+  measurementId: "G-T7NV2E2DY6"
+};
+
+// Inicia Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Exporta funções para o escopo global (window)
+window._fb = { db, ref, push, onValue, remove, get };
+window._fbReady = true;
+window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #f5f0e8;
+    --surface: #fffdf8;
+    --border: #d4c9b0;
+    --accent: #2c5f2e;
+    --accent2: #8b1a1a;
+    --text: #1a1a18;
+    --muted: #7a7568;
+    --tag-bg: #e8f0e8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  header .logo { font-family: 'DM Serif Display', serif; font-size: 1.4rem; letter-spacing: .02em; }
+  header .sub { font-size: .8rem; opacity: .75; }
+
+  /* Status badge */
+  #status-badge {
+    margin-left: auto;
+    font-size: .75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  #status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ffd700;
+    flex-shrink: 0;
+  }
+  #status-dot.online { background: #7ec97f; }
+  #status-dot.error  { background: #f88; }
+
+  .tabs { display: flex; background: #1e4220; padding: 0 16px; }
+  .tab-btn {
+    background: none; border: none; color: rgba(255,255,255,.6);
+    font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500;
+    padding: 12px 18px; cursor: pointer;
+    border-bottom: 3px solid transparent; transition: all .2s;
+  }
+  .tab-btn.active { color: #fff; border-bottom-color: #7ec97f; }
+
+  .container { max-width: 680px; margin: 0 auto; padding: 24px 16px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    color: var(--accent);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .field { margin-bottom: 14px; }
+  label {
+    display: block; font-size: .78rem; font-weight: 600;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: .06em; margin-bottom: 5px;
+  }
+  input[type=text], input[type=date], select, textarea {
+    width: 100%; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; font-family: 'DM Sans', sans-serif;
+    font-size: .9rem; color: var(--text);
+    transition: border-color .2s; outline: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .check-item {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 10px; cursor: pointer;
+    transition: all .15s; font-size: .85rem;
+  }
+  .check-item:hover { border-color: var(--accent); }
+  .check-item.checked { background: var(--tag-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .check-item input[type=checkbox] { display: none; }
+  .check-icon { font-size: 1rem; }
+
+  .peca-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .peca-row input { flex: 1; margin: 0; }
+  .btn-remove {
+    background: #fde8e8; border: 1px solid #f5b8b8;
+    color: var(--accent2); border-radius: 6px;
+    width: 32px; height: 38px; cursor: pointer; font-size: 1rem; flex-shrink: 0;
+  }
+  .btn-remove:hover { background: #f5b8b8; }
+
+  .sig-canvas {
+    width: 100%; height: 110px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; cursor: crosshair; display: block; touch-action: none;
+  }
+  .sig-actions { display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end; }
+
+  .btn {
+    padding: 10px 18px; border-radius: 8px; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #1e4220; }
+  .btn-secondary { background: var(--bg); border: 1px solid var(--border); color: var(--muted); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: #fde8e8; color: var(--accent2); border: 1px solid #f5b8b8; }
+  .btn-sm { padding: 6px 12px; font-size: .78rem; }
+  .btn-add {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: 1px dashed var(--border);
+    color: var(--muted); border-radius: 8px;
+    padding: 8px 14px; cursor: pointer; width: 100%;
+    font-family: 'DM Sans', sans-serif; font-size: .85rem; transition: all .15s;
+  }
+  .btn-add:hover { border-color: var(--accent); color: var(--accent); }
+
+  .save-bar { display: flex; gap: 10px; justify-content: flex-end; padding-top: 8px; }
+
+  .qr-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; padding: 24px; text-align: center; gap: 16px;
+  }
+  #qrcode canvas, #qrcode img { border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,.12); }
+  .qr-label { font-size: .85rem; color: var(--muted); max-width: 280px; line-height: 1.5; }
+  .machine-badge {
+    background: var(--accent); color: #fff;
+    font-family: 'DM Serif Display', serif; font-size: 1.1rem;
+    padding: 8px 20px; border-radius: 20px; letter-spacing: .03em;
+  }
+
+  /* URL da ficha */
+  .qr-url-box {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: .78rem; color: var(--muted);
+    word-break: break-all; text-align: left; width: 100%; max-width: 340px;
+  }
+  .qr-url-box strong { display: block; color: var(--accent); margin-bottom: 4px; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+
+  .historico-empty { text-align: center; color: var(--muted); padding: 40px 16px; font-size: .9rem; }
+  .registro-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; margin-bottom: 12px;
+  }
+  .reg-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .reg-date { font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--accent); }
+  .reg-tipo { font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .tipo-preventiva { background: #e8f0e8; color: var(--accent); }
+  .tipo-corretiva  { background: #fde8e8; color: var(--accent2); }
+  .reg-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .tag { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px; font-size: .75rem; color: var(--muted); }
+  .sig-preview { height: 50px; object-fit: contain; opacity: .7; }
+  .reg-sigs { display: flex; gap: 16px; margin-top: 8px; }
+  .sig-box { text-align: center; font-size: .7rem; color: var(--muted); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Fotos */
+  .foto-upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    background: var(--bg);
+    position: relative;
+  }
+  .foto-upload-area:hover { border-color: var(--accent); background: var(--tag-bg); }
+  .foto-upload-area input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .foto-upload-icon { font-size: 1.8rem; margin-bottom: 6px; }
+  .foto-upload-label { font-size: .82rem; color: var(--muted); line-height: 1.4; }
+  .foto-preview-wrap {
+    display: none;
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: #000;
+  }
+  .foto-preview-wrap img {
+    width: 100%; max-height: 220px;
+    object-fit: contain; display: block;
+  }
+  .foto-remove-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,.6); color: #fff;
+    border: none; border-radius: 20px;
+    padding: 4px 10px; font-size: .75rem;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+  }
+  .foto-remove-btn:hover { background: var(--accent2); }
+  .reg-fotos { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .reg-foto-item {
+    flex: 1; min-width: 120px; max-width: 200px;
+    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  }
+  .reg-foto-item img { width: 100%; display: block; object-fit: cover; max-height: 130px; }
+  .reg-foto-label { font-size: .68rem; color: var(--muted); padding: 4px 6px; text-align: center; background: var(--bg); }
+
+  /* Loading spinner */
+  .loading { text-align:center; padding: 30px; color: var(--muted); font-size:.9rem; }
+  .spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; margin-right:8px; vertical-align:middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Aviso de config */
+  #config-aviso {
+    background: #fffbea; border: 1px solid #e0d090;
+    border-radius: 12px; padding: 20px; margin: 16px;
+    font-size: .88rem; line-height: 1.7; color: #5a4800;
+  }
+  #config-aviso h3 { font-size: 1rem; color: #7a6200; margin-bottom: 10px; }
+  #config-aviso code {
+    background: #fef3c7; border: 1px solid #d0b830;
+    border-radius: 4px; padding: 1px 6px; font-size: .82rem; font-family: monospace;
+  }
+  #config-aviso ol { padding-left: 18px; margin-top: 8px; }
+  #config-aviso a { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">🪡 Ficha de Manutenção</div>
+    <div class="sub">Máquinas de Costura</div>
+  </div>
+  <div id="status-badge">
+    <div id="status-dot"></div>
+    <span id="status-text">Conectando…</span>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('registrar', this)">＋ Registrar</button>
+  <button class="tab-btn" onclick="switchTab('historico', this)">📋 Histórico</button>
+  <button class="tab-btn" onclick="switchTab('qrcode', this)">⬛ QR Code</button>
+</div>
+
+<!-- Aviso de configuração (some depois de configurar) -->
+<div id="config-aviso">
+  <h3>⚙️ Passo a passo para ativar o sistema online</h3>
+  <p>Esta ficha usa o <strong>Firebase</strong> (gratuito do Google) para salvar os dados na nuvem.<br>
+  Siga os passos abaixo <strong>uma única vez</strong>:</p>
+  <ol>
+    <li>Acesse <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a></li>
+    <li>Clique em <strong>"Criar um projeto"</strong> → dê um nome (ex: <em>manutencao-costura</em>) → clique em Continuar</li>
+    <li>No menu lateral, clique em <strong>Realtime Database</strong> → <strong>Criar banco de dados</strong></li>
+    <li>Escolha <strong>"Iniciar no modo de teste"</strong> (pode manter por 30 dias, depois ajustar regras)</li>
+    <li>No menu lateral, clique em ⚙️ <strong>Configurações do projeto</strong></li>
+    <li>Role até <strong>"Seus aplicativos"</strong> → clique em <strong>&lt;/&gt; Web</strong> → registre o app</li>
+    <li>Copie os dados da <code>firebaseConfig</code> e cole no início do código deste arquivo (substitua os campos <code>COLE_SUA_...</code>)</li>
+    <li>Salve o arquivo e abra no navegador — pronto! ✅</li>
+  </ol>
+  <p style="margin-top:10px">🔒 <strong>Regras de segurança:</strong> após testar, altere as regras do banco para: <code>".read": true, ".write": true</code> (para uso interno/equipe).</p>
+</div>
+
+<!-- ===== TAB REGISTRAR ===== -->
+<div id="tab-registrar" class="tab-content active">
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">🔧 Identificação da Máquina</div>
+    <div class="row2">
+      <div class="field">
+        <label>Modelo / Nome</label>
+        <input type="text" id="modelo" placeholder="Ex: Juki DDL-9000">
+      </div>
+      <div class="field">
+        <label>Nº de Série / Patrimônio</label>
+        <input type="text" id="serial" placeholder="Ex: SN-00421">
+      </div>
+    </div>
+    <div class="field">
+      <label>Local / Setor</label>
+      <input type="text" id="setor" placeholder="Ex: Sala de Costura B">
+    </div>
+    <div class="field">
+      <label>📷 Foto da Máquina</label>
+      <div class="foto-upload-area" id="area-maquina">
+        <input type="file" accept="image/*" onchange="carregarFoto('maquina', this)">
+        <div class="foto-upload-icon">📷</div>
+        <div class="foto-upload-label">Toque para tirar foto ou escolher da galeria</div>
+      </div>
+      <div class="foto-preview-wrap" id="preview-maquina">
+        <img id="img-maquina" src="">
+        <button class="foto-remove-btn" onclick="removerFoto('maquina')">✕ Remover foto</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 Dados da Manutenção</div>
+    <div class="row2">
+      <div class="field">
+        <label>Data da Manutenção</label>
+        <input type="date" id="data">
+      </div>
+      <div class="field">
+        <label>Próxima Manutenção</label>
+        <input type="date" id="proxima">
+      </div>
+    </div>
+    <div class="field">
+      <label>Tipo de Manutenção</label>
+      <select id="tipo">
+        <option value="">Selecione...</option>
+        <option value="preventiva">Preventiva</option>
+        <option value="corretiva">Corretiva</option>
+        <option value="lubrificacao">Lubrificação</option>
+        <option value="calibragem">Calibragem</option>
+        <option value="revisao">Revisão Geral</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✅ Serviços Realizados</div>
+    <div class="check-grid" id="servicos-grid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔩 Peças Trocadas</div>
+    <div id="pecas-list"></div>
+    <button class="btn-add" onclick="addPeca()">＋ Adicionar peça</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 Observações</div>
+    <textarea id="obs" placeholder="Descreva o problema encontrado, ajustes feitos, recomendações..."></textarea>
+    <div class="field" style="margin-top:14px">
+      <label>📸 Foto do Problema / Defeito</label>
+      <div class="foto-upload-area" id="area-problema">
+        <input type="file" accept="image/*" onchange="carregarFoto('problema', this)">
+        <div class="foto-upload-icon">📸</div>
+        <div class="foto-upload-label">Registre o defeito, peça ou situação encontrada</div>
+      </div>
+      <div class="foto-preview-wrap" id="preview-problema">
+        <img id="img-problema" src="">
+        <button class="foto-remove-btn" onclick="removerFoto('problema')">✕ Remover foto</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✍️ Assinatura do Técnico</div>
+    <div class="field">
+      <label>Nome do Técnico</label>
+      <input type="text" id="tecnico" placeholder="Nome completo">
+    </div>
+    <canvas id="sig-tecnico" class="sig-canvas"></canvas>
+    <div class="sig-actions">
+      <button class="btn btn-secondary btn-sm" onclick="clearSig('sig-tecnico')">Limpar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✍️ Assinatura do Responsável</div>
+    <div class="field">
+      <label>Nome do Responsável</label>
+      <input type="text" id="responsavel" placeholder="Nome do responsável presente">
+    </div>
+    <canvas id="sig-responsavel" class="sig-canvas"></canvas>
+    <div class="sig-actions">
+      <button class="btn btn-secondary btn-sm" onclick="clearSig('sig-responsavel')">Limpar</button>
+    </div>
+  </div>
+
+  <div class="save-bar">
+    <button class="btn btn-secondary" onclick="limparForm()">Limpar tudo</button>
+    <button class="btn btn-primary" onclick="salvarRegistro()">☁️ Salvar na Nuvem</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ===== TAB HISTÓRICO ===== -->
+<div id="tab-historico" class="tab-content">
+<div class="container">
+  <div class="card">
+    <div class="card-title">🔍 Filtrar</div>
+    <div class="row2">
+      <div class="field">
+        <label>Máquina / Modelo</label>
+        <input type="text" id="filtro-modelo" placeholder="Buscar modelo..." oninput="filtrarHistorico()">
+      </div>
+      <div class="field">
+        <label>Tipo</label>
+        <select id="filtro-tipo" onchange="filtrarHistorico()">
+          <option value="">Todos</option>
+          <option value="preventiva">Preventiva</option>
+          <option value="corretiva">Corretiva</option>
+          <option value="lubrificacao">Lubrificação</option>
+          <option value="calibragem">Calibragem</option>
+          <option value="revisao">Revisão Geral</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div id="historico-lista"><div class="loading"><span class="spinner"></span>Carregando histórico…</div></div>
+</div>
+</div>
+
+<!-- ===== TAB QR CODE ===== -->
+<div id="tab-qrcode" class="tab-content">
+<div class="container">
+  <div class="card">
+    <div class="card-title">⬛ Gerar QR Code para a Máquina</div>
+    <div class="field">
+      <label>Modelo / Identificação da Máquina</label>
+      <input type="text" id="qr-modelo" placeholder="Ex: Juki DDL-9000 — SN-00421" oninput="updateQR()">
+    </div>
+    <p style="font-size:.8rem;color:var(--muted);margin-top:4px">
+      ⚠️ Digite exatamente o mesmo nome usado no campo <strong>Modelo</strong> ao registrar.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="qr-wrap">
+      <div class="qr-label">
+        📌 Imprima e cole este QR Code na máquina.<br>
+        Ao escanear com o celular, abre o histórico direto.
+      </div>
+      <div id="qr-machine-label" class="machine-badge" style="display:none"></div>
+      <div id="qrcode"></div>
+      <div class="qr-label" id="qr-instrucao">Digite o nome/modelo da máquina acima para gerar o QR Code.</div>
+      <div id="qr-url-display" style="display:none" class="qr-url-box">
+        <strong>🔗 Link que o QR abre:</strong>
+        <span id="qr-url-text"></span>
+      </div>
+      <button class="btn btn-primary" id="btn-imprimir" style="display:none" onclick="imprimirQR()">🖨️ Imprimir QR Code</button>
+    </div>
+  </div>
+
+  <div class="card" style="background:#fffbea; border-color:#e0d090;">
+    <div class="card-title" style="color:#7a6200;">💡 Como usar</div>
+    <ol style="font-size:.85rem; color:#5a4800; line-height:1.8; padding-left:18px;">
+      <li>Configure o Firebase seguindo o aviso acima (apenas uma vez)</li>
+      <li>Registre manutenções na aba <strong>Registrar</strong></li>
+      <li>Gere o QR Code e imprima (recomendo plastificar)</li>
+      <li>Cole na máquina — funciona para sempre, sem expirar</li>
+      <li>Qualquer celular que escanear verá o histórico atualizado da nuvem</li>
+    </ol>
+  </div>
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// SERVIÇOS
+// ══════════════════════════════════════════════════
+const SERVICOS = [
+  {id:'limpeza', label:'🧹 Limpeza geral', icon:'🧹'},
+  {id:'lubrif',  label:'🛢️ Lubrificação',  icon:'🛢️'},
+  {id:'tensao',  label:'🧵 Ajuste de tensão', icon:'🧵'},
+  {id:'ponto',   label:'📐 Regulagem de ponto', icon:'📐'},
+  {id:'pedal',   label:'🦶 Calibração do pedal', icon:'🦶'},
+  {id:'agulha',  label:'🪡 Troca de agulha', icon:'🪡'},
+  {id:'correia', label:'⚙️ Troca de correia', icon:'⚙️'},
+  {id:'bobina',  label:'🔄 Ajuste de bobina', icon:'🔄'},
+  {id:'motor',   label:'⚡ Verificação do motor', icon:'⚡'},
+  {id:'eletrica',label:'🔌 Teste elétrico', icon:'🔌'},
+  {id:'outros',  label:'🔧 Outros', icon:'🔧'},
+];
+
+function renderServicos() {
+  const grid = document.getElementById('servicos-grid');
+  grid.innerHTML = SERVICOS.map(s => `
+    <label class="check-item" id="chk-${s.id}" onclick="toggleCheck('${s.id}')">
+      <input type="checkbox" id="cb-${s.id}">
+      <span class="check-icon">${s.icon}</span>
+      <span>${s.label.replace(s.icon+' ','')}</span>
+    </label>`).join('');
+}
+
+function toggleCheck(id) {
+  const el = document.getElementById('chk-'+id);
+  const cb = document.getElementById('cb-'+id);
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+}
+
+// ══════════════════════════════════════════════════
+// PEÇAS
+// ══════════════════════════════════════════════════
+let pecaIdx = 0;
+function addPeca() {
+  const id = 'peca-'+pecaIdx++;
+  const div = document.createElement('div');
+  div.className = 'peca-row';
+  div.id = id;
+  div.innerHTML = `
+    <input type="text" placeholder="Nome / código da peça" class="peca-input">
+    <button class="btn-remove" onclick="removePeca('${id}')">✕</button>`;
+  document.getElementById('pecas-list').appendChild(div);
+}
+function removePeca(id) { document.getElementById(id)?.remove(); }
+
+// ══════════════════════════════════════════════════
+// ASSINATURA
+// ══════════════════════════════════════════════════
+function initCanvas(id) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  let drawing = false;
+  const getPos = e => {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - r.left, y: src.clientY - r.top };
+  };
+  canvas.addEventListener('mousedown', e => { drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x,p.y); });
+  canvas.addEventListener('mousemove', e => { if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#1a1a18'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke(); });
+  canvas.addEventListener('mouseup', ()=>drawing=false);
+  canvas.addEventListener('mouseleave', ()=>drawing=false);
+  canvas.addEventListener('touchstart', e=>{ e.preventDefault(); drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x,p.y); }, {passive:false});
+  canvas.addEventListener('touchmove', e=>{ e.preventDefault(); if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#1a1a18'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke(); }, {passive:false});
+  canvas.addEventListener('touchend', ()=>drawing=false);
+}
+function clearSig(id) {
+  const c = document.getElementById(id);
+  c.getContext('2d').clearRect(0,0,c.width,c.height);
+}
+
+// ══════════════════════════════════════════════════
+// STATUS FIREBASE
+// ══════════════════════════════════════════════════
+function setStatus(state, msg) {
+  document.getElementById('status-text').textContent = msg;
+  const dot = document.getElementById('status-dot');
+  dot.className = '';
+  if(state==='online') dot.classList.add('online');
+  if(state==='error')  dot.classList.add('error');
+}
+
+// ══════════════════════════════════════════════════
+// SALVAR NA NUVEM
+// ══════════════════════════════════════════════════
+async function salvarRegistro() {
+  if(!window._fbReady) {
+    alert('⚠️ Firebase ainda não configurado. Siga o passo a passo no aviso amarelo.');
+    return;
+  }
+
+  const modelo = document.getElementById('modelo').value.trim();
+  const data   = document.getElementById('data').value;
+  if (!modelo || !data) { alert('Preencha ao menos o modelo da máquina e a data.'); return; }
+
+  const servicos = SERVICOS.filter(s => document.getElementById('cb-'+s.id)?.checked).map(s=>s.label);
+  const pecas    = [...document.querySelectorAll('.peca-input')].map(i=>i.value.trim()).filter(Boolean);
+
+  const sigTecnico     = document.getElementById('sig-tecnico').toDataURL();
+  const sigResponsavel = document.getElementById('sig-responsavel').toDataURL();
+
+  const reg = {
+    ts: Date.now(),
+    modelo,
+    serial:      document.getElementById('serial').value.trim(),
+    setor:       document.getElementById('setor').value.trim(),
+    data,
+    proxima:     document.getElementById('proxima').value,
+    tipo:        document.getElementById('tipo').value,
+    servicos,
+    pecas,
+    obs:         document.getElementById('obs').value.trim(),
+    tecnico:     document.getElementById('tecnico').value.trim(),
+    responsavel: document.getElementById('responsavel').value.trim(),
+    sigTecnico,
+    sigResponsavel,
+    fotoMaquina:  window._fotos?.maquina  || null,
+    fotoProblema: window._fotos?.problema || null,
+  };
+
+  try {
+    setStatus('', 'Salvando…');
+    const { db, ref, push } = window._fb;
+    await push(ref(db, 'manutencoes'), reg);
+    setStatus('online', '☁️ Online');
+    alert('✅ Registro salvo na nuvem com sucesso!');
+    limparForm();
+  } catch(e) {
+    setStatus('error', 'Erro');
+    alert('❌ Erro ao salvar: ' + e.message + '\n\nVerifique se o Firebase está configurado corretamente.');
+  }
+}
+
+function limparForm() {
+  ['modelo','serial','setor','data','proxima','obs','tecnico','responsavel'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  document.getElementById('tipo').value = '';
+  SERVICOS.forEach(s => {
+    const cb  = document.getElementById('cb-'+s.id);
+    const chk = document.getElementById('chk-'+s.id);
+    if(cb)  cb.checked = false;
+    if(chk) chk.classList.remove('checked');
+  });
+  document.getElementById('pecas-list').innerHTML = '';
+  clearSig('sig-tecnico');
+  clearSig('sig-responsavel');
+  removerFoto('maquina');
+  removerFoto('problema');
+  const hoje = new Date().toISOString().split('T')[0];
+  document.getElementById('data').value = hoje;
+}
+
+// ══════════════════════════════════════════════════
+// FOTOS
+// ══════════════════════════════════════════════════
+window._fotos = { maquina: null, problema: null };
+
+function carregarFoto(tipo, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    // Comprime para max 800px e qualidade 75%
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else       { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+      window._fotos[tipo] = dataUrl;
+      document.getElementById('img-' + tipo).src = dataUrl;
+      document.getElementById('area-' + tipo).style.display = 'none';
+      document.getElementById('preview-' + tipo).style.display = 'block';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removerFoto(tipo) {
+  window._fotos[tipo] = null;
+  document.getElementById('img-' + tipo).src = '';
+  document.getElementById('area-' + tipo).style.display = 'block';
+  document.getElementById('preview-' + tipo).style.display = 'none';
+  // Limpa o input para permitir reselecionar o mesmo arquivo
+  const area = document.getElementById('area-' + tipo);
+  const input = area.querySelector('input[type=file]');
+  if (input) input.value = '';
+}
+
+// ══════════════════════════════════════════════════
+// HISTÓRICO — escuta em tempo real
+// ══════════════════════════════════════════════════
+let todosRegistros = [];
+
+function iniciarEscuta() {
+  if(!window._fbReady) return;
+  const { db, ref, onValue } = window._fb;
+  onValue(ref(db, 'manutencoes'), snapshot => {
+    todosRegistros = [];
+    snapshot.forEach(child => {
+      todosRegistros.push({ fbKey: child.key, ...child.val() });
+    });
+    // Mais recentes primeiro
+    todosRegistros.sort((a,b) => b.ts - a.ts);
+    setStatus('online', '☁️ Online');
+    filtrarHistorico();
+  }, err => {
+    setStatus('error', 'Sem conexão');
+    document.getElementById('historico-lista').innerHTML =
+      '<div class="historico-empty">❌ Erro ao carregar dados. Verifique a configuração do Firebase.</div>';
+  });
+}
+
+function filtrarHistorico() {
+  const filtroModelo = document.getElementById('filtro-modelo')?.value.toLowerCase() || '';
+  const filtroTipo   = document.getElementById('filtro-tipo')?.value || '';
+
+  let regs = todosRegistros.filter(r => {
+    if(filtroModelo && !r.modelo?.toLowerCase().includes(filtroModelo)) return false;
+    if(filtroTipo   && r.tipo !== filtroTipo) return false;
+    return true;
+  });
+
+  renderHistorico(regs);
+}
+
+function renderHistorico(regs) {
+  const lista = document.getElementById('historico-lista');
+  if(!regs || !regs.length) {
+    lista.innerHTML = '<div class="historico-empty">📂 Nenhum registro encontrado.</div>';
+    return;
+  }
+
+  lista.innerHTML = regs.map(r => {
+    const dataFmt = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '—';
+    const proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
+    const tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
+    const tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Não informado';
+    const servTags  = (r.servicos||[]).map(s=>`<span class="tag">${s}</span>`).join('');
+    const pecaTags  = (r.pecas||[]).map(p=>`<span class="tag">🔩 ${p}</span>`).join('');
+    const tecSig    = r.sigTecnico && r.sigTecnico.length > 200
+      ? `<img class="sig-preview" src="${r.sigTecnico}">` : '—';
+    const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200
+      ? `<img class="sig-preview" src="${r.sigResponsavel}">` : '—';
+
+    const fotosMaq = r.fotoMaquina
+      ? `<div class="reg-foto-item"><img src="${r.fotoMaquina}"><div class="reg-foto-label">📷 Máquina</div></div>` : '';
+    const fotosProb = r.fotoProblema
+      ? `<div class="reg-foto-item"><img src="${r.fotoProblema}"><div class="reg-foto-label">📸 Problema</div></div>` : '';
+    const fotosHtml = (fotosMaq || fotosProb)
+      ? `<div class="reg-fotos">${fotosMaq}${fotosProb}</div>` : '';
+
+    return `
+    <div class="registro-card">
+      <div class="reg-header">
+        <div>
+          <div class="reg-date">${r.modelo||'—'}</div>
+          <div style="font-size:.8rem;color:var(--muted)">${dataFmt}${r.setor?' · '+r.setor:''}</div>
+        </div>
+        <span class="reg-tipo ${tipoClass}">${tipoLabel}</span>
+      </div>
+      ${servTags ? `<div class="reg-tags">${servTags}</div>` : ''}
+      ${pecaTags ? `<div class="reg-tags">${pecaTags}</div>` : ''}
+      ${r.obs ? `<div style="font-size:.82rem;color:var(--muted);margin-top:6px">📝 ${r.obs}</div>` : ''}
+      ${proxFmt ? `<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">📅 Próxima: ${proxFmt}</div>` : ''}
+      ${fotosHtml}
+      <div class="reg-sigs">
+        <div class="sig-box">${tecSig}<div>${r.tecnico||'Técnico'}</div></div>
+        <div class="sig-box">${resSig}<div>${r.responsavel||'Responsável'}</div></div>
+      </div>
+      <div style="margin-top:10px;text-align:right">
+        <button class="btn btn-danger btn-sm" onclick="excluirRegistro('${r.fbKey}')">🗑 Excluir</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function excluirRegistro(fbKey) {
+  if(!confirm('Excluir este registro da nuvem?')) return;
+  try {
+    const { db, ref, remove } = window._fb;
+    await remove(ref(db, 'manutencoes/'+fbKey));
+  } catch(e) {
+    alert('Erro ao excluir: ' + e.message);
+  }
+}
+
+// ══════════════════════════════════════════════════
+// QR CODE  — aponta para URL da ficha hospedada
+// ══════════════════════════════════════════════════
+let qrInstance = null;
+function updateQR() {
+  const val = document.getElementById('qr-modelo').value.trim();
+  const div = document.getElementById('qrcode');
+  const instrucao  = document.getElementById('qr-instrucao');
+  const badge      = document.getElementById('qr-machine-label');
+  const btnImprimir = document.getElementById('btn-imprimir');
+  const urlDisplay  = document.getElementById('qr-url-display');
+  const urlText     = document.getElementById('qr-url-text');
+
+  if(!val) {
+    div.innerHTML = '';
+    instrucao.textContent = 'Digite o nome/modelo da máquina acima para gerar o QR Code.';
+    badge.style.display = 'none';
+    btnImprimir.style.display = 'none';
+    urlDisplay.style.display = 'none';
+    return;
+  }
+
+  // Usa a URL atual da página (funciona local E quando hospedado)
+  const base = window.location.href.split('?')[0];
+  const url  = base + '?maquina=' + encodeURIComponent(val);
+
+  div.innerHTML = '';
+  new QRCode(div, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.H });
+
+  instrucao.textContent = 'QR Code gerado! Imprima e cole na máquina.';
+  badge.textContent = val;
+  badge.style.display = 'inline-block';
+  btnImprimir.style.display = 'inline-block';
+  urlText.textContent = url;
+  urlDisplay.style.display = 'block';
+}
+
+function imprimirQR() {
+  const modelo  = document.getElementById('qr-modelo').value.trim();
+  const qrHTML  = document.getElementById('qrcode').innerHTML;
+  const urlLink = document.getElementById('qr-url-text').textContent;
+  const w = window.open('','_blank','width=400,height=560');
+  w.document.write(`
+    <html><head><title>QR — ${modelo}</title>
+    <style>
+      body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;
+           justify-content:center;min-height:100vh;background:#fff;padding:24px;gap:12px}
+      h2{font-size:1.1rem;margin:0;text-align:center}
+      p{font-size:.72rem;color:#666;text-align:center;max-width:220px}
+      canvas{border-radius:8px}
+      .url{font-size:.6rem;color:#999;word-break:break-all;text-align:center;max-width:240px;margin-top:4px}
+    </style></head>
+    <body>
+      <h2>🪡 Ficha de Manutenção</h2>
+      ${qrHTML}
+      <h2>${modelo}</h2>
+      <p>Escaneie para ver o histórico de manutenções</p>
+      <div class="url">${urlLink}</div>
+      <script>window.onload=()=>window.print()<\/script>
+    </body></html>`);
+  w.document.close();
+}
+
+// ══════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════
+// URL PARAMS  — abre histórico filtrado pelo QR
+// ══════════════════════════════════════════════════
+function checkURLParams() {
+  const params  = new URLSearchParams(window.location.search);
+  const maquina = params.get('maquina');
+  if(maquina) {
+    // Vai direto para aba Histórico filtrando a máquina
+    switchTab('historico');
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    document.querySelectorAll('.tab-btn')[0].classList.remove('active');
+    document.getElementById('filtro-modelo').value = maquina;
+    filtrarHistorico();
+  }
+}
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  renderServicos();
+  initCanvas('sig-tecnico');
+  initCanvas('sig-responsavel');
+  const hoje = new Date().toISOString().split('T')[0];
+  document.getElementById('data').value = hoje;
+
+  // Aguarda Firebase ficar pronto
+  if(window._fbReady) {
+    iniciarEscuta();
+    checkURLParams();
+  } else {
+    window.addEventListener('firebase-ready', () => {
+      iniciarEscuta();
+      checkURLParams();
+    });
+    // Mostra aviso de não configurado após 3s
+    setTimeout(() => {
+      if(!window._fbReady) setStatus('error', 'Não configurado');
+    }, 3000);
+  }
+});
+</script>
+</body>
+</html>
