@@ -368,6 +368,10 @@ window.dispatchEvent(new Event('firebase-ready'));
 
   <div class="card">
     <div class="card-title">🔧 Identificação da Máquina</div>
+    <div class="field">
+        <label>Empresa / Cliente</label>
+        <input type="text" id="empresa" placeholder="Ex: Senac Faustolo">
+      </div>
     <div class="row2">
       <div class="field">
         <label>Modelo / Nome</label>
@@ -487,6 +491,10 @@ window.dispatchEvent(new Event('firebase-ready'));
   <div class="card">
     <div class="card-title">🔍 Filtrar</div>
     <div class="row2">
+      <div class="field">
+        <label>Empresa / Cliente</label>
+        <input type="text" id="filtro-empresa" placeholder="Buscar empresa..." oninput="filtrarHistorico()">
+      </div>
       <div class="field">
         <label>Máquina / Modelo</label>
         <input type="text" id="filtro-modelo" placeholder="Buscar modelo..." oninput="filtrarHistorico()">
@@ -660,8 +668,10 @@ async function salvarRegistro() {
   const sigTecnico     = document.getElementById('sig-tecnico').toDataURL();
   const sigResponsavel = document.getElementById('sig-responsavel').toDataURL();
 
+  const empresa = document.getElementById('empresa') ? document.getElementById('empresa').value.trim() : '';
   const reg = {
     ts: Date.now(),
+    empresa,
     modelo,
     serial:      document.getElementById('serial').value.trim(),
     setor:       document.getElementById('setor').value.trim(),
@@ -786,6 +796,7 @@ function filtrarHistorico() {
   const filtroTipo   = document.getElementById('filtro-tipo')?.value || '';
 
   let regs = todosRegistros.filter(r => {
+    if(filtroEmpresa && !r.empresa?.toLowerCase().includes(filtroEmpresa)) return false;
     if(filtroModelo && !r.modelo?.toLowerCase().includes(filtroModelo)) return false;
     if(filtroTipo   && r.tipo !== filtroTipo) return false;
     return true;
