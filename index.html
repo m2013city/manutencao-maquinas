@@ -43,11 +43,11 @@ window.dispatchEvent(new Event('firebase-ready'));
     --bg: #f5f0e8;
     --surface: #fffdf8;
     --border: #d4c9b0;
-    --accent: #2c5f2e;
+    --accent: #1a6b9a;
     --accent2: #8b1a1a;
     --text: #1a1a18;
     --muted: #7a7568;
-    --tag-bg: #e8f0e8;
+    --tag-bg: #e0f0fa;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -294,71 +294,56 @@ window.dispatchEvent(new Event('firebase-ready'));
   }
   #config-aviso ol { padding-left: 18px; margin-top: 8px; }
   #config-aviso a { color: var(--accent); font-weight: 600; }
+
   /* ═══ TELA DE SENHA ═══ */
   #tela-senha {
     position: fixed; inset: 0; z-index: 9999;
-    background: var(--accent);
+    background: #1a6b9a;
     display: flex; align-items: center; justify-content: center;
-    flex-direction: column;
   }
   .senha-box {
-    background: var(--surface);
-    border-radius: 16px; padding: 36px 28px;
-    width: 90%; max-width: 340px;
-    text-align: center;
+    background: #fffdf8; border-radius: 16px; padding: 36px 28px;
+    width: 90%; max-width: 340px; text-align: center;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   }
   .senha-logo { font-size: 2.4rem; margin-bottom: 8px; }
-  .senha-titulo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.3rem; color: var(--accent);
-    margin-bottom: 4px;
-  }
-  .senha-sub { font-size: .82rem; color: var(--muted); margin-bottom: 24px; }
+  .senha-titulo { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: #1a6b9a; margin-bottom: 4px; }
+  .senha-sub { font-size: .82rem; color: #7a7568; margin-bottom: 24px; }
   .senha-input {
-    width: 100%; padding: 12px 14px;
-    border: 2px solid var(--border); border-radius: 10px;
-    font-size: 1.1rem; text-align: center;
-    letter-spacing: 0.2em; font-family: monospace;
-    background: var(--bg); color: var(--text);
-    outline: none; transition: border-color .2s;
-    margin-bottom: 14px;
+    width: 100%; padding: 12px 14px; border: 2px solid #d4c9b0;
+    border-radius: 10px; font-size: 1.1rem; text-align: center;
+    letter-spacing: 0.2em; background: #f5f0e8; outline: none;
+    transition: border-color .2s; margin-bottom: 14px;
   }
-  .senha-input:focus { border-color: var(--accent); }
+  .senha-input:focus { border-color: #1a6b9a; }
   .senha-input.erro { border-color: #c0392b; animation: shake .3s ease; }
   .senha-btn {
-    width: 100%; padding: 12px;
-    background: var(--accent); color: #fff;
-    border: none; border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: .95rem; font-weight: 600;
+    width: 100%; padding: 12px; background: #1a6b9a; color: #fff;
+    border: none; border-radius: 10px; font-size: .95rem; font-weight: 600;
     cursor: pointer; transition: background .2s;
   }
-  .senha-btn:hover { background: #1e4220; }
+  .senha-btn:hover { background: #0e4f7a; }
   .senha-erro { color: #c0392b; font-size: .82rem; margin-top: 10px; display: none; }
   @keyframes shake {
-    0%,100%{transform:translateX(0)}
-    25%{transform:translateX(-8px)}
-    75%{transform:translateX(8px)}
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)}
   }
 </style>
 </head>
 <body>
 
-<!-- ═══ TELA DE SENHA ═══ -->
+<!-- TELA DE SENHA -->
 <div id="tela-senha">
   <div class="senha-box">
-    <div class="senha-logo">🔐</div>
-    <div class="senha-titulo">Ficha de Manutenção</div>
-    <div class="senha-sub">Acesso restrito — digite a senha para continuar</div>
-    <input type="password" id="campo-senha" class="senha-input"
-      placeholder="••••••••"
-      onkeydown="if(event.key==='Enter')verificarSenha()"
-      autofocus>
-    <button class="senha-btn" onclick="verificarSenha()">🔓 Entrar</button>
-    <div class="senha-erro" id="senha-erro">❌ Senha incorreta. Tente novamente.</div>
+    <div class="senha-logo">&#128274;</div>
+    <div class="senha-titulo">MG City</div>
+    <div class="senha-sub">Acesso restrito &mdash; digite a senha para continuar</div>
+    <input type="password" id="campo-senha" class="senha-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+      onkeydown="if(event.key==='Enter')verificarSenha()" autofocus>
+    <button class="senha-btn" onclick="verificarSenha()">&#128275; Entrar</button>
+    <div class="senha-erro" id="senha-erro">Senha incorreta. Tente novamente.</div>
   </div>
 </div>
+
 
 <header>
   <div>
@@ -375,24 +360,6 @@ window.dispatchEvent(new Event('firebase-ready'));
   <button class="tab-btn active" onclick="switchTab('registrar', this)">＋ Registrar</button>
   <button class="tab-btn" onclick="switchTab('historico', this)">📋 Histórico</button>
   <button class="tab-btn" onclick="switchTab('qrcode', this)">⬛ QR Code</button>
-</div>
-
-<!-- Aviso de configuração (some depois de configurar) -->
-<div id="config-aviso">
-  <h3>⚙️ Passo a passo para ativar o sistema online</h3>
-  <p>Esta ficha usa o <strong>Firebase</strong> (gratuito do Google) para salvar os dados na nuvem.<br>
-  Siga os passos abaixo <strong>uma única vez</strong>:</p>
-  <ol>
-    <li>Acesse <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a></li>
-    <li>Clique em <strong>"Criar um projeto"</strong> → dê um nome (ex: <em>manutencao-costura</em>) → clique em Continuar</li>
-    <li>No menu lateral, clique em <strong>Realtime Database</strong> → <strong>Criar banco de dados</strong></li>
-    <li>Escolha <strong>"Iniciar no modo de teste"</strong> (pode manter por 30 dias, depois ajustar regras)</li>
-    <li>No menu lateral, clique em ⚙️ <strong>Configurações do projeto</strong></li>
-    <li>Role até <strong>"Seus aplicativos"</strong> → clique em <strong>&lt;/&gt; Web</strong> → registre o app</li>
-    <li>Copie os dados da <code>firebaseConfig</code> e cole no início do código deste arquivo (substitua os campos <code>COLE_SUA_...</code>)</li>
-    <li>Salve o arquivo e abra no navegador — pronto! ✅</li>
-  </ol>
-  <p style="margin-top:10px">🔒 <strong>Regras de segurança:</strong> após testar, altere as regras do banco para: <code>".read": true, ".write": true</code> (para uso interno/equipe).</p>
 </div>
 
 <!-- ===== TAB REGISTRAR ===== -->
@@ -871,7 +838,7 @@ function renderHistorico(regs) {
         <div class="sig-box">${tecSig}<div>${r.tecnico||'Técnico'}</div></div>
         <div class="sig-box">${resSig}<div>${r.responsavel||'Responsável'}</div></div>
       </div>
-      <div style="margin-top:10px;text-align:right">
+      <div class="btn-excluir-wrap" style="display:none;margin-top:10px;text-align:right">
         <button class="btn btn-danger btn-sm" onclick="excluirRegistro('${r.fbKey}')">🗑 Excluir</button>
       </div>
     </div>`;
@@ -980,28 +947,36 @@ function checkURLParams() {
 // ══════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════
-// ═══════════════════════════════════════
-// VERIFICAÇÃO DE SENHA
-// ═══════════════════════════════════════
-const SENHA_CORRETA = 'MGCITY';
 
+// VERIFICACAO DE SENHA
+var SENHA_CORRETA = 'Primeir@entrar_2026';
+var SENHA_ADMIN = 'Segund@adm_2026';
+function ativarAdmin() {
+  document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){
+    el.style.display = 'block';
+  });
+}
 function verificarSenha() {
-  const input = document.getElementById('campo-senha');
-  const erro  = document.getElementById('senha-erro');
-  if(input.value === SENHA_CORRETA) {
+  var input = document.getElementById('campo-senha');
+  var erro  = document.getElementById('senha-erro');
+  if(input.value === SENHA_ADMIN) {
     document.getElementById('tela-senha').style.display = 'none';
-    sessionStorage.setItem('autenticado', 'sim');
+    sessionStorage.setItem('auth', 'admin');
+    ativarAdmin();
+  } else if(input.value === SENHA_CORRETA) {
+    document.getElementById('tela-senha').style.display = 'none';
+    sessionStorage.setItem('auth', '1');
   } else {
     input.classList.add('erro');
     erro.style.display = 'block';
     input.value = '';
-    setTimeout(() => input.classList.remove('erro'), 400);
+    setTimeout(function(){ input.classList.remove('erro'); }, 400);
   }
 }
-
-// Se já autenticou nessa sessão, esconde a tela direto
-if(sessionStorage.getItem('autenticado') === 'sim') {
-  document.getElementById('tela-senha').style.display = 'none';
+if(sessionStorage.getItem('auth') === '1') {
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('tela-senha').style.display = 'none';
+  });
 }
 
 window.addEventListener('load', () => {
