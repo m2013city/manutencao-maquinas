@@ -271,7 +271,7 @@ window.dispatchEvent(new Event('firebase-ready'));
   .spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; margin-right:8px; vertical-align:middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ═══ TELA DE SENHA ═══ */
+  /* TELA DE SENHA */
   #tela-senha {
     position: fixed; inset: 0; z-index: 9999;
     background: #1a6b9a;
@@ -332,16 +332,16 @@ window.dispatchEvent(new Event('firebase-ready'));
 </header>
 
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('registrar', this)">＋ Registrar</button>
-  <button class="tab-btn" onclick="switchTab('historico', this)">📋 Histórico</button>
-  <button class="tab-btn" onclick="switchTab('qrcode', this)">⬛ QR Code</button>
+  <button class="tab-btn active" onclick="switchTab('registrar', this)">+ Registrar</button>
+  <button class="tab-btn" onclick="switchTab('historico', this)">&#128203; Histórico</button>
+  <button class="tab-btn" onclick="switchTab('qrcode', this)">&#11035; QR Code</button>
 </div>
 
-<!-- ===== TAB REGISTRAR ===== -->
+<!-- TAB REGISTRAR -->
 <div id="tab-registrar" class="tab-content active">
 <div class="container">
   <div class="card">
-    <div class="card-title">🔧 Identificação da Máquina</div>
+    <div class="card-title">&#128295; Identificação da Máquina</div>
     <div class="field">
       <label>Empresa / Cliente</label>
       <input type="text" id="empresa" placeholder="Ex: Senac Faustolo">
@@ -361,21 +361,21 @@ window.dispatchEvent(new Event('firebase-ready'));
       <input type="text" id="setor" placeholder="Ex: Sala de Costura B">
     </div>
     <div class="field">
-      <label>📷 Foto da Máquina</label>
+      <label>&#128247; Foto da Máquina</label>
       <div class="foto-upload-area" id="area-maquina">
         <input type="file" accept="image/*" onchange="carregarFoto('maquina', this)">
-        <div class="foto-upload-icon">📷</div>
+        <div class="foto-upload-icon">&#128247;</div>
         <div class="foto-upload-label">Toque para tirar foto ou escolher da galeria</div>
       </div>
       <div class="foto-preview-wrap" id="preview-maquina">
         <img id="img-maquina" src="">
-        <button class="foto-remove-btn" onclick="removerFoto('maquina')">✕ Remover foto</button>
+        <button class="foto-remove-btn" onclick="removerFoto('maquina')">&#10005; Remover foto</button>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">📅 Dados da Manutenção</div>
+    <div class="card-title">&#128197; Dados da Manutenção</div>
     <div class="row2">
       <div class="field">
         <label>Data da Manutenção</label>
@@ -400,35 +400,35 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
 
   <div class="card">
-    <div class="card-title">✅ Serviços Realizados</div>
+    <div class="card-title">&#9989; Serviços Realizados</div>
     <div class="check-grid" id="servicos-grid"></div>
   </div>
 
   <div class="card">
-    <div class="card-title">🔩 Peças Trocadas</div>
+    <div class="card-title">&#128297; Peças Trocadas</div>
     <div id="pecas-list"></div>
-    <button class="btn-add" onclick="addPeca()">＋ Adicionar peça</button>
+    <button class="btn-add" onclick="addPeca()">+ Adicionar peça</button>
   </div>
 
   <div class="card">
-    <div class="card-title">📝 Observações</div>
+    <div class="card-title">&#128221; Observações</div>
     <textarea id="obs" placeholder="Descreva o problema encontrado, ajustes feitos, recomendações..."></textarea>
     <div class="field" style="margin-top:14px">
-      <label>📸 Foto do Problema / Defeito</label>
+      <label>&#128248; Foto do Problema / Defeito</label>
       <div class="foto-upload-area" id="area-problema">
         <input type="file" accept="image/*" onchange="carregarFoto('problema', this)">
-        <div class="foto-upload-icon">📸</div>
+        <div class="foto-upload-icon">&#128248;</div>
         <div class="foto-upload-label">Registre o defeito, peça ou situação encontrada</div>
       </div>
       <div class="foto-preview-wrap" id="preview-problema">
         <img id="img-problema" src="">
-        <button class="foto-remove-btn" onclick="removerFoto('problema')">✕ Remover foto</button>
+        <button class="foto-remove-btn" onclick="removerFoto('problema')">&#10005; Remover foto</button>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">✍️ Assinatura do Técnico</div>
+    <div class="card-title">&#9999;&#65039; Assinatura do Técnico</div>
     <div class="field">
       <label>Nome do Técnico</label>
       <input type="text" id="tecnico" placeholder="Nome completo">
@@ -440,7 +440,7 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
 
   <div class="card">
-    <div class="card-title">✍️ Assinatura do Responsável</div>
+    <div class="card-title">&#9999;&#65039; Assinatura do Responsável</div>
     <div class="field">
       <label>Nome do Responsável</label>
       <input type="text" id="responsavel" placeholder="Nome do responsável presente">
@@ -453,16 +453,16 @@ window.dispatchEvent(new Event('firebase-ready'));
 
   <div class="save-bar">
     <button class="btn btn-secondary" onclick="limparForm()">Limpar tudo</button>
-    <button class="btn btn-primary" onclick="salvarRegistro()">☁️ Salvar na Nuvem</button>
+    <button class="btn btn-primary" onclick="salvarRegistro()">&#9729;&#65039; Salvar na Nuvem</button>
   </div>
 </div>
 </div>
 
-<!-- ===== TAB HISTÓRICO ===== -->
+<!-- TAB HISTÓRICO -->
 <div id="tab-historico" class="tab-content">
 <div class="container">
   <div class="card">
-    <div class="card-title">🔍 Filtrar</div>
+    <div class="card-title">&#128269; Filtrar</div>
     <div class="row2">
       <div class="field">
         <label>Empresa / Cliente</label>
@@ -489,11 +489,11 @@ window.dispatchEvent(new Event('firebase-ready'));
 </div>
 </div>
 
-<!-- ===== TAB QR CODE ===== -->
+<!-- TAB QR CODE -->
 <div id="tab-qrcode" class="tab-content">
 <div class="container">
   <div class="card">
-    <div class="card-title">⬛ Gerar QR Code para a Máquina</div>
+    <div class="card-title">&#11035; Gerar QR Code para a Máquina</div>
     <div class="field">
       <label>Modelo / Identificação da Máquina</label>
       <input type="text" id="qr-modelo" placeholder="Ex: Juki DDL-9000 — SN-00421" oninput="updateQR()">
@@ -501,15 +501,15 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
   <div class="card">
     <div class="qr-wrap">
-      <div class="qr-label">📌 Imprima e cole este QR Code na máquina.</div>
+      <div class="qr-label">&#128204; Imprima e cole este QR Code na máquina.</div>
       <div id="qr-machine-label" class="machine-badge" style="display:none"></div>
       <div id="qrcode"></div>
       <div class="qr-label" id="qr-instrucao">Digite o nome/modelo da máquina acima para gerar o QR Code.</div>
       <div id="qr-url-display" style="display:none" class="qr-url-box">
-        <strong>🔗 Link que o QR abre:</strong>
+        <strong>&#128279; Link que o QR abre:</strong>
         <span id="qr-url-text"></span>
       </div>
-      <button class="btn btn-primary" id="btn-imprimir" style="display:none" onclick="imprimirQR()">🖨️ Imprimir QR Code</button>
+      <button class="btn btn-primary" id="btn-imprimir" style="display:none" onclick="imprimirQR()">&#128424;&#65039; Imprimir QR Code</button>
     </div>
   </div>
 </div>
@@ -517,17 +517,17 @@ window.dispatchEvent(new Event('firebase-ready'));
 
 <script>
 const SERVICOS = [
-  {id:'limpeza', label:'🧹 Limpeza geral', icon:'🧹'},
-  {id:'lubrif',  label:'🛢️ Lubrificação',  icon:'🛢️'},
-  {id:'tensao',  label:'🧵 Ajuste de tensão', icon:'🧵'},
-  {id:'ponto',   label:'📐 Regulagem de ponto', icon:'📐'},
-  {id:'pedal',   label:'🦶 Calibração do pedal', icon:'🦶'},
-  {id:'agulha',  label:'🪡 Troca de agulha', icon:'🪡'},
-  {id:'correia', label:'⚙️ Troca de correia', icon:'⚙️'},
-  {id:'bobina',  label:'🔄 Ajuste de bobina', icon:'🔄'},
-  {id:'motor',   label:'⚡ Verificação do motor', icon:'⚡'},
-  {id:'eletrica',label:'🔌 Teste elétrico', icon:'🔌'},
-  {id:'outros',  label:'🔧 Outros', icon:'🔧'},
+  {id:'limpeza', label:'Limpeza geral',       icon:'&#129529;'},
+  {id:'lubrif',  label:'Lubrificação',         icon:'&#128722;'},
+  {id:'tensao',  label:'Ajuste de tensão',     icon:'&#129525;'},
+  {id:'ponto',   label:'Regulagem de ponto',   icon:'&#128208;'},
+  {id:'pedal',   label:'Calibração do pedal',  icon:'&#129463;'},
+  {id:'agulha',  label:'Troca de agulha',      icon:'&#129521;'},
+  {id:'correia', label:'Troca de correia',     icon:'&#9881;&#65039;'},
+  {id:'bobina',  label:'Ajuste de bobina',     icon:'&#128260;'},
+  {id:'motor',   label:'Verificação do motor', icon:'&#9889;'},
+  {id:'eletrica',label:'Teste elétrico',       icon:'&#128268;'},
+  {id:'outros',  label:'Outros',               icon:'&#128295;'},
 ];
 
 function renderServicos() {
@@ -536,7 +536,7 @@ function renderServicos() {
     <label class="check-item" id="chk-${s.id}" onclick="toggleCheck('${s.id}')">
       <input type="checkbox" id="cb-${s.id}">
       <span class="check-icon">${s.icon}</span>
-      <span>${s.label.replace(s.icon+' ','')}</span>
+      <span>${s.label}</span>
     </label>`).join('');
 }
 
@@ -555,7 +555,7 @@ function addPeca() {
   div.id = id;
   div.innerHTML = `
     <input type="text" placeholder="Nome / código da peça" class="peca-input">
-    <button class="btn-remove" onclick="removePeca('${id}')">✕</button>`;
+    <button class="btn-remove" onclick="removePeca('${id}')">&#10005;</button>`;
   document.getElementById('pecas-list').appendChild(div);
 }
 function removePeca(id) { document.getElementById(id)?.remove(); }
@@ -620,12 +620,12 @@ async function salvarRegistro() {
     setStatus('', 'Salvando…');
     const { db, ref, push } = window._fb;
     await push(ref(db, 'manutencoes'), reg);
-    setStatus('online', '☁️ Online');
-    alert('✅ Registro salvo na nuvem com sucesso!');
+    setStatus('online', 'Online');
+    alert('Registro salvo na nuvem com sucesso!');
     limparForm();
   } catch(e) {
     setStatus('error', 'Erro');
-    alert('❌ Erro ao salvar: ' + e.message);
+    alert('Erro ao salvar: ' + e.message);
   }
 }
 
@@ -699,12 +699,12 @@ function iniciarEscuta() {
       todosRegistros.push({ fbKey: child.key, ...child.val() });
     });
     todosRegistros.sort((a,b) => b.ts - a.ts);
-    setStatus('online', '☁️ Online');
+    setStatus('online', 'Online');
     filtrarHistorico();
   }, err => {
     setStatus('error', 'Sem conexão');
     document.getElementById('historico-lista').innerHTML =
-      '<div class="historico-empty">❌ Erro ao carregar dados.</div>';
+      '<div class="historico-empty">Erro ao carregar dados.</div>';
   });
 }
 
@@ -724,7 +724,7 @@ function filtrarHistorico() {
 function renderHistorico(regs) {
   const lista = document.getElementById('historico-lista');
   if(!regs || !regs.length) {
-    lista.innerHTML = '<div class="historico-empty">📂 Nenhum registro encontrado.</div>';
+    lista.innerHTML = '<div class="historico-empty">Nenhum registro encontrado.</div>';
     return;
   }
   lista.innerHTML = regs.map(r => {
@@ -733,11 +733,11 @@ function renderHistorico(regs) {
     const tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
     const tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Não informado';
     const servTags  = (r.servicos||[]).map(s=>`<span class="tag">${s}</span>`).join('');
-    const pecaTags  = (r.pecas||[]).map(p=>`<span class="tag">🔩 ${p}</span>`).join('');
+    const pecaTags  = (r.pecas||[]).map(p=>`<span class="tag">&#128297; ${p}</span>`).join('');
     const tecSig    = r.sigTecnico && r.sigTecnico.length > 200 ? `<img class="sig-preview" src="${r.sigTecnico}">` : '—';
     const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200 ? `<img class="sig-preview" src="${r.sigResponsavel}">` : '—';
-    const fotosMaq  = r.fotoMaquina  ? `<div class="reg-foto-item"><img src="${r.fotoMaquina}"><div class="reg-foto-label">📷 Máquina</div></div>` : '';
-    const fotosProb = r.fotoProblema ? `<div class="reg-foto-item"><img src="${r.fotoProblema}"><div class="reg-foto-label">📸 Problema</div></div>` : '';
+    const fotosMaq  = r.fotoMaquina  ? `<div class="reg-foto-item"><img src="${r.fotoMaquina}"><div class="reg-foto-label">Maquina</div></div>` : '';
+    const fotosProb = r.fotoProblema ? `<div class="reg-foto-item"><img src="${r.fotoProblema}"><div class="reg-foto-label">Problema</div></div>` : '';
     const fotosHtml = (fotosMaq || fotosProb) ? `<div class="reg-fotos">${fotosMaq}${fotosProb}</div>` : '';
     return `
     <div class="registro-card">
@@ -750,15 +750,15 @@ function renderHistorico(regs) {
       </div>
       ${servTags ? `<div class="reg-tags">${servTags}</div>` : ''}
       ${pecaTags ? `<div class="reg-tags">${pecaTags}</div>` : ''}
-      ${r.obs ? `<div style="font-size:.82rem;color:var(--muted);margin-top:6px">📝 ${r.obs}</div>` : ''}
-      ${proxFmt ? `<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">📅 Próxima: ${proxFmt}</div>` : ''}
+      ${r.obs ? `<div style="font-size:.82rem;color:var(--muted);margin-top:6px">${r.obs}</div>` : ''}
+      ${proxFmt ? `<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: ${proxFmt}</div>` : ''}
       ${fotosHtml}
       <div class="reg-sigs">
         <div class="sig-box">${tecSig}<div>${r.tecnico||'Técnico'}</div></div>
         <div class="sig-box">${resSig}<div>${r.responsavel||'Responsável'}</div></div>
       </div>
       <div class="btn-excluir-wrap" style="display:none;margin-top:10px;text-align:right">
-        <button class="btn btn-danger btn-sm" onclick="excluirRegistro('${r.fbKey}')">🗑 Excluir</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirRegistro('${r.fbKey}')">Excluir</button>
       </div>
     </div>`;
   }).join('');
@@ -806,10 +806,10 @@ function imprimirQR() {
   const qrHTML  = document.getElementById('qrcode').innerHTML;
   const urlLink = document.getElementById('qr-url-text').textContent;
   const w = window.open('','_blank','width=400,height=560');
-  w.document.write(`<html><head><title>QR — ${modelo}</title>
-    <style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fff;padding:24px;gap:12px}h2{font-size:1.1rem;margin:0;text-align:center}canvas{border-radius:8px}.url{font-size:.6rem;color:#999;word-break:break-all;text-align:center;max-width:240px}</style></head>
-    <body><h2>🪡 Ficha de Manutenção</h2>${qrHTML}<h2>${modelo}</h2><div class="url">${urlLink}</div>
-    <script>window.onload=()=>window.print()</script></body></html>`);
+  w.document.write('<html><head><title>QR - ' + modelo + '</title>'
+    + '<style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fff;padding:24px;gap:12px}h2{font-size:1.1rem;margin:0;text-align:center}canvas{border-radius:8px}.url{font-size:.6rem;color:#999;word-break:break-all;text-align:center;max-width:240px}</style></head>'
+    + '<body><h2>Ficha de Manutencao</h2>' + qrHTML + '<h2>' + modelo + '</h2><div class="url">' + urlLink + '</div>'
+    + '<script>window.onload=function(){window.print()}<\/script></body></html>');
   w.document.close();
 }
 
@@ -832,9 +832,7 @@ function checkURLParams() {
   }
 }
 
-// ══════════════════════════════════════════════════
-// SENHA — versão simplificada sem caracteres especiais
-// ══════════════════════════════════════════════════
+// SENHA
 var SENHA_CORRETA = 'Primeiroentrar2026';
 var SENHA_ADMIN   = 'Segundoadmin2026';
 
