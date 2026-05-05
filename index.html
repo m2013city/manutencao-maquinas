@@ -11,10 +11,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// ════════════════════════════════════════════════════════
-// ⚙️  CONFIGURAÇÃO DO FIREBASE
-// Substitua pelos seus dados após criar o projeto no Firebase
-// ════════════════════════════════════════════════════════
 const firebaseConfig = {
   apiKey: "AIzaSyCuYQG4MqIo8xha1YDOcZ_Jqx-EsO4rw3Y",
   authDomain: "manutencao-maquina-cf53e.firebaseapp.com",
@@ -26,11 +22,9 @@ const firebaseConfig = {
   measurementId: "G-T7NV2E2DY6"
 };
 
-// Inicia Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Exporta funções para o escopo global (window)
 window._fb = { db, ref, push, onValue, remove, get };
 window._fbReady = true;
 window.dispatchEvent(new Event('firebase-ready'));
@@ -70,7 +64,6 @@ window.dispatchEvent(new Event('firebase-ready'));
   header .logo { font-family: 'DM Serif Display', serif; font-size: 1.4rem; letter-spacing: .02em; }
   header .sub { font-size: .8rem; opacity: .75; }
 
-  /* Status badge */
   #status-badge {
     margin-left: auto;
     font-size: .75rem;
@@ -203,7 +196,6 @@ window.dispatchEvent(new Event('firebase-ready'));
     padding: 8px 20px; border-radius: 20px; letter-spacing: .03em;
   }
 
-  /* URL da ficha */
   .qr-url-box {
     background: var(--bg); border: 1px solid var(--border);
     border-radius: 8px; padding: 10px 14px;
@@ -231,7 +223,6 @@ window.dispatchEvent(new Event('firebase-ready'));
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* Fotos */
   .foto-upload-area {
     border: 2px dashed var(--border);
     border-radius: 10px;
@@ -276,24 +267,9 @@ window.dispatchEvent(new Event('firebase-ready'));
   .reg-foto-item img { width: 100%; display: block; object-fit: cover; max-height: 130px; }
   .reg-foto-label { font-size: .68rem; color: var(--muted); padding: 4px 6px; text-align: center; background: var(--bg); }
 
-  /* Loading spinner */
   .loading { text-align:center; padding: 30px; color: var(--muted); font-size:.9rem; }
   .spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; margin-right:8px; vertical-align:middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Aviso de config */
-  #config-aviso {
-    background: #fffbea; border: 1px solid #e0d090;
-    border-radius: 12px; padding: 20px; margin: 16px;
-    font-size: .88rem; line-height: 1.7; color: #5a4800;
-  }
-  #config-aviso h3 { font-size: 1rem; color: #7a6200; margin-bottom: 10px; }
-  #config-aviso code {
-    background: #fef3c7; border: 1px solid #d0b830;
-    border-radius: 4px; padding: 1px 6px; font-size: .82rem; font-family: monospace;
-  }
-  #config-aviso ol { padding-left: 18px; margin-top: 8px; }
-  #config-aviso a { color: var(--accent); font-weight: 600; }
 
   /* ═══ TELA DE SENHA ═══ */
   #tela-senha {
@@ -312,7 +288,7 @@ window.dispatchEvent(new Event('firebase-ready'));
   .senha-input {
     width: 100%; padding: 12px 14px; border: 2px solid #d4c9b0;
     border-radius: 10px; font-size: 1.1rem; text-align: center;
-    letter-spacing: 0.2em; background: #f5f0e8; outline: none;
+    letter-spacing: 0.1em; background: #f5f0e8; outline: none;
     transition: border-color .2s; margin-bottom: 14px;
   }
   .senha-input:focus { border-color: #1a6b9a; }
@@ -337,18 +313,17 @@ window.dispatchEvent(new Event('firebase-ready'));
     <div class="senha-logo">&#128274;</div>
     <div class="senha-titulo">MG City</div>
     <div class="senha-sub">Acesso restrito &mdash; digite a senha para continuar</div>
-    <input type="password" id="campo-senha" class="senha-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+    <input type="password" id="campo-senha" class="senha-input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
       onkeydown="if(event.key==='Enter')verificarSenha()" autofocus>
     <button class="senha-btn" onclick="verificarSenha()">&#128275; Entrar</button>
     <div class="senha-erro" id="senha-erro">Senha incorreta. Tente novamente.</div>
   </div>
 </div>
 
-
 <header>
   <div>
-    <div class="logo">🪡 Ficha de Manutenção</div>
-    <div class="sub">Máquinas de Costura</div>
+    <div class="logo">Ficha de Manutenção</div>
+    <div class="sub">Assistência Técnica em Máquinas de Costura Ltda</div>
   </div>
   <div id="status-badge">
     <div id="status-dot"></div>
@@ -365,13 +340,12 @@ window.dispatchEvent(new Event('firebase-ready'));
 <!-- ===== TAB REGISTRAR ===== -->
 <div id="tab-registrar" class="tab-content active">
 <div class="container">
-
   <div class="card">
     <div class="card-title">🔧 Identificação da Máquina</div>
     <div class="field">
-        <label>Empresa / Cliente</label>
-        <input type="text" id="empresa" placeholder="Ex: Senac Faustolo">
-      </div>
+      <label>Empresa / Cliente</label>
+      <input type="text" id="empresa" placeholder="Ex: Senac Faustolo">
+    </div>
     <div class="row2">
       <div class="field">
         <label>Modelo / Nome</label>
@@ -481,7 +455,6 @@ window.dispatchEvent(new Event('firebase-ready'));
     <button class="btn btn-secondary" onclick="limparForm()">Limpar tudo</button>
     <button class="btn btn-primary" onclick="salvarRegistro()">☁️ Salvar na Nuvem</button>
   </div>
-
 </div>
 </div>
 
@@ -525,17 +498,10 @@ window.dispatchEvent(new Event('firebase-ready'));
       <label>Modelo / Identificação da Máquina</label>
       <input type="text" id="qr-modelo" placeholder="Ex: Juki DDL-9000 — SN-00421" oninput="updateQR()">
     </div>
-    <p style="font-size:.8rem;color:var(--muted);margin-top:4px">
-      ⚠️ Digite exatamente o mesmo nome usado no campo <strong>Modelo</strong> ao registrar.
-    </p>
   </div>
-
   <div class="card">
     <div class="qr-wrap">
-      <div class="qr-label">
-        📌 Imprima e cole este QR Code na máquina.<br>
-        Ao escanear com o celular, abre o histórico direto.
-      </div>
+      <div class="qr-label">📌 Imprima e cole este QR Code na máquina.</div>
       <div id="qr-machine-label" class="machine-badge" style="display:none"></div>
       <div id="qrcode"></div>
       <div class="qr-label" id="qr-instrucao">Digite o nome/modelo da máquina acima para gerar o QR Code.</div>
@@ -546,24 +512,10 @@ window.dispatchEvent(new Event('firebase-ready'));
       <button class="btn btn-primary" id="btn-imprimir" style="display:none" onclick="imprimirQR()">🖨️ Imprimir QR Code</button>
     </div>
   </div>
-
-  <div class="card" style="background:#fffbea; border-color:#e0d090;">
-    <div class="card-title" style="color:#7a6200;">💡 Como usar</div>
-    <ol style="font-size:.85rem; color:#5a4800; line-height:1.8; padding-left:18px;">
-      <li>Configure o Firebase seguindo o aviso acima (apenas uma vez)</li>
-      <li>Registre manutenções na aba <strong>Registrar</strong></li>
-      <li>Gere o QR Code e imprima (recomendo plastificar)</li>
-      <li>Cole na máquina — funciona para sempre, sem expirar</li>
-      <li>Qualquer celular que escanear verá o histórico atualizado da nuvem</li>
-    </ol>
-  </div>
 </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════
-// SERVIÇOS
-// ══════════════════════════════════════════════════
 const SERVICOS = [
   {id:'limpeza', label:'🧹 Limpeza geral', icon:'🧹'},
   {id:'lubrif',  label:'🛢️ Lubrificação',  icon:'🛢️'},
@@ -595,9 +547,6 @@ function toggleCheck(id) {
   el.classList.toggle('checked', cb.checked);
 }
 
-// ══════════════════════════════════════════════════
-// PEÇAS
-// ══════════════════════════════════════════════════
 let pecaIdx = 0;
 function addPeca() {
   const id = 'peca-'+pecaIdx++;
@@ -611,9 +560,6 @@ function addPeca() {
 }
 function removePeca(id) { document.getElementById(id)?.remove(); }
 
-// ══════════════════════════════════════════════════
-// ASSINATURA
-// ══════════════════════════════════════════════════
 function initCanvas(id) {
   const canvas = document.getElementById(id);
   const ctx = canvas.getContext('2d');
@@ -638,9 +584,6 @@ function clearSig(id) {
   c.getContext('2d').clearRect(0,0,c.width,c.height);
 }
 
-// ══════════════════════════════════════════════════
-// STATUS FIREBASE
-// ══════════════════════════════════════════════════
 function setStatus(state, msg) {
   document.getElementById('status-text').textContent = msg;
   const dot = document.getElementById('status-dot');
@@ -649,46 +592,30 @@ function setStatus(state, msg) {
   if(state==='error')  dot.classList.add('error');
 }
 
-// ══════════════════════════════════════════════════
-// SALVAR NA NUVEM
-// ══════════════════════════════════════════════════
 async function salvarRegistro() {
-  if(!window._fbReady) {
-    alert('⚠️ Firebase ainda não configurado. Siga o passo a passo no aviso amarelo.');
-    return;
-  }
-
+  if(!window._fbReady) { alert('Firebase não configurado.'); return; }
   const modelo = document.getElementById('modelo').value.trim();
   const data   = document.getElementById('data').value;
   if (!modelo || !data) { alert('Preencha ao menos o modelo da máquina e a data.'); return; }
-
   const servicos = SERVICOS.filter(s => document.getElementById('cb-'+s.id)?.checked).map(s=>s.label);
   const pecas    = [...document.querySelectorAll('.peca-input')].map(i=>i.value.trim()).filter(Boolean);
-
   const sigTecnico     = document.getElementById('sig-tecnico').toDataURL();
   const sigResponsavel = document.getElementById('sig-responsavel').toDataURL();
-
-  const empresa = document.getElementById('empresa') ? document.getElementById('empresa').value.trim() : '';
   const reg = {
     ts: Date.now(),
-    empresa,
-    modelo,
-    serial:      document.getElementById('serial').value.trim(),
-    setor:       document.getElementById('setor').value.trim(),
-    data,
-    proxima:     document.getElementById('proxima').value,
-    tipo:        document.getElementById('tipo').value,
-    servicos,
-    pecas,
-    obs:         document.getElementById('obs').value.trim(),
-    tecnico:     document.getElementById('tecnico').value.trim(),
+    empresa: document.getElementById('empresa').value.trim(),
+    modelo, serial: document.getElementById('serial').value.trim(),
+    setor: document.getElementById('setor').value.trim(),
+    data, proxima: document.getElementById('proxima').value,
+    tipo: document.getElementById('tipo').value,
+    servicos, pecas,
+    obs: document.getElementById('obs').value.trim(),
+    tecnico: document.getElementById('tecnico').value.trim(),
     responsavel: document.getElementById('responsavel').value.trim(),
-    sigTecnico,
-    sigResponsavel,
+    sigTecnico, sigResponsavel,
     fotoMaquina:  window._fotos?.maquina  || null,
     fotoProblema: window._fotos?.problema || null,
   };
-
   try {
     setStatus('', 'Salvando…');
     const { db, ref, push } = window._fb;
@@ -698,12 +625,12 @@ async function salvarRegistro() {
     limparForm();
   } catch(e) {
     setStatus('error', 'Erro');
-    alert('❌ Erro ao salvar: ' + e.message + '\n\nVerifique se o Firebase está configurado corretamente.');
+    alert('❌ Erro ao salvar: ' + e.message);
   }
 }
 
 function limparForm() {
-  ['modelo','serial','setor','data','proxima','obs','tecnico','responsavel'].forEach(id => {
+  ['empresa','modelo','serial','setor','data','proxima','obs','tecnico','responsavel'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.value = '';
   });
@@ -719,13 +646,9 @@ function limparForm() {
   clearSig('sig-responsavel');
   removerFoto('maquina');
   removerFoto('problema');
-  const hoje = new Date().toISOString().split('T')[0];
-  document.getElementById('data').value = hoje;
+  document.getElementById('data').value = new Date().toISOString().split('T')[0];
 }
 
-// ══════════════════════════════════════════════════
-// FOTOS
-// ══════════════════════════════════════════════════
 window._fotos = { maquina: null, problema: null };
 
 function carregarFoto(tipo, input) {
@@ -733,7 +656,6 @@ function carregarFoto(tipo, input) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    // Comprime para max 800px e qualidade 75%
     const img = new Image();
     img.onload = () => {
       const MAX = 800;
@@ -761,15 +683,11 @@ function removerFoto(tipo) {
   document.getElementById('img-' + tipo).src = '';
   document.getElementById('area-' + tipo).style.display = 'block';
   document.getElementById('preview-' + tipo).style.display = 'none';
-  // Limpa o input para permitir reselecionar o mesmo arquivo
   const area = document.getElementById('area-' + tipo);
   const input = area.querySelector('input[type=file]');
   if (input) input.value = '';
 }
 
-// ══════════════════════════════════════════════════
-// HISTÓRICO — escuta em tempo real
-// ══════════════════════════════════════════════════
 let todosRegistros = [];
 
 function iniciarEscuta() {
@@ -780,28 +698,26 @@ function iniciarEscuta() {
     snapshot.forEach(child => {
       todosRegistros.push({ fbKey: child.key, ...child.val() });
     });
-    // Mais recentes primeiro
     todosRegistros.sort((a,b) => b.ts - a.ts);
     setStatus('online', '☁️ Online');
     filtrarHistorico();
   }, err => {
     setStatus('error', 'Sem conexão');
     document.getElementById('historico-lista').innerHTML =
-      '<div class="historico-empty">❌ Erro ao carregar dados. Verifique a configuração do Firebase.</div>';
+      '<div class="historico-empty">❌ Erro ao carregar dados.</div>';
   });
 }
 
 function filtrarHistorico() {
-  const filtroModelo = document.getElementById('filtro-modelo')?.value.toLowerCase() || '';
-  const filtroTipo   = document.getElementById('filtro-tipo')?.value || '';
-
+  const filtroEmpresa = document.getElementById('filtro-empresa')?.value.toLowerCase() || '';
+  const filtroModelo  = document.getElementById('filtro-modelo')?.value.toLowerCase() || '';
+  const filtroTipo    = document.getElementById('filtro-tipo')?.value || '';
   let regs = todosRegistros.filter(r => {
     if(filtroEmpresa && !r.empresa?.toLowerCase().includes(filtroEmpresa)) return false;
-    if(filtroModelo && !r.modelo?.toLowerCase().includes(filtroModelo)) return false;
-    if(filtroTipo   && r.tipo !== filtroTipo) return false;
+    if(filtroModelo  && !r.modelo?.toLowerCase().includes(filtroModelo))  return false;
+    if(filtroTipo    && r.tipo !== filtroTipo) return false;
     return true;
   });
-
   renderHistorico(regs);
 }
 
@@ -811,7 +727,6 @@ function renderHistorico(regs) {
     lista.innerHTML = '<div class="historico-empty">📂 Nenhum registro encontrado.</div>';
     return;
   }
-
   lista.innerHTML = regs.map(r => {
     const dataFmt = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '—';
     const proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
@@ -819,18 +734,11 @@ function renderHistorico(regs) {
     const tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Não informado';
     const servTags  = (r.servicos||[]).map(s=>`<span class="tag">${s}</span>`).join('');
     const pecaTags  = (r.pecas||[]).map(p=>`<span class="tag">🔩 ${p}</span>`).join('');
-    const tecSig    = r.sigTecnico && r.sigTecnico.length > 200
-      ? `<img class="sig-preview" src="${r.sigTecnico}">` : '—';
-    const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200
-      ? `<img class="sig-preview" src="${r.sigResponsavel}">` : '—';
-
-    const fotosMaq = r.fotoMaquina
-      ? `<div class="reg-foto-item"><img src="${r.fotoMaquina}"><div class="reg-foto-label">📷 Máquina</div></div>` : '';
-    const fotosProb = r.fotoProblema
-      ? `<div class="reg-foto-item"><img src="${r.fotoProblema}"><div class="reg-foto-label">📸 Problema</div></div>` : '';
-    const fotosHtml = (fotosMaq || fotosProb)
-      ? `<div class="reg-fotos">${fotosMaq}${fotosProb}</div>` : '';
-
+    const tecSig    = r.sigTecnico && r.sigTecnico.length > 200 ? `<img class="sig-preview" src="${r.sigTecnico}">` : '—';
+    const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200 ? `<img class="sig-preview" src="${r.sigResponsavel}">` : '—';
+    const fotosMaq  = r.fotoMaquina  ? `<div class="reg-foto-item"><img src="${r.fotoMaquina}"><div class="reg-foto-label">📷 Máquina</div></div>` : '';
+    const fotosProb = r.fotoProblema ? `<div class="reg-foto-item"><img src="${r.fotoProblema}"><div class="reg-foto-label">📸 Problema</div></div>` : '';
+    const fotosHtml = (fotosMaq || fotosProb) ? `<div class="reg-fotos">${fotosMaq}${fotosProb}</div>` : '';
     return `
     <div class="registro-card">
       <div class="reg-header">
@@ -861,24 +769,18 @@ async function excluirRegistro(fbKey) {
   try {
     const { db, ref, remove } = window._fb;
     await remove(ref(db, 'manutencoes/'+fbKey));
-  } catch(e) {
-    alert('Erro ao excluir: ' + e.message);
-  }
+  } catch(e) { alert('Erro ao excluir: ' + e.message); }
 }
 
-// ══════════════════════════════════════════════════
-// QR CODE  — aponta para URL da ficha hospedada
-// ══════════════════════════════════════════════════
 let qrInstance = null;
 function updateQR() {
   const val = document.getElementById('qr-modelo').value.trim();
   const div = document.getElementById('qrcode');
-  const instrucao  = document.getElementById('qr-instrucao');
-  const badge      = document.getElementById('qr-machine-label');
+  const instrucao   = document.getElementById('qr-instrucao');
+  const badge       = document.getElementById('qr-machine-label');
   const btnImprimir = document.getElementById('btn-imprimir');
   const urlDisplay  = document.getElementById('qr-url-display');
   const urlText     = document.getElementById('qr-url-text');
-
   if(!val) {
     div.innerHTML = '';
     instrucao.textContent = 'Digite o nome/modelo da máquina acima para gerar o QR Code.';
@@ -887,14 +789,10 @@ function updateQR() {
     urlDisplay.style.display = 'none';
     return;
   }
-
-  // Usa a URL atual da página (funciona local E quando hospedado)
   const base = window.location.href.split('?')[0];
   const url  = base + '?maquina=' + encodeURIComponent(val);
-
   div.innerHTML = '';
   new QRCode(div, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.H });
-
   instrucao.textContent = 'QR Code gerado! Imprima e cole na máquina.';
   badge.textContent = val;
   badge.style.display = 'inline-block';
@@ -908,30 +806,13 @@ function imprimirQR() {
   const qrHTML  = document.getElementById('qrcode').innerHTML;
   const urlLink = document.getElementById('qr-url-text').textContent;
   const w = window.open('','_blank','width=400,height=560');
-  w.document.write(`
-    <html><head><title>QR — ${modelo}</title>
-    <style>
-      body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;
-           justify-content:center;min-height:100vh;background:#fff;padding:24px;gap:12px}
-      h2{font-size:1.1rem;margin:0;text-align:center}
-      p{font-size:.72rem;color:#666;text-align:center;max-width:220px}
-      canvas{border-radius:8px}
-      .url{font-size:.6rem;color:#999;word-break:break-all;text-align:center;max-width:240px;margin-top:4px}
-    </style></head>
-    <body>
-      <h2>🪡 Ficha de Manutenção</h2>
-      ${qrHTML}
-      <h2>${modelo}</h2>
-      <p>Escaneie para ver o histórico de manutenções</p>
-      <div class="url">${urlLink}</div>
-      <script>window.onload=()=>window.print()<\/script>
-    </body></html>`);
+  w.document.write(`<html><head><title>QR — ${modelo}</title>
+    <style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fff;padding:24px;gap:12px}h2{font-size:1.1rem;margin:0;text-align:center}canvas{border-radius:8px}.url{font-size:.6rem;color:#999;word-break:break-all;text-align:center;max-width:240px}</style></head>
+    <body><h2>🪡 Ficha de Manutenção</h2>${qrHTML}<h2>${modelo}</h2><div class="url">${urlLink}</div>
+    <script>window.onload=()=>window.print()</script></body></html>`);
   w.document.close();
 }
 
-// ══════════════════════════════════════════════════
-// TABS
-// ══════════════════════════════════════════════════
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
@@ -939,15 +820,11 @@ function switchTab(name, btn) {
   if(btn) btn.classList.add('active');
 }
 
-// ══════════════════════════════════════════════════
-// URL PARAMS  — abre histórico filtrado pelo QR
-// ══════════════════════════════════════════════════
 function checkURLParams() {
   const params  = new URLSearchParams(window.location.search);
   const maquina = params.get('maquina');
   if(maquina) {
-    // Vai direto para aba Histórico filtrando a máquina
-    switchTab('historico');
+    switchTab('historico', null);
     document.querySelectorAll('.tab-btn')[1].classList.add('active');
     document.querySelectorAll('.tab-btn')[0].classList.remove('active');
     document.getElementById('filtro-modelo').value = maquina;
@@ -956,25 +833,26 @@ function checkURLParams() {
 }
 
 // ══════════════════════════════════════════════════
-// INIT
+// SENHA — versão simplificada sem caracteres especiais
 // ══════════════════════════════════════════════════
+var SENHA_CORRETA = 'Primeiroentrar2026';
+var SENHA_ADMIN   = 'Segundoadmin2026';
 
-// VERIFICACAO DE SENHA
-var SENHA_CORRETA = 'Primeir@entrar_2026';
-var SENHA_ADMIN = 'Segund@adm_2026';
 function ativarAdmin() {
   document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){
     el.style.display = 'block';
   });
 }
+
 function verificarSenha() {
   var input = document.getElementById('campo-senha');
   var erro  = document.getElementById('senha-erro');
-  if(input.value === SENHA_ADMIN) {
+  var val   = input.value.trim();
+  if(val === SENHA_ADMIN) {
     document.getElementById('tela-senha').style.display = 'none';
     sessionStorage.setItem('auth', 'admin');
     ativarAdmin();
-  } else if(input.value === SENHA_CORRETA) {
+  } else if(val === SENHA_CORRETA) {
     document.getElementById('tela-senha').style.display = 'none';
     sessionStorage.setItem('auth', '1');
   } else {
@@ -984,9 +862,12 @@ function verificarSenha() {
     setTimeout(function(){ input.classList.remove('erro'); }, 400);
   }
 }
-if(sessionStorage.getItem('auth') === '1') {
+
+var auth = sessionStorage.getItem('auth');
+if(auth === '1' || auth === 'admin') {
   document.addEventListener('DOMContentLoaded', function(){
     document.getElementById('tela-senha').style.display = 'none';
+    if(auth === 'admin') ativarAdmin();
   });
 }
 
@@ -994,10 +875,7 @@ window.addEventListener('load', () => {
   renderServicos();
   initCanvas('sig-tecnico');
   initCanvas('sig-responsavel');
-  const hoje = new Date().toISOString().split('T')[0];
-  document.getElementById('data').value = hoje;
-
-  // Aguarda Firebase ficar pronto
+  document.getElementById('data').value = new Date().toISOString().split('T')[0];
   if(window._fbReady) {
     iniciarEscuta();
     checkURLParams();
@@ -1006,10 +884,7 @@ window.addEventListener('load', () => {
       iniciarEscuta();
       checkURLParams();
     });
-    // Mostra aviso de não configurado após 3s
-    setTimeout(() => {
-      if(!window._fbReady) setStatus('error', 'Não configurado');
-    }, 3000);
+    setTimeout(() => { if(!window._fbReady) setStatus('error', 'Não configurado'); }, 3000);
   }
 });
 </script>
