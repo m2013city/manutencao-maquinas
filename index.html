@@ -5,12 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ficha de Manutenção — Máquina de Costura</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<!-- Firebase SDKs -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyCuYQG4MqIo8xha1YDOcZ_Jqx-EsO4rw3Y",
   authDomain: "manutencao-maquina-cf53e.firebaseapp.com",
@@ -21,194 +18,95 @@ const firebaseConfig = {
   appId: "1:416211412422:web:cc898849a9657a36097ec7",
   measurementId: "G-T7NV2E2DY6"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
 window._fb = { db, ref, push, onValue, remove, get };
 window._fbReady = true;
 window.dispatchEvent(new Event('firebase-ready'));
 </script>
-
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
-
   :root {
-    --bg: #f5f0e8;
-    --surface: #fffdf8;
-    --border: #d4c9b0;
-    --accent: #1a6b9a;
-    --accent2: #8b1a1a;
-    --text: #1a1a18;
-    --muted: #7a7568;
-    --tag-bg: #e0f0fa;
+    --bg: #f5f0e8; --surface: #fffdf8; --border: #d4c9b0;
+    --accent: #1a6b9a; --accent2: #8b1a1a; --text: #1a1a18;
+    --muted: #7a7568; --tag-bg: #e0f0fa;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
   header {
-    background: var(--accent);
-    color: #fff;
-    padding: 18px 24px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    background: var(--accent); color: #fff; padding: 12px 24px;
+    display: flex; align-items: center; gap: 14px;
   }
-  header .logo { font-family: 'DM Serif Display', serif; font-size: 1.4rem; letter-spacing: .02em; }
-  header .sub { font-size: .8rem; opacity: .75; }
-
+  header .logo-img { height: 52px; width: auto; border-radius: 8px; }
+  header .header-text .logo { font-family: 'DM Serif Display', serif; font-size: 1.4rem; letter-spacing: .02em; }
+  header .header-text .sub { font-size: .8rem; opacity: .75; }
   #status-badge {
-    margin-left: auto;
-    font-size: .75rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.15);
-    border: 1px solid rgba(255,255,255,.3);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    white-space: nowrap;
+    margin-left: auto; font-size: .75rem; font-weight: 600;
+    padding: 4px 10px; border-radius: 12px;
+    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; gap: 5px; white-space: nowrap;
   }
-  #status-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #ffd700;
-    flex-shrink: 0;
-  }
+  #status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffd700; flex-shrink: 0; }
   #status-dot.online { background: #7ec97f; }
   #status-dot.error  { background: #f88; }
-
   .tabs { display: flex; background: #1e4220; padding: 0 16px; }
   .tab-btn {
     background: none; border: none; color: rgba(255,255,255,.6);
     font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500;
-    padding: 12px 18px; cursor: pointer;
-    border-bottom: 3px solid transparent; transition: all .2s;
+    padding: 12px 18px; cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s;
   }
   .tab-btn.active { color: #fff; border-bottom-color: #7ec97f; }
-
   .container { max-width: 680px; margin: 0 auto; padding: 24px 16px; }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
   .card-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.05rem;
-    color: var(--accent);
-    margin-bottom: 14px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: var(--accent);
+    margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
   }
-
   .field { margin-bottom: 14px; }
-  label {
-    display: block; font-size: .78rem; font-weight: 600;
-    color: var(--muted); text-transform: uppercase;
-    letter-spacing: .06em; margin-bottom: 5px;
-  }
+  label { display: block; font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
   input[type=text], input[type=date], select, textarea {
-    width: 100%; background: var(--bg);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 10px 12px; font-family: 'DM Sans', sans-serif;
-    font-size: .9rem; color: var(--text);
+    width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--text);
     transition: border-color .2s; outline: none;
   }
   input:focus, select:focus, textarea:focus { border-color: var(--accent); }
   textarea { resize: vertical; min-height: 70px; }
-
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
   .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .check-item {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 8px; padding: 9px 10px; cursor: pointer;
-    transition: all .15s; font-size: .85rem;
+    display: flex; align-items: center; gap: 8px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px;
+    cursor: pointer; transition: all .15s; font-size: .85rem;
   }
   .check-item:hover { border-color: var(--accent); }
   .check-item.checked { background: var(--tag-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
   .check-item input[type=checkbox] { display: none; }
   .check-icon { font-size: 1rem; }
-
   .peca-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
   .peca-row input { flex: 1; margin: 0; }
-  .btn-remove {
-    background: #fde8e8; border: 1px solid #f5b8b8;
-    color: var(--accent2); border-radius: 6px;
-    width: 32px; height: 38px; cursor: pointer; font-size: 1rem; flex-shrink: 0;
-  }
+  .btn-remove { background: #fde8e8; border: 1px solid #f5b8b8; color: var(--accent2); border-radius: 6px; width: 32px; height: 38px; cursor: pointer; font-size: 1rem; flex-shrink: 0; }
   .btn-remove:hover { background: #f5b8b8; }
-
-  .sig-canvas {
-    width: 100%; height: 110px;
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 8px; cursor: crosshair; display: block; touch-action: none;
-  }
+  .sig-canvas { width: 100%; height: 110px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; cursor: crosshair; display: block; touch-action: none; }
   .sig-actions { display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end; }
-
-  .btn {
-    padding: 10px 18px; border-radius: 8px; border: none;
-    font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 600;
-    cursor: pointer; transition: all .2s;
-  }
+  .btn { padding: 10px 18px; border-radius: 8px; border: none; font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .2s; }
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-primary:hover { background: #1e4220; }
   .btn-secondary { background: var(--bg); border: 1px solid var(--border); color: var(--muted); }
   .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
   .btn-danger { background: #fde8e8; color: var(--accent2); border: 1px solid #f5b8b8; }
   .btn-sm { padding: 6px 12px; font-size: .78rem; }
-  .btn-add {
-    display: flex; align-items: center; gap: 6px;
-    background: none; border: 1px dashed var(--border);
-    color: var(--muted); border-radius: 8px;
-    padding: 8px 14px; cursor: pointer; width: 100%;
-    font-family: 'DM Sans', sans-serif; font-size: .85rem; transition: all .15s;
-  }
+  .btn-add { display: flex; align-items: center; gap: 6px; background: none; border: 1px dashed var(--border); color: var(--muted); border-radius: 8px; padding: 8px 14px; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; font-size: .85rem; transition: all .15s; }
   .btn-add:hover { border-color: var(--accent); color: var(--accent); }
-
   .save-bar { display: flex; gap: 10px; justify-content: flex-end; padding-top: 8px; }
-
-  .qr-wrap {
-    display: flex; flex-direction: column;
-    align-items: center; padding: 24px; text-align: center; gap: 16px;
-  }
+  .qr-wrap { display: flex; flex-direction: column; align-items: center; padding: 24px; text-align: center; gap: 16px; }
   #qrcode canvas, #qrcode img { border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,.12); }
   .qr-label { font-size: .85rem; color: var(--muted); max-width: 280px; line-height: 1.5; }
-  .machine-badge {
-    background: var(--accent); color: #fff;
-    font-family: 'DM Serif Display', serif; font-size: 1.1rem;
-    padding: 8px 20px; border-radius: 20px; letter-spacing: .03em;
-  }
-
-  .qr-url-box {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 14px;
-    font-size: .78rem; color: var(--muted);
-    word-break: break-all; text-align: left; width: 100%; max-width: 340px;
-  }
+  .machine-badge { background: var(--accent); color: #fff; font-family: 'DM Serif Display', serif; font-size: 1.1rem; padding: 8px 20px; border-radius: 20px; letter-spacing: .03em; }
+  .qr-url-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: .78rem; color: var(--muted); word-break: break-all; text-align: left; width: 100%; max-width: 340px; }
   .qr-url-box strong { display: block; color: var(--accent); margin-bottom: 4px; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
-
   .historico-empty { text-align: center; color: var(--muted); padding: 40px 16px; font-size: .9rem; }
-  .registro-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px; margin-bottom: 12px;
-  }
+  .registro-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
   .reg-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
   .reg-date { font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--accent); }
   .reg-tipo { font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: .05em; }
@@ -219,95 +117,40 @@ window.dispatchEvent(new Event('firebase-ready'));
   .sig-preview { height: 50px; object-fit: contain; opacity: .7; }
   .reg-sigs { display: flex; gap: 16px; margin-top: 8px; }
   .sig-box { text-align: center; font-size: .7rem; color: var(--muted); }
-
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-
-  .foto-upload-area {
-    border: 2px dashed var(--border);
-    border-radius: 10px;
-    padding: 18px;
-    text-align: center;
-    cursor: pointer;
-    transition: all .2s;
-    background: var(--bg);
-    position: relative;
-  }
+  .foto-upload-area { border: 2px dashed var(--border); border-radius: 10px; padding: 18px; text-align: center; cursor: pointer; transition: all .2s; background: var(--bg); position: relative; }
   .foto-upload-area:hover { border-color: var(--accent); background: var(--tag-bg); }
-  .foto-upload-area input[type=file] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-  }
+  .foto-upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .foto-upload-icon { font-size: 1.8rem; margin-bottom: 6px; }
   .foto-upload-label { font-size: .82rem; color: var(--muted); line-height: 1.4; }
-  .foto-preview-wrap {
-    display: none;
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: #000;
-  }
-  .foto-preview-wrap img {
-    width: 100%; max-height: 220px;
-    object-fit: contain; display: block;
-  }
-  .foto-remove-btn {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(0,0,0,.6); color: #fff;
-    border: none; border-radius: 20px;
-    padding: 4px 10px; font-size: .75rem;
-    cursor: pointer; font-family: 'DM Sans', sans-serif;
-  }
+  .foto-preview-wrap { display: none; position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: #000; }
+  .foto-preview-wrap img { width: 100%; max-height: 220px; object-fit: contain; display: block; }
+  .foto-remove-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.6); color: #fff; border: none; border-radius: 20px; padding: 4px 10px; font-size: .75rem; cursor: pointer; font-family: 'DM Sans', sans-serif; }
   .foto-remove-btn:hover { background: var(--accent2); }
   .reg-fotos { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-  .reg-foto-item {
-    flex: 1; min-width: 120px; max-width: 200px;
-    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
-  }
+  .reg-foto-item { flex: 1; min-width: 120px; max-width: 200px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .reg-foto-item img { width: 100%; display: block; object-fit: cover; max-height: 130px; }
   .reg-foto-label { font-size: .68rem; color: var(--muted); padding: 4px 6px; text-align: center; background: var(--bg); }
-
   .loading { text-align:center; padding: 30px; color: var(--muted); font-size:.9rem; }
   .spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; margin-right:8px; vertical-align:middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* TELA DE SENHA */
-  #tela-senha {
-    position: fixed; inset: 0; z-index: 9999;
-    background: #1a6b9a;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .senha-box {
-    background: #fffdf8; border-radius: 16px; padding: 36px 28px;
-    width: 90%; max-width: 340px; text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  }
+  #tela-senha { position: fixed; inset: 0; z-index: 9999; background: #1a6b9a; display: flex; align-items: center; justify-content: center; }
+  .senha-box { background: #fffdf8; border-radius: 16px; padding: 36px 28px; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
   .senha-logo { font-size: 2.4rem; margin-bottom: 8px; }
   .senha-titulo { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: #1a6b9a; margin-bottom: 4px; }
   .senha-sub { font-size: .82rem; color: #7a7568; margin-bottom: 24px; }
-  .senha-input {
-    width: 100%; padding: 12px 14px; border: 2px solid #d4c9b0;
-    border-radius: 10px; font-size: 1.1rem; text-align: center;
-    letter-spacing: 0.1em; background: #f5f0e8; outline: none;
-    transition: border-color .2s; margin-bottom: 14px;
-  }
+  .senha-input { width: 100%; padding: 12px 14px; border: 2px solid #d4c9b0; border-radius: 10px; font-size: 1.1rem; text-align: center; letter-spacing: 0.1em; background: #f5f0e8; outline: none; transition: border-color .2s; margin-bottom: 14px; }
   .senha-input:focus { border-color: #1a6b9a; }
   .senha-input.erro { border-color: #c0392b; animation: shake .3s ease; }
-  .senha-btn {
-    width: 100%; padding: 12px; background: #1a6b9a; color: #fff;
-    border: none; border-radius: 10px; font-size: .95rem; font-weight: 600;
-    cursor: pointer; transition: background .2s;
-  }
+  .senha-btn { width: 100%; padding: 12px; background: #1a6b9a; color: #fff; border: none; border-radius: 10px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .2s; }
   .senha-btn:hover { background: #0e4f7a; }
   .senha-erro { color: #c0392b; font-size: .82rem; margin-top: 10px; display: none; }
-  @keyframes shake {
-    0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)}
-  }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
 </style>
 </head>
 <body>
 
-<!-- TELA DE SENHA -->
 <div id="tela-senha">
   <div class="senha-box">
     <div class="senha-logo">&#128274;</div>
@@ -321,7 +164,8 @@ window.dispatchEvent(new Event('firebase-ready'));
 </div>
 
 <header>
-  <div>
+  <img class="logo-img" src="data:image/jpeg;base64,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" alt="MG City Logo">
+  <div class="header-text">
     <div class="logo">Ficha de Manutenção</div>
     <div class="sub">Assistência Técnica em Máquinas de Costura Ltda</div>
   </div>
@@ -337,31 +181,18 @@ window.dispatchEvent(new Event('firebase-ready'));
   <button class="tab-btn" onclick="switchTab('qrcode', this)">&#11035; QR Code</button>
 </div>
 
-<!-- TAB REGISTRAR -->
 <div id="tab-registrar" class="tab-content active">
 <div class="container">
   <div class="card">
     <div class="card-title">&#128295; Identificação da Máquina</div>
-    <div class="field">
-      <label>Empresa / Cliente</label>
-      <input type="text" id="empresa" placeholder="Ex: Senac Faustolo">
-    </div>
+    <div class="field"><label>Empresa / Cliente</label><input type="text" id="empresa" placeholder="Ex: Senac Faustolo"></div>
     <div class="row2">
-      <div class="field">
-        <label>Modelo / Nome</label>
-        <input type="text" id="modelo" placeholder="Ex: Juki DDL-9000">
-      </div>
-      <div class="field">
-        <label>Nº de Série / Patrimônio</label>
-        <input type="text" id="serial" placeholder="Ex: SN-00421">
-      </div>
+      <div class="field"><label>Modelo / Nome</label><input type="text" id="modelo" placeholder="Ex: Juki DDL-9000"></div>
+      <div class="field"><label>N de Serie / Patrimonio</label><input type="text" id="serial" placeholder="Ex: SN-00421"></div>
     </div>
+    <div class="field"><label>Local / Setor</label><input type="text" id="setor" placeholder="Ex: Sala de Costura B"></div>
     <div class="field">
-      <label>Local / Setor</label>
-      <input type="text" id="setor" placeholder="Ex: Sala de Costura B">
-    </div>
-    <div class="field">
-      <label>&#128247; Foto da Máquina</label>
+      <label>Foto da Maquina</label>
       <div class="foto-upload-area" id="area-maquina">
         <input type="file" accept="image/*" onchange="carregarFoto('maquina', this)">
         <div class="foto-upload-icon">&#128247;</div>
@@ -373,52 +204,42 @@ window.dispatchEvent(new Event('firebase-ready'));
       </div>
     </div>
   </div>
-
   <div class="card">
-    <div class="card-title">&#128197; Dados da Manutenção</div>
+    <div class="card-title">&#128197; Dados da Manutencao</div>
     <div class="row2">
-      <div class="field">
-        <label>Data da Manutenção</label>
-        <input type="date" id="data">
-      </div>
-      <div class="field">
-        <label>Próxima Manutenção</label>
-        <input type="date" id="proxima">
-      </div>
+      <div class="field"><label>Data da Manutencao</label><input type="date" id="data"></div>
+      <div class="field"><label>Proxima Manutencao</label><input type="date" id="proxima"></div>
     </div>
     <div class="field">
-      <label>Tipo de Manutenção</label>
+      <label>Tipo de Manutencao</label>
       <select id="tipo">
         <option value="">Selecione...</option>
         <option value="preventiva">Preventiva</option>
         <option value="corretiva">Corretiva</option>
-        <option value="lubrificacao">Lubrificação</option>
+        <option value="lubrificacao">Lubrificacao</option>
         <option value="calibragem">Calibragem</option>
-        <option value="revisao">Revisão Geral</option>
+        <option value="revisao">Revisao Geral</option>
       </select>
     </div>
   </div>
-
   <div class="card">
-    <div class="card-title">&#9989; Serviços Realizados</div>
+    <div class="card-title">&#9989; Servicos Realizados</div>
     <div class="check-grid" id="servicos-grid"></div>
   </div>
-
   <div class="card">
-    <div class="card-title">&#128297; Peças Trocadas</div>
+    <div class="card-title">&#128297; Pecas Trocadas</div>
     <div id="pecas-list"></div>
-    <button class="btn-add" onclick="addPeca()">+ Adicionar peça</button>
+    <button class="btn-add" onclick="addPeca()">+ Adicionar peca</button>
   </div>
-
   <div class="card">
-    <div class="card-title">&#128221; Observações</div>
-    <textarea id="obs" placeholder="Descreva o problema encontrado, ajustes feitos, recomendações..."></textarea>
+    <div class="card-title">&#128221; Observacoes</div>
+    <textarea id="obs" placeholder="Descreva o problema encontrado, ajustes feitos, recomendacoes..."></textarea>
     <div class="field" style="margin-top:14px">
-      <label>&#128248; Foto do Problema / Defeito</label>
+      <label>Foto do Problema / Defeito</label>
       <div class="foto-upload-area" id="area-problema">
         <input type="file" accept="image/*" onchange="carregarFoto('problema', this)">
         <div class="foto-upload-icon">&#128248;</div>
-        <div class="foto-upload-label">Registre o defeito, peça ou situação encontrada</div>
+        <div class="foto-upload-label">Registre o defeito, peca ou situacao encontrada</div>
       </div>
       <div class="foto-preview-wrap" id="preview-problema">
         <img id="img-problema" src="">
@@ -426,90 +247,66 @@ window.dispatchEvent(new Event('firebase-ready'));
       </div>
     </div>
   </div>
-
   <div class="card">
-    <div class="card-title">&#9999;&#65039; Assinatura do Técnico</div>
-    <div class="field">
-      <label>Nome do Técnico</label>
-      <input type="text" id="tecnico" placeholder="Nome completo">
-    </div>
+    <div class="card-title">Assinatura do Tecnico</div>
+    <div class="field"><label>Nome do Tecnico</label><input type="text" id="tecnico" placeholder="Nome completo"></div>
     <canvas id="sig-tecnico" class="sig-canvas"></canvas>
-    <div class="sig-actions">
-      <button class="btn btn-secondary btn-sm" onclick="clearSig('sig-tecnico')">Limpar</button>
-    </div>
+    <div class="sig-actions"><button class="btn btn-secondary btn-sm" onclick="clearSig('sig-tecnico')">Limpar</button></div>
   </div>
-
   <div class="card">
-    <div class="card-title">&#9999;&#65039; Assinatura do Responsável</div>
-    <div class="field">
-      <label>Nome do Responsável</label>
-      <input type="text" id="responsavel" placeholder="Nome do responsável presente">
-    </div>
+    <div class="card-title">Assinatura do Responsavel</div>
+    <div class="field"><label>Nome do Responsavel</label><input type="text" id="responsavel" placeholder="Nome do responsavel presente"></div>
     <canvas id="sig-responsavel" class="sig-canvas"></canvas>
-    <div class="sig-actions">
-      <button class="btn btn-secondary btn-sm" onclick="clearSig('sig-responsavel')">Limpar</button>
-    </div>
+    <div class="sig-actions"><button class="btn btn-secondary btn-sm" onclick="clearSig('sig-responsavel')">Limpar</button></div>
   </div>
-
   <div class="save-bar">
     <button class="btn btn-secondary" onclick="limparForm()">Limpar tudo</button>
-    <button class="btn btn-primary" onclick="salvarRegistro()">&#9729;&#65039; Salvar na Nuvem</button>
+    <button class="btn btn-primary" onclick="salvarRegistro()">Salvar na Nuvem</button>
   </div>
 </div>
 </div>
 
-<!-- TAB HISTÓRICO -->
 <div id="tab-historico" class="tab-content">
 <div class="container">
   <div class="card">
     <div class="card-title">&#128269; Filtrar</div>
     <div class="row2">
-      <div class="field">
-        <label>Empresa / Cliente</label>
-        <input type="text" id="filtro-empresa" placeholder="Buscar empresa..." oninput="filtrarHistorico()">
-      </div>
-      <div class="field">
-        <label>Máquina / Modelo</label>
-        <input type="text" id="filtro-modelo" placeholder="Buscar modelo..." oninput="filtrarHistorico()">
-      </div>
+      <div class="field"><label>Empresa / Cliente</label><input type="text" id="filtro-empresa" placeholder="Buscar empresa..." oninput="filtrarHistorico()"></div>
+      <div class="field"><label>Maquina / Modelo</label><input type="text" id="filtro-modelo" placeholder="Buscar modelo..." oninput="filtrarHistorico()"></div>
       <div class="field">
         <label>Tipo</label>
         <select id="filtro-tipo" onchange="filtrarHistorico()">
           <option value="">Todos</option>
           <option value="preventiva">Preventiva</option>
           <option value="corretiva">Corretiva</option>
-          <option value="lubrificacao">Lubrificação</option>
+          <option value="lubrificacao">Lubrificacao</option>
           <option value="calibragem">Calibragem</option>
-          <option value="revisao">Revisão Geral</option>
+          <option value="revisao">Revisao Geral</option>
         </select>
       </div>
     </div>
   </div>
-  <div id="historico-lista"><div class="loading"><span class="spinner"></span>Carregando histórico…</div></div>
+  <div id="historico-lista"><div class="loading"><span class="spinner"></span>Carregando historico...</div></div>
 </div>
 </div>
 
-<!-- TAB QR CODE -->
 <div id="tab-qrcode" class="tab-content">
 <div class="container">
   <div class="card">
-    <div class="card-title">&#11035; Gerar QR Code para a Máquina</div>
-    <div class="field">
-      <label>Modelo / Identificação da Máquina</label>
-      <input type="text" id="qr-modelo" placeholder="Ex: Juki DDL-9000 — SN-00421" oninput="updateQR()">
-    </div>
+    <div class="card-title">&#11035; Gerar QR Code para a Maquina</div>
+    <div class="field"><label>Modelo / Identificacao da Maquina</label><input type="text" id="qr-modelo" placeholder="Ex: Juki DDL-9000 - SN-00421" oninput="updateQR()"></div>
   </div>
   <div class="card">
     <div class="qr-wrap">
-      <div class="qr-label">&#128204; Imprima e cole este QR Code na máquina.</div>
+      <div class="qr-label">Imprima e cole este QR Code na maquina.</div>
       <div id="qr-machine-label" class="machine-badge" style="display:none"></div>
       <div id="qrcode"></div>
-      <div class="qr-label" id="qr-instrucao">Digite o nome/modelo da máquina acima para gerar o QR Code.</div>
+      <div class="qr-label" id="qr-instrucao">Digite o nome/modelo da maquina acima para gerar o QR Code.</div>
       <div id="qr-url-display" style="display:none" class="qr-url-box">
-        <strong>&#128279; Link que o QR abre:</strong>
+        <strong>Link que o QR abre:</strong>
         <span id="qr-url-text"></span>
       </div>
-      <button class="btn btn-primary" id="btn-imprimir" style="display:none" onclick="imprimirQR()">&#128424;&#65039; Imprimir QR Code</button>
+      <button class="btn btn-primary" id="btn-imprimir" style="display:none" onclick="imprimirQR()">Imprimir QR Code</button>
     </div>
   </div>
 </div>
@@ -518,59 +315,42 @@ window.dispatchEvent(new Event('firebase-ready'));
 <script>
 const SERVICOS = [
   {id:'limpeza', label:'Limpeza geral',       icon:'&#129529;'},
-  {id:'lubrif',  label:'Lubrificação',         icon:'&#128722;'},
-  {id:'tensao',  label:'Ajuste de tensão',     icon:'&#129525;'},
+  {id:'lubrif',  label:'Lubrificacao',         icon:'&#128722;'},
+  {id:'tensao',  label:'Ajuste de tensao',     icon:'&#129525;'},
   {id:'ponto',   label:'Regulagem de ponto',   icon:'&#128208;'},
-  {id:'pedal',   label:'Calibração do pedal',  icon:'&#129463;'},
+  {id:'pedal',   label:'Calibracao do pedal',  icon:'&#129463;'},
   {id:'agulha',  label:'Troca de agulha',      icon:'&#129521;'},
-  {id:'correia', label:'Troca de correia',     icon:'&#9881;&#65039;'},
+  {id:'correia', label:'Troca de correia',     icon:'&#9881;'},
   {id:'bobina',  label:'Ajuste de bobina',     icon:'&#128260;'},
-  {id:'motor',   label:'Verificação do motor', icon:'&#9889;'},
-  {id:'eletrica',label:'Teste elétrico',       icon:'&#128268;'},
+  {id:'motor',   label:'Verificacao do motor', icon:'&#9889;'},
+  {id:'eletrica',label:'Teste eletrico',       icon:'&#128268;'},
   {id:'outros',  label:'Outros',               icon:'&#128295;'},
 ];
-
 function renderServicos() {
   const grid = document.getElementById('servicos-grid');
-  grid.innerHTML = SERVICOS.map(s => `
-    <label class="check-item" id="chk-${s.id}" onclick="toggleCheck('${s.id}')">
-      <input type="checkbox" id="cb-${s.id}">
-      <span class="check-icon">${s.icon}</span>
-      <span>${s.label}</span>
-    </label>`).join('');
+  grid.innerHTML = SERVICOS.map(s => `<label class="check-item" id="chk-${s.id}" onclick="toggleCheck('${s.id}')"><input type="checkbox" id="cb-${s.id}"><span class="check-icon">${s.icon}</span><span>${s.label}</span></label>`).join('');
 }
-
 function toggleCheck(id) {
   const el = document.getElementById('chk-'+id);
   const cb = document.getElementById('cb-'+id);
   cb.checked = !cb.checked;
   el.classList.toggle('checked', cb.checked);
 }
-
 let pecaIdx = 0;
 function addPeca() {
   const id = 'peca-'+pecaIdx++;
   const div = document.createElement('div');
-  div.className = 'peca-row';
-  div.id = id;
-  div.innerHTML = `
-    <input type="text" placeholder="Nome / código da peça" class="peca-input">
-    <button class="btn-remove" onclick="removePeca('${id}')">&#10005;</button>`;
+  div.className = 'peca-row'; div.id = id;
+  div.innerHTML = '<input type="text" placeholder="Nome / codigo da peca" class="peca-input"><button class="btn-remove" onclick="removePeca(\''+id+'\')">&#10005;</button>';
   document.getElementById('pecas-list').appendChild(div);
 }
 function removePeca(id) { document.getElementById(id)?.remove(); }
-
 function initCanvas(id) {
   const canvas = document.getElementById(id);
   const ctx = canvas.getContext('2d');
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
+  canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
   let drawing = false;
-  const getPos = e => {
-    const r = canvas.getBoundingClientRect();
-    const src = e.touches ? e.touches[0] : e;
-    return { x: src.clientX - r.left, y: src.clientY - r.top };
-  };
+  const getPos = e => { const r = canvas.getBoundingClientRect(); const src = e.touches ? e.touches[0] : e; return { x: src.clientX - r.left, y: src.clientY - r.top }; };
   canvas.addEventListener('mousedown', e => { drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x,p.y); });
   canvas.addEventListener('mousemove', e => { if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#1a1a18'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke(); });
   canvas.addEventListener('mouseup', ()=>drawing=false);
@@ -579,11 +359,7 @@ function initCanvas(id) {
   canvas.addEventListener('touchmove', e=>{ e.preventDefault(); if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#1a1a18'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke(); }, {passive:false});
   canvas.addEventListener('touchend', ()=>drawing=false);
 }
-function clearSig(id) {
-  const c = document.getElementById(id);
-  c.getContext('2d').clearRect(0,0,c.width,c.height);
-}
-
+function clearSig(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
 function setStatus(state, msg) {
   document.getElementById('status-text').textContent = msg;
   const dot = document.getElementById('status-dot');
@@ -591,12 +367,11 @@ function setStatus(state, msg) {
   if(state==='online') dot.classList.add('online');
   if(state==='error')  dot.classList.add('error');
 }
-
 async function salvarRegistro() {
-  if(!window._fbReady) { alert('Firebase não configurado.'); return; }
+  if(!window._fbReady) { alert('Firebase nao configurado.'); return; }
   const modelo = document.getElementById('modelo').value.trim();
   const data   = document.getElementById('data').value;
-  if (!modelo || !data) { alert('Preencha ao menos o modelo da máquina e a data.'); return; }
+  if (!modelo || !data) { alert('Preencha ao menos o modelo da maquina e a data.'); return; }
   const servicos = SERVICOS.filter(s => document.getElementById('cb-'+s.id)?.checked).map(s=>s.label);
   const pecas    = [...document.querySelectorAll('.peca-input')].map(i=>i.value.trim()).filter(Boolean);
   const sigTecnico     = document.getElementById('sig-tecnico').toDataURL();
@@ -617,55 +392,33 @@ async function salvarRegistro() {
     fotoProblema: window._fotos?.problema || null,
   };
   try {
-    setStatus('', 'Salvando…');
+    setStatus('', 'Salvando...');
     const { db, ref, push } = window._fb;
     await push(ref(db, 'manutencoes'), reg);
     setStatus('online', 'Online');
     alert('Registro salvo na nuvem com sucesso!');
     limparForm();
-  } catch(e) {
-    setStatus('error', 'Erro');
-    alert('Erro ao salvar: ' + e.message);
-  }
+  } catch(e) { setStatus('error', 'Erro'); alert('Erro ao salvar: ' + e.message); }
 }
-
 function limparForm() {
-  ['empresa','modelo','serial','setor','data','proxima','obs','tecnico','responsavel'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = '';
-  });
+  ['empresa','modelo','serial','setor','data','proxima','obs','tecnico','responsavel'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   document.getElementById('tipo').value = '';
-  SERVICOS.forEach(s => {
-    const cb  = document.getElementById('cb-'+s.id);
-    const chk = document.getElementById('chk-'+s.id);
-    if(cb)  cb.checked = false;
-    if(chk) chk.classList.remove('checked');
-  });
+  SERVICOS.forEach(s => { const cb=document.getElementById('cb-'+s.id); const chk=document.getElementById('chk-'+s.id); if(cb) cb.checked=false; if(chk) chk.classList.remove('checked'); });
   document.getElementById('pecas-list').innerHTML = '';
-  clearSig('sig-tecnico');
-  clearSig('sig-responsavel');
-  removerFoto('maquina');
-  removerFoto('problema');
+  clearSig('sig-tecnico'); clearSig('sig-responsavel');
+  removerFoto('maquina'); removerFoto('problema');
   document.getElementById('data').value = new Date().toISOString().split('T')[0];
 }
-
 window._fotos = { maquina: null, problema: null };
-
 function carregarFoto(tipo, input) {
-  const file = input.files[0];
-  if (!file) return;
+  const file = input.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
     const img = new Image();
     img.onload = () => {
-      const MAX = 800;
-      let w = img.width, h = img.height;
-      if (w > MAX || h > MAX) {
-        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-        else       { w = Math.round(w * MAX / h); h = MAX; }
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
+      const MAX = 800; let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h * MAX / w); w = MAX; } else { w = Math.round(w * MAX / h); h = MAX; } }
+      const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
       window._fotos[tipo] = dataUrl;
@@ -677,7 +430,6 @@ function carregarFoto(tipo, input) {
   };
   reader.readAsDataURL(file);
 }
-
 function removerFoto(tipo) {
   window._fotos[tipo] = null;
   document.getElementById('img-' + tipo).src = '';
@@ -687,27 +439,21 @@ function removerFoto(tipo) {
   const input = area.querySelector('input[type=file]');
   if (input) input.value = '';
 }
-
 let todosRegistros = [];
-
 function iniciarEscuta() {
   if(!window._fbReady) return;
   const { db, ref, onValue } = window._fb;
   onValue(ref(db, 'manutencoes'), snapshot => {
     todosRegistros = [];
-    snapshot.forEach(child => {
-      todosRegistros.push({ fbKey: child.key, ...child.val() });
-    });
+    snapshot.forEach(child => { todosRegistros.push({ fbKey: child.key, ...child.val() }); });
     todosRegistros.sort((a,b) => b.ts - a.ts);
     setStatus('online', 'Online');
     filtrarHistorico();
   }, err => {
-    setStatus('error', 'Sem conexão');
-    document.getElementById('historico-lista').innerHTML =
-      '<div class="historico-empty">Erro ao carregar dados.</div>';
+    setStatus('error', 'Sem conexao');
+    document.getElementById('historico-lista').innerHTML = '<div class="historico-empty">Erro ao carregar dados.</div>';
   });
 }
-
 function filtrarHistorico() {
   const filtroEmpresa = document.getElementById('filtro-empresa')?.value.toLowerCase() || '';
   const filtroModelo  = document.getElementById('filtro-modelo')?.value.toLowerCase() || '';
@@ -720,108 +466,63 @@ function filtrarHistorico() {
   });
   renderHistorico(regs);
 }
-
 function renderHistorico(regs) {
   const lista = document.getElementById('historico-lista');
-  if(!regs || !regs.length) {
-    lista.innerHTML = '<div class="historico-empty">Nenhum registro encontrado.</div>';
-    return;
-  }
+  if(!regs || !regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhum registro encontrado.</div>'; return; }
   lista.innerHTML = regs.map(r => {
-    const dataFmt = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '—';
+    const dataFmt = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
     const proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
     const tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
-    const tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Não informado';
-    const servTags  = (r.servicos||[]).map(s=>`<span class="tag">${s}</span>`).join('');
-    const pecaTags  = (r.pecas||[]).map(p=>`<span class="tag">&#128297; ${p}</span>`).join('');
-    const tecSig    = r.sigTecnico && r.sigTecnico.length > 200 ? `<img class="sig-preview" src="${r.sigTecnico}">` : '—';
-    const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200 ? `<img class="sig-preview" src="${r.sigResponsavel}">` : '—';
-    const fotosMaq  = r.fotoMaquina  ? `<div class="reg-foto-item"><img src="${r.fotoMaquina}"><div class="reg-foto-label">Maquina</div></div>` : '';
-    const fotosProb = r.fotoProblema ? `<div class="reg-foto-item"><img src="${r.fotoProblema}"><div class="reg-foto-label">Problema</div></div>` : '';
-    const fotosHtml = (fotosMaq || fotosProb) ? `<div class="reg-fotos">${fotosMaq}${fotosProb}</div>` : '';
-    return `
-    <div class="registro-card">
-      <div class="reg-header">
-        <div>
-          <div class="reg-date">${r.modelo||'—'}</div>
-          <div style="font-size:.8rem;color:var(--muted)">${dataFmt}${r.setor?' · '+r.setor:''}</div>
-        </div>
-        <span class="reg-tipo ${tipoClass}">${tipoLabel}</span>
-      </div>
-      ${servTags ? `<div class="reg-tags">${servTags}</div>` : ''}
-      ${pecaTags ? `<div class="reg-tags">${pecaTags}</div>` : ''}
-      ${r.obs ? `<div style="font-size:.82rem;color:var(--muted);margin-top:6px">${r.obs}</div>` : ''}
-      ${proxFmt ? `<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: ${proxFmt}</div>` : ''}
-      ${fotosHtml}
-      <div class="reg-sigs">
-        <div class="sig-box">${tecSig}<div>${r.tecnico||'Técnico'}</div></div>
-        <div class="sig-box">${resSig}<div>${r.responsavel||'Responsável'}</div></div>
-      </div>
-      <div class="btn-excluir-wrap" style="display:none;margin-top:10px;text-align:right">
-        <button class="btn btn-danger btn-sm" onclick="excluirRegistro('${r.fbKey}')">Excluir</button>
-      </div>
-    </div>`;
+    const tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Nao informado';
+    const servTags  = (r.servicos||[]).map(s=>'<span class="tag">'+s+'</span>').join('');
+    const pecaTags  = (r.pecas||[]).map(p=>'<span class="tag">'+p+'</span>').join('');
+    const tecSig    = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '-';
+    const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '-';
+    const fotosMaq  = r.fotoMaquina  ? '<div class="reg-foto-item"><img src="'+r.fotoMaquina+'"><div class="reg-foto-label">Maquina</div></div>' : '';
+    const fotosProb = r.fotoProblema ? '<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>' : '';
+    const fotosHtml = (fotosMaq || fotosProb) ? '<div class="reg-fotos">'+fotosMaq+fotosProb+'</div>' : '';
+    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+(r.modelo||'-')+'</div><div style="font-size:.8rem;color:var(--muted)">'+dataFmt+(r.setor?' - '+r.setor:'')+'</div></div><span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+(servTags?'<div class="reg-tags">'+servTags+'</div>':'')+(pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+(r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+(proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+fotosHtml+'<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div><div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div><div class="btn-excluir-wrap" style="display:none;margin-top:10px;text-align:right"><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">Excluir</button></div></div>';
   }).join('');
 }
-
 async function excluirRegistro(fbKey) {
   if(!confirm('Excluir este registro da nuvem?')) return;
-  try {
-    const { db, ref, remove } = window._fb;
-    await remove(ref(db, 'manutencoes/'+fbKey));
-  } catch(e) { alert('Erro ao excluir: ' + e.message); }
+  try { const { db, ref, remove } = window._fb; await remove(ref(db, 'manutencoes/'+fbKey)); }
+  catch(e) { alert('Erro ao excluir: ' + e.message); }
 }
-
-let qrInstance = null;
 function updateQR() {
   const val = document.getElementById('qr-modelo').value.trim();
   const div = document.getElementById('qrcode');
-  const instrucao   = document.getElementById('qr-instrucao');
-  const badge       = document.getElementById('qr-machine-label');
+  const instrucao = document.getElementById('qr-instrucao');
+  const badge = document.getElementById('qr-machine-label');
   const btnImprimir = document.getElementById('btn-imprimir');
-  const urlDisplay  = document.getElementById('qr-url-display');
-  const urlText     = document.getElementById('qr-url-text');
-  if(!val) {
-    div.innerHTML = '';
-    instrucao.textContent = 'Digite o nome/modelo da máquina acima para gerar o QR Code.';
-    badge.style.display = 'none';
-    btnImprimir.style.display = 'none';
-    urlDisplay.style.display = 'none';
-    return;
-  }
+  const urlDisplay = document.getElementById('qr-url-display');
+  const urlText = document.getElementById('qr-url-text');
+  if(!val) { div.innerHTML=''; instrucao.textContent='Digite o nome/modelo da maquina acima para gerar o QR Code.'; badge.style.display='none'; btnImprimir.style.display='none'; urlDisplay.style.display='none'; return; }
   const base = window.location.href.split('?')[0];
   const url  = base + '?maquina=' + encodeURIComponent(val);
   div.innerHTML = '';
   new QRCode(div, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.H });
-  instrucao.textContent = 'QR Code gerado! Imprima e cole na máquina.';
-  badge.textContent = val;
-  badge.style.display = 'inline-block';
+  instrucao.textContent = 'QR Code gerado! Imprima e cole na maquina.';
+  badge.textContent = val; badge.style.display = 'inline-block';
   btnImprimir.style.display = 'inline-block';
-  urlText.textContent = url;
-  urlDisplay.style.display = 'block';
+  urlText.textContent = url; urlDisplay.style.display = 'block';
 }
-
 function imprimirQR() {
-  const modelo  = document.getElementById('qr-modelo').value.trim();
-  const qrHTML  = document.getElementById('qrcode').innerHTML;
+  const modelo = document.getElementById('qr-modelo').value.trim();
+  const qrHTML = document.getElementById('qrcode').innerHTML;
   const urlLink = document.getElementById('qr-url-text').textContent;
   const w = window.open('','_blank','width=400,height=560');
-  w.document.write('<html><head><title>QR - ' + modelo + '</title>'
-    + '<style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fff;padding:24px;gap:12px}h2{font-size:1.1rem;margin:0;text-align:center}canvas{border-radius:8px}.url{font-size:.6rem;color:#999;word-break:break-all;text-align:center;max-width:240px}</style></head>'
-    + '<body><h2>Ficha de Manutencao</h2>' + qrHTML + '<h2>' + modelo + '</h2><div class="url">' + urlLink + '</div>'
-    + '<script>window.onload=function(){window.print()}<\/script></body></html>');
+  w.document.write('<html><head><title>QR - '+modelo+'</title><style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fff;padding:24px;gap:12px}h2{font-size:1.1rem;margin:0;text-align:center}canvas{border-radius:8px}.url{font-size:.6rem;color:#999;word-break:break-all;text-align:center;max-width:240px}</style></head><body><h2>Ficha de Manutencao</h2>'+qrHTML+'<h2>'+modelo+'</h2><div class="url">'+urlLink+'</div><sc'+'ript>window.onload=function(){window.print()}</sc'+'ript></body></html>');
   w.document.close();
 }
-
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   if(btn) btn.classList.add('active');
 }
-
 function checkURLParams() {
-  const params  = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(window.location.search);
   const maquina = params.get('maquina');
   if(maquina) {
     switchTab('historico', null);
@@ -831,36 +532,24 @@ function checkURLParams() {
     filtrarHistorico();
   }
 }
-
-// SENHA
 var SENHA_CORRETA = 'Primeiroentrar2026';
 var SENHA_ADMIN   = 'Segundoadmin2026';
-
-function ativarAdmin() {
-  document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){
-    el.style.display = 'block';
-  });
-}
-
+function ativarAdmin() { document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){ el.style.display='block'; }); }
 function verificarSenha() {
   var input = document.getElementById('campo-senha');
   var erro  = document.getElementById('senha-erro');
   var val   = input.value.trim();
   if(val === SENHA_ADMIN) {
     document.getElementById('tela-senha').style.display = 'none';
-    sessionStorage.setItem('auth', 'admin');
-    ativarAdmin();
+    sessionStorage.setItem('auth', 'admin'); ativarAdmin();
   } else if(val === SENHA_CORRETA) {
     document.getElementById('tela-senha').style.display = 'none';
     sessionStorage.setItem('auth', '1');
   } else {
-    input.classList.add('erro');
-    erro.style.display = 'block';
-    input.value = '';
+    input.classList.add('erro'); erro.style.display = 'block'; input.value = '';
     setTimeout(function(){ input.classList.remove('erro'); }, 400);
   }
 }
-
 var auth = sessionStorage.getItem('auth');
 if(auth === '1' || auth === 'admin') {
   document.addEventListener('DOMContentLoaded', function(){
@@ -868,21 +557,15 @@ if(auth === '1' || auth === 'admin') {
     if(auth === 'admin') ativarAdmin();
   });
 }
-
 window.addEventListener('load', () => {
   renderServicos();
   initCanvas('sig-tecnico');
   initCanvas('sig-responsavel');
   document.getElementById('data').value = new Date().toISOString().split('T')[0];
-  if(window._fbReady) {
-    iniciarEscuta();
-    checkURLParams();
-  } else {
-    window.addEventListener('firebase-ready', () => {
-      iniciarEscuta();
-      checkURLParams();
-    });
-    setTimeout(() => { if(!window._fbReady) setStatus('error', 'Não configurado'); }, 3000);
+  if(window._fbReady) { iniciarEscuta(); checkURLParams(); }
+  else {
+    window.addEventListener('firebase-ready', () => { iniciarEscuta(); checkURLParams(); });
+    setTimeout(() => { if(!window._fbReady) setStatus('error', 'Nao configurado'); }, 3000);
   }
 });
 </script>
