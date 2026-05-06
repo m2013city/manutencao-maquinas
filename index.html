@@ -449,6 +449,7 @@ function iniciarEscuta() {
     todosRegistros.sort((a,b) => b.ts - a.ts);
     setStatus('online', 'Online');
     filtrarHistorico();
+    if(sessionStorage.getItem('auth') === 'admin') ativarAdmin();
   }, err => {
     setStatus('error', 'Sem conexao');
     document.getElementById('historico-lista').innerHTML = '<div class="historico-empty">Erro ao carregar dados.</div>';
