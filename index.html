@@ -146,8 +146,18 @@ window.dispatchEvent(new Event('firebase-ready'));
   .senha-btn { width: 100%; padding: 12px; background: #1a6b9a; color: #fff; border: none; border-radius: 10px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .2s; }
   .senha-btn:hover { background: #0e4f7a; }
   .senha-erro { color: #c0392b; font-size: .82rem; margin-top: 10px; display: none; }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
-</style>
+  .btn-edit { background: #e8f4fd; color: var(--accent); border: 1px solid #b3d7f0; }
+  .btn-edit:hover { background: #c8e6f8; }
+  /* Modal de edição */
+  #modal-editar { display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,.5); align-items:center; justify-content:center; padding:16px; }
+  #modal-editar.aberto { display:flex; }
+  .modal-box { background:var(--surface); border-radius:14px; padding:24px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; }
+  .modal-title { font-family:'DM Serif Display',serif; font-size:1.1rem; color:var(--accent); margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:16px; padding-top:12px; border-top:1px solid var(--border); }
+  /* Campo manual */
+  .manual-link { display:inline-flex; align-items:center; gap:6px; color:var(--accent); font-size:.85rem; text-decoration:none; font-weight:600; margin-top:6px; }
+  .manual-link:hover { text-decoration:underline; }
+
 </head>
 <body>
 
@@ -191,6 +201,11 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div class="field"><label>N de Serie / Patrimonio</label><input type="text" id="serial" placeholder="Ex: SN-00421"></div>
     </div>
     <div class="field"><label>Local / Setor</label><input type="text" id="setor" placeholder="Ex: Sala de Costura B"></div>
+    <div class="field">
+      <label>Manual da Maquina (link)</label>
+      <input type="text" id="manual-link" placeholder="Ex: https://drive.google.com/... ou URL do manual" oninput="atualizarManualPreview()">
+      <div id="manual-link-preview" style="display:none;margin-top:4px"></div>
+    </div>
     <div class="field">
       <label>Foto da Maquina</label>
       <div class="foto-upload-area" id="area-maquina">
@@ -312,6 +327,43 @@ window.dispatchEvent(new Event('firebase-ready'));
 </div>
 </div>
 
+<!-- Modal de Edição -->
+<div id="modal-editar">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Editar Registro</div>
+    <input type="hidden" id="edit-fbkey">
+    <div class="field"><label>Empresa / Cliente</label><input type="text" id="edit-empresa"></div>
+    <div class="row2">
+      <div class="field"><label>Modelo / Nome</label><input type="text" id="edit-modelo"></div>
+      <div class="field"><label>N de Serie</label><input type="text" id="edit-serial"></div>
+    </div>
+    <div class="field"><label>Local / Setor</label><input type="text" id="edit-setor"></div>
+    <div class="row2">
+      <div class="field"><label>Data</label><input type="date" id="edit-data"></div>
+      <div class="field"><label>Proxima Manutencao</label><input type="date" id="edit-proxima"></div>
+    </div>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="edit-tipo">
+        <option value="">Selecione...</option>
+        <option value="preventiva">Preventiva</option>
+        <option value="corretiva">Corretiva</option>
+        <option value="lubrificacao">Lubrificacao</option>
+        <option value="calibragem">Calibragem</option>
+        <option value="revisao">Revisao Geral</option>
+      </select>
+    </div>
+    <div class="field"><label>Tecnico</label><input type="text" id="edit-tecnico"></div>
+    <div class="field"><label>Responsavel</label><input type="text" id="edit-responsavel"></div>
+    <div class="field"><label>Manual da Maquina (link)</label><input type="text" id="edit-manual" placeholder="URL do manual"></div>
+    <div class="field"><label>Observacoes</label><textarea id="edit-obs" style="min-height:80px"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEdicao()">Salvar Alterações</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SERVICOS = [
   {id:'limpeza', label:'Limpeza geral',       icon:'&#129529;'},
@@ -324,6 +376,7 @@ const SERVICOS = [
   {id:'bobina',  label:'Ajuste de bobina',     icon:'&#128260;'},
   {id:'motor',   label:'Verificacao do motor', icon:'&#9889;'},
   {id:'eletrica',label:'Teste eletrico',       icon:'&#128268;'},
+  {id:'registro', label:'Registro de Maquina',  icon:'&#128196;'},
   {id:'outros',  label:'Outros',               icon:'&#128295;'},
 ];
 function renderServicos() {
@@ -387,6 +440,7 @@ async function salvarRegistro() {
     obs: document.getElementById('obs').value.trim(),
     tecnico: document.getElementById('tecnico').value.trim(),
     responsavel: document.getElementById('responsavel').value.trim(),
+    manualLink: document.getElementById('manual-link').value.trim(),
     sigTecnico, sigResponsavel,
     fotoMaquina:  window._fotos?.maquina  || null,
     fotoProblema: window._fotos?.problema || null,
@@ -401,7 +455,7 @@ async function salvarRegistro() {
   } catch(e) { setStatus('error', 'Erro'); alert('Erro ao salvar: ' + e.message); }
 }
 function limparForm() {
-  ['empresa','modelo','serial','setor','data','proxima','obs','tecnico','responsavel'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  ['empresa','modelo','serial','setor','data','proxima','obs','tecnico','responsavel','manual-link'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   document.getElementById('tipo').value = '';
   SERVICOS.forEach(s => { const cb=document.getElementById('cb-'+s.id); const chk=document.getElementById('chk-'+s.id); if(cb) cb.checked=false; if(chk) chk.classList.remove('checked'); });
   document.getElementById('pecas-list').innerHTML = '';
@@ -482,13 +536,69 @@ function renderHistorico(regs) {
     const fotosMaq  = r.fotoMaquina  ? '<div class="reg-foto-item"><img src="'+r.fotoMaquina+'"><div class="reg-foto-label">Maquina</div></div>' : '';
     const fotosProb = r.fotoProblema ? '<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>' : '';
     const fotosHtml = (fotosMaq || fotosProb) ? '<div class="reg-fotos">'+fotosMaq+fotosProb+'</div>' : '';
-    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+(r.modelo||'-')+'</div><div style="font-size:.8rem;color:var(--muted)">'+dataFmt+(r.setor?' - '+r.setor:'')+'</div></div><span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+(servTags?'<div class="reg-tags">'+servTags+'</div>':'')+(pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+(r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+(proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+fotosHtml+'<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div><div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div><div class="btn-excluir-wrap" style="display:none;margin-top:10px;text-align:right"><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">Excluir</button></div></div>';
+    const manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">&#128196; Abrir manual da maquina</a></div>' : '';
+    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+(r.modelo||'-')+'</div><div style="font-size:.8rem;color:var(--muted)">'+dataFmt+(r.setor?' - '+r.setor:'')+'</div></div><span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+(servTags?'<div class="reg-tags">'+servTags+'</div>':'')+(pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+(r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+(proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+fotosHtml+manualHtml+'<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div><div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div><div class="btn-excluir-wrap" style="display:none;margin-top:10px"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button> <button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">Excluir</button></div></div>';
   }).join('');
 }
 async function excluirRegistro(fbKey) {
   if(!confirm('Excluir este registro da nuvem?')) return;
   try { const { db, ref, remove } = window._fb; await remove(ref(db, 'manutencoes/'+fbKey)); }
   catch(e) { alert('Erro ao excluir: ' + e.message); }
+}
+function editarRegistro(fbKey) {
+  const r = todosRegistros.find(x => x.fbKey === fbKey);
+  if(!r) return;
+  document.getElementById('edit-fbkey').value = fbKey;
+  document.getElementById('edit-empresa').value   = r.empresa   || '';
+  document.getElementById('edit-modelo').value    = r.modelo    || '';
+  document.getElementById('edit-serial').value    = r.serial    || '';
+  document.getElementById('edit-setor').value     = r.setor     || '';
+  document.getElementById('edit-data').value      = r.data      || '';
+  document.getElementById('edit-proxima').value   = r.proxima   || '';
+  document.getElementById('edit-tipo').value      = r.tipo      || '';
+  document.getElementById('edit-tecnico').value   = r.tecnico   || '';
+  document.getElementById('edit-responsavel').value = r.responsavel || '';
+  document.getElementById('edit-manual').value    = r.manualLink || '';
+  document.getElementById('edit-obs').value       = r.obs       || '';
+  document.getElementById('modal-editar').classList.add('aberto');
+}
+function fecharModal() {
+  document.getElementById('modal-editar').classList.remove('aberto');
+}
+async function salvarEdicao() {
+  const fbKey = document.getElementById('edit-fbkey').value;
+  if(!fbKey) return;
+  const updates = {
+    empresa:     document.getElementById('edit-empresa').value.trim(),
+    modelo:      document.getElementById('edit-modelo').value.trim(),
+    serial:      document.getElementById('edit-serial').value.trim(),
+    setor:       document.getElementById('edit-setor').value.trim(),
+    data:        document.getElementById('edit-data').value,
+    proxima:     document.getElementById('edit-proxima').value,
+    tipo:        document.getElementById('edit-tipo').value,
+    tecnico:     document.getElementById('edit-tecnico').value.trim(),
+    responsavel: document.getElementById('edit-responsavel').value.trim(),
+    manualLink:  document.getElementById('edit-manual').value.trim(),
+    obs:         document.getElementById('edit-obs').value.trim(),
+  };
+  try {
+    const { db, ref } = window._fb;
+    const { update } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
+    await update(ref(db, 'manutencoes/'+fbKey), updates);
+    fecharModal();
+    alert('Registro atualizado com sucesso!');
+  } catch(e) { alert('Erro ao editar: ' + e.message); }
+}
+function atualizarManualPreview() {
+  const val = document.getElementById('manual-link').value.trim();
+  const prev = document.getElementById('manual-link-preview');
+  if(val && (val.startsWith('http://') || val.startsWith('https://'))) {
+    prev.style.display = 'block';
+    prev.innerHTML = '<a class="manual-link" href="'+val+'" target="_blank">&#128196; Abrir manual</a>';
+  } else {
+    prev.style.display = 'none';
+    prev.innerHTML = '';
+  }
 }
 function updateQR() {
   const val = document.getElementById('qr-modelo').value.trim();
@@ -526,6 +636,10 @@ function checkURLParams() {
   const params = new URLSearchParams(window.location.search);
   const maquina = params.get('maquina');
   if(maquina) {
+    // Preenche o campo modelo na aba Registrar
+    const campoModelo = document.getElementById('modelo');
+    if(campoModelo) campoModelo.value = maquina;
+    // Vai para aba historico e filtra
     switchTab('historico', null);
     document.querySelectorAll('.tab-btn')[1].classList.add('active');
     document.querySelectorAll('.tab-btn')[0].classList.remove('active');
@@ -535,7 +649,7 @@ function checkURLParams() {
 }
 var SENHA_CORRETA = 'Primeiroentrar2026';
 var SENHA_ADMIN   = 'Segundoadmin2026';
-function ativarAdmin() { document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){ el.style.display='block'; }); }
+function ativarAdmin() { document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){ el.style.display='flex'; el.style.gap='8px'; el.style.justifyContent='flex-end'; }); }
 function verificarSenha() {
   var input = document.getElementById('campo-senha');
   var erro  = document.getElementById('senha-erro');
