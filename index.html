@@ -33,52 +33,28 @@ window.dispatchEvent(new Event('firebase-ready'));
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  header {
-    background: var(--accent); color: #fff; padding: 12px 24px;
-    display: flex; align-items: center; gap: 14px;
-  }
+  header { background: var(--accent); color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 14px; }
   header .logo-img { height: 52px; width: auto; border-radius: 8px; }
   header .header-text .logo { font-family: 'DM Serif Display', serif; font-size: 1.4rem; letter-spacing: .02em; }
   header .header-text .sub { font-size: .8rem; opacity: .75; }
-  #status-badge {
-    margin-left: auto; font-size: .75rem; font-weight: 600;
-    padding: 4px 10px; border-radius: 12px;
-    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
-    display: flex; align-items: center; gap: 5px; white-space: nowrap;
-  }
+  #status-badge { margin-left: auto; font-size: .75rem; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); display: flex; align-items: center; gap: 5px; white-space: nowrap; }
   #status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffd700; flex-shrink: 0; }
   #status-dot.online { background: #7ec97f; }
   #status-dot.error  { background: #f88; }
   .tabs { display: flex; background: #1e4220; padding: 0 16px; }
-  .tab-btn {
-    background: none; border: none; color: rgba(255,255,255,.6);
-    font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500;
-    padding: 12px 18px; cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s;
-  }
+  .tab-btn { background: none; border: none; color: rgba(255,255,255,.6); font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500; padding: 12px 18px; cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s; }
   .tab-btn.active { color: #fff; border-bottom-color: #7ec97f; }
   .container { max-width: 680px; margin: 0 auto; padding: 24px 16px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-  .card-title {
-    font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: var(--accent);
-    margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 8px;
-  }
+  .card-title { font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: var(--accent); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
   .field { margin-bottom: 14px; }
   label { display: block; font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
-  input[type=text], input[type=date], select, textarea {
-    width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--text);
-    transition: border-color .2s; outline: none;
-  }
+  input[type=text], input[type=date], select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--text); transition: border-color .2s; outline: none; }
   input:focus, select:focus, textarea:focus { border-color: var(--accent); }
   textarea { resize: vertical; min-height: 70px; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .check-item {
-    display: flex; align-items: center; gap: 8px; background: var(--bg);
-    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px;
-    cursor: pointer; transition: all .15s; font-size: .85rem;
-  }
+  .check-item { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; cursor: pointer; transition: all .15s; font-size: .85rem; }
   .check-item:hover { border-color: var(--accent); }
   .check-item.checked { background: var(--tag-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
   .check-item input[type=checkbox] { display: none; }
@@ -143,24 +119,56 @@ window.dispatchEvent(new Event('firebase-ready'));
   .senha-input { width: 100%; padding: 12px 14px; border: 2px solid #d4c9b0; border-radius: 10px; font-size: 1.1rem; text-align: center; letter-spacing: 0.1em; background: #f5f0e8; outline: none; transition: border-color .2s; margin-bottom: 14px; }
   .senha-input:focus { border-color: #1a6b9a; }
   .senha-input.erro { border-color: #c0392b; animation: shake .3s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
   .senha-btn { width: 100%; padding: 12px; background: #1a6b9a; color: #fff; border: none; border-radius: 10px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .2s; }
   .senha-btn:hover { background: #0e4f7a; }
   .senha-erro { color: #c0392b; font-size: .82rem; margin-top: 10px; display: none; }
   .btn-edit { background: #e8f4fd; color: var(--accent); border: 1px solid #b3d7f0; }
   .btn-edit:hover { background: #c8e6f8; }
-  /* Modal de edição */
   #modal-editar { display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,.5); align-items:center; justify-content:center; padding:16px; }
   #modal-editar.aberto { display:flex; }
   .modal-box { background:var(--surface); border-radius:14px; padding:24px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; }
   .modal-title { font-family:'DM Serif Display',serif; font-size:1.1rem; color:var(--accent); margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border); }
   .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:16px; padding-top:12px; border-top:1px solid var(--border); }
-  /* Campo manual */
   .manual-link { display:inline-flex; align-items:center; gap:6px; color:var(--accent); font-size:.85rem; text-decoration:none; font-weight:600; margin-top:6px; }
   .manual-link:hover { text-decoration:underline; }
 
+  /* ===== TELA PÚBLICA QR ===== */
+  #tela-qr-publica { display:none; position:fixed; inset:0; z-index:9998; background:var(--bg); overflow-y:auto; }
+  .qr-pub-header { background:var(--accent); color:#fff; padding:14px 20px; display:flex; align-items:center; gap:12px; }
+  .qr-pub-header .logo-img { height:44px; border-radius:6px; }
+  .qr-pub-titulo { font-family:'DM Serif Display',serif; font-size:1.2rem; }
+  .qr-pub-sub { font-size:.75rem; opacity:.75; }
+  .qr-pub-container { max-width:640px; margin:0 auto; padding:20px 16px; }
+  .qr-pub-machine { background:var(--accent); color:#fff; border-radius:14px; padding:20px; margin-bottom:16px; text-align:center; }
+  .qr-pub-machine-nome { font-family:'DM Serif Display',serif; font-size:1.5rem; margin-bottom:4px; }
+  .qr-pub-machine-empresa { font-size:.85rem; opacity:.8; }
+  .info-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px; margin-bottom:14px; }
+  .info-card-titulo { font-family:'DM Serif Display',serif; font-size:1rem; color:var(--accent); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .info-linha { display:flex; flex-direction:column; margin-bottom:12px; gap:4px; }
+  .info-linha:last-child { margin-bottom:0; }
+  .info-rotulo { font-size:.72rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+  .info-valor { font-size:.92rem; color:var(--text); line-height:1.5; }
+  .info-link-btn { display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; padding:10px 16px; border-radius:8px; text-decoration:none; font-size:.85rem; font-weight:600; margin-top:6px; }
+  .info-link-btn:hover { background:#1e4220; }
+  .qr-pub-botoes { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+  .qr-pub-btn { width:100%; padding:14px; border-radius:10px; border:none; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all .2s; }
+  .qr-pub-btn-hist { background:var(--surface); border:2px solid var(--accent); color:var(--accent); }
+  .qr-pub-btn-hist:hover { background:var(--tag-bg); }
+  .qr-pub-btn-tec { background:#1e4220; color:#fff; }
+  .qr-pub-btn-tec:hover { background:#152e17; }
+  #qr-pub-historico { display:none; }
+  /* Esconde botões de ação no histórico público */
+  #qr-pub-hist-lista .btn-excluir-wrap { display:none !important; }
+
+  /* Modal senha técnico */
+  #modal-senha-tec { display:none; position:fixed; inset:0; z-index:10001; background:rgba(0,0,0,.6); align-items:center; justify-content:center; }
+  #modal-senha-tec.aberto { display:flex; }
+</style>
 </head>
 <body>
 
+<!-- TELA DE SENHA PRINCIPAL -->
 <div id="tela-senha">
   <div class="senha-box">
     <div class="senha-logo">&#128274;</div>
@@ -173,8 +181,76 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
 </div>
 
+<!-- TELA PÚBLICA DO QR CODE -->
+<div id="tela-qr-publica">
+  <div class="qr-pub-header">
+    <img class="logo-img" src="data:image/jpeg;base64,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" alt="MG City">
+    <div>
+      <div class="qr-pub-titulo">Ficha da Máquina</div>
+      <div class="qr-pub-sub">MG City — Assistência Técnica</div>
+    </div>
+  </div>
+
+  <div class="qr-pub-container">
+    <!-- Destaque da máquina -->
+    <div class="qr-pub-machine">
+      <div class="qr-pub-machine-nome" id="qr-pub-nome">—</div>
+      <div class="qr-pub-machine-empresa" id="qr-pub-empresa"></div>
+    </div>
+
+    <!-- Informações técnicas -->
+    <div class="info-card">
+      <div class="info-card-titulo">🔧 Informações Técnicas</div>
+      <div class="info-linha">
+        <span class="info-rotulo">🪡 Tipo de Agulha</span>
+        <span class="info-valor" id="qr-pub-agulha">—</span>
+      </div>
+      <div class="info-linha">
+        <span class="info-rotulo">📍 Tipo de Ponto</span>
+        <span class="info-valor" id="qr-pub-ponto">—</span>
+      </div>
+      <div class="info-linha">
+        <span class="info-rotulo">🧵 Passagem de Linha</span>
+        <span class="info-valor" id="qr-pub-linha-desc">—</span>
+        <a id="qr-pub-linha-link" href="#" target="_blank" class="info-link-btn" style="display:none">▶️ Ver vídeo / passo a passo</a>
+      </div>
+    </div>
+
+    <!-- Botões de ação -->
+    <div class="qr-pub-botoes">
+      <button class="qr-pub-btn qr-pub-btn-hist" onclick="toggleQrHistorico()">
+        📋 <span id="btn-hist-label">Ver Histórico de Manutenções</span>
+      </button>
+      <button class="qr-pub-btn qr-pub-btn-tec" onclick="abrirModalSenhaTec()">
+        🔒 Área do Técnico
+      </button>
+    </div>
+
+    <!-- Histórico público (somente leitura) -->
+    <div id="qr-pub-historico">
+      <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--accent);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);">📋 Histórico de Manutenções</div>
+      <div id="qr-pub-hist-lista"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SENHA TÉCNICO (na tela pública) -->
+<div id="modal-senha-tec">
+  <div class="senha-box">
+    <div class="senha-logo">🔒</div>
+    <div class="senha-titulo">Área do Técnico</div>
+    <div class="senha-sub">Digite a senha para acessar o sistema completo</div>
+    <input type="password" id="campo-senha-tec" class="senha-input" placeholder="••••••••"
+      onkeydown="if(event.key==='Enter')verificarSenhaTec()">
+    <button class="senha-btn" onclick="verificarSenhaTec()">🔓 Entrar</button>
+    <div class="senha-erro" id="senha-tec-erro">Senha incorreta. Tente novamente.</div>
+    <button onclick="fecharModalSenhaTec()" style="margin-top:14px;background:none;border:none;color:var(--muted);font-size:.85rem;cursor:pointer;">Cancelar</button>
+  </div>
+</div>
+
+<!-- SISTEMA PRINCIPAL -->
 <header>
-  <img class="logo-img" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAA+AFcDASIAAhEBAxEB/8QAHQAAAQQDAQEAAAAAAAAAAAAACAAFBgcDBAkBAv/EADcQAAEDAwMDAgQCCAcAAAAAAAECAwQFBhEAByEIEjFBYRMiUXEUIwkVMjNCgYKRFiRSY8HR4f/EABwBAAMAAgMBAAAAAAAAAAAAAAQFBgIIAQMHCf/EACsRAAEDAwQCAAQHAAAAAAAAAAECAwQABREGEhMhMUEUI1FhBxUiQoGRof/aAAwDAQACEQMRAD8A6PNIHbj11tNoyR/YjGtb4zMdtT76whCASpRPA1F6td78n/LU3LLROFL/AIlD/gandY66tukWd8pWVnwmhoNucmHCR1UulVWm0xPbIkBSkntLSBlf9tNaLwjTWyunNoeaJKUupXkZB5B9xofd+dzZG3FsO1aG4kzGmFrZCz5XjgE+fOo90TbvL3DsaXQau6RVqVJcecBI/MDqislI8kAnGoKNqe/altbl1iJ2NoPj7U4MSPFdDTnZNFKmsT1Y71tgq/ZAGO7XqJ8hw/vQr0OBjn1Ghn6sd9XtsbUkUujOpNSqTC4rQB+ZJWMFST6FOc6mnSXfS7/2OodRlvuOy4iVQ33HDlalN8dxPqT51myzeXLb+aOLO3OKzXwJd4Md1dAdWoftAjxjGma5L4sm0W2l3jeFIogfPa0ZslLfefUYProe+qzqgc2opf6htFIdr0/LbLmR2sf7ih549PfQDNUrcfdeoyqo8KlXn1Ol+VJeUpTYWo5JAPAz7a9E0laJ8yP8ZLe2N/f3Si4PNIVxITk113ot3WZdqnG7Ru+kVpTI7lIhyUrUB749NbT7a0KOQRzjBHI/61yJt6lbp2fd8Bu1manAqSpKG2H4/d8P4pIwlQHkfXIxrsBZ1Jr79lUVq+pKHrg/Btic+0MJU9jkgasJb7Vu2kLC0n6UpEVT+cAg01uDOMHS1tVODIgL7XU5HosDgjS0Wh1DyQtB6NL1sqSrBTTddtWU+/8AqtggMoALqknlSh6H7aYm1JBAxx40n3kyJbskJ7S6tSx7Z1hlPpiRnZKlfK2gq59ONfNXVOopGqrwqU8eieh9BXsUSKmIwEig564ruQ+7FtxuSW1uOgjtPJCDkjVM9P250raHdKk3G6sswJI/DTQoeY6vUD65xzrL1JXK7cm5UhgI70xBlo58qUcEa2N6dupltUui10wwwHIbK3OCflKBxre/8Pmodl0rHhS8fP6Pj3UFdA7JmqW3+2sPUVuHI3G3LnvNuFyFTyW20A5APkrSfoQdEF+j3vpbNAvG0XpYKWUImwkZwUpCT3EfzOqK2v2pqNesGu3xNadTCCVRWFrTw4oD5iD58HX30kXXEtHe+msy3wxGqhcojncoAJCzjJz6cedV05m3vWx+zRSMNjP80A0p4PIkue+qZepKtP1fdafLlLJdRG7Rn+Edx0Tc2+mtkun+2EWHRKe/V6lGiyHHJTAcSVODK8+2qd6tNrKpbt4yKuzHWW1qVyE8PIPoD9PXTLtd1JP2fSI1uXfasO56dDyYqZKiFMgeEH6gaHtyBdbQ0zGIy2e0/XFESB8NJLix0of1UgT1Pb12VOfudVt24wsqDqi7ABSgeMoGfGi16MOpPcrf9yvs3zT6alikJbUxJhsfDGVHHaRnQN7yb5U/diOunwrDp9BZcwApl9SlHH30Zn6NuhQo20tYuFthxuZPqS4zq1pKQtLeO3AP386OuEdLNtUqQgJV6rqac5HwGiSPdF4WGpKQmSwl1KfAVpazMc/yGNLUqy+4lACT1TVaEk5xVM1GOuLUpDXw+wBZKQf9P11oVWGuoU5+Ek/vkFGdTK5qamUyakzkusDKhjhSfUn7ajBVwpTY47T5+2daR670bK0leijYeMnKT6qst05E1kZPeO6EC/dqdntsLm/xfuhOaWmWsmOz2KcW8oc9oSORreubfbZPdM06gVmkz7citoTFjyZTJLaxjtT28cHGqr6hK47Ut46CxVpCVx408fK7ykIKh3Zz9Rqz9wIOw9jTKPNvKtCqxZbzSmafDSHXGyrwvtzwgE+dbP6ctQdsUSRJK3HFDrB6TipyQ6RIWlGABU83EvDaPYfaGh2C1Dlz4kwKSHWcdwVjPxHDjHOQNVHaUPYWxbUg7x3dZC6pGn1Etx4T5KXkLycODxx76Yer4QYjkRilzXBBfZBjsrV5R25H31aU7YA7kbYW1XpMlbtOiUuO6EtuYQlxKBxx66p4bEeBBTKfUobzhXfdCqU447xpxgDqst/9XeyO40JNJqNg1YvBsfCHBV2gcYGPbVFSaZszXaHWb8hUuoNR6ZIZjSWgMufm5wrjwE45Om+wKV+sOoaJbja21oL7sZIVgdn5eAP76Jat9JCbLsmrzaUt9D89QeqDSllSHfPAHoPbVGtNssgaLJUN/dDI531EKPioRs7tTsRctjTt0qlFIplEd7VtyT3KdIHcMY0XHTFvjZG8NEn02xbal0qDb4QO91ADbhJxhJAAJGOdc4reFxSbne2At+ufg6RcFRQHQvALascjJ8fbXU/ZbaiibN2HAs6iIQQ0kKffSnCnnCOVK99EXhLaGQ4tZVu7FcRyrk2JGMeasJg5B+fHuRpaqXdjfSRYdRZtSxLTdvO6yn4z9LjLx+HY9VuKGcHxgfTS0qZYWpAIFFLWAcZqYtuAHk5T5HHk+41FbltSpF1mp224gpSlQlwXPDySMgtH0cJ454xqRtKI9dbDeUngDJGmF903A1DH4JqAof7SaLNciq3tmgq3G2Eo993A89UYiYMxtKXpcOcfhhpSjwn4nCVH2SdeWp0UUtyuMVG5KUmRBCRhhbilJI9MHOcaM2s0aiXJFES4aRFqTDSg4luQ2FBKh4I99ReLtNIZkyZtlXhVYNRdPagVB4yorQPOEtHAAHpqFc0hc7U1x2yQQgeAT4p23cWZB+cnuqEvbpIp15VuAqRT210unAIZjFwlKUfTOc6uejbXUi1ttEbf2lThAjIC8NIcUoAq/aIKiTydaF8ztztoqY7XLouel1+M2nuLEeniMo/1ZOqeX14xIgAXt2tas9uRN/8ANIHbfeMBl9YIHrNHJdaP60jFONkdGlq067lXRdlAYnPCWJLTqnlpKVA5Sr5SOcjRJ3PSJFdoEmkxc97iezPkkYxoaaD1fV/cCe3SbWoEejSVuBKX5B+Okf08Z1cdR293or9Niit7sRWYbq0Ouim078M+Un+EOA8afxrZcp23mWDjx3Q65LTQJx3VKwelXauxq/MvnddiAW2nkzFGTKKXmyFDtUlCCFK5xwAdW9Ud273v15FK2copp1F/MjybkqjZSlASkdpYbPz9/wBCoY1lgbO2NAnuVSqRpdxTCQEv1p8yltkHPyE+ORqXvLUSORwfAHGr6HZnClJkL3YpDKugGQ0MGonZFh0iwIEhEB5+ZUqg7+IqFUkKzJlOHyVK9BzwBxpakS8k4ScZ5440tUrbCG0hIApKp1azkmv/2Q==" alt="MG City Logo">
+  <img class="logo-img" src="data:image/jpeg;base64,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" alt="MG City Logo">
   <div class="header-text">
     <div class="logo">Ficha de Manutenção</div>
     <div class="sub">Assistência Técnica em Máquinas de Costura Ltda</div>
@@ -191,6 +267,7 @@ window.dispatchEvent(new Event('firebase-ready'));
   <button class="tab-btn" onclick="switchTab('qrcode', this)">&#11035; QR Code</button>
 </div>
 
+<!-- ABA REGISTRAR -->
 <div id="tab-registrar" class="tab-content active">
 <div class="container">
   <div class="card">
@@ -203,7 +280,7 @@ window.dispatchEvent(new Event('firebase-ready'));
     <div class="field"><label>Local / Setor</label><input type="text" id="setor" placeholder="Ex: Sala de Costura B"></div>
     <div class="field">
       <label>Manual da Maquina (link)</label>
-      <input type="text" id="manual-link" placeholder="Ex: https://drive.google.com/... ou URL do manual" oninput="atualizarManualPreview()">
+      <input type="text" id="manual-link" placeholder="Ex: https://drive.google.com/..." oninput="atualizarManualPreview()">
       <div id="manual-link-preview" style="display:none;margin-top:4px"></div>
     </div>
     <div class="field">
@@ -219,6 +296,28 @@ window.dispatchEvent(new Event('firebase-ready'));
       </div>
     </div>
   </div>
+
+  <!-- INFORMAÇÕES TÉCNICAS DA MÁQUINA -->
+  <div class="card">
+    <div class="card-title">🧵 Informações Técnicas da Máquina</div>
+    <div class="field">
+      <label>🪡 Tipo de Agulha</label>
+      <input type="text" id="info-agulha" placeholder="Ex: 134-35, 16x231, DBx1 n°14...">
+    </div>
+    <div class="field">
+      <label>📍 Tipo de Ponto</label>
+      <input type="text" id="info-ponto" placeholder="Ex: Ponto fixo 301, Overlock 504, Corrente 401...">
+    </div>
+    <div class="field">
+      <label>🧵 Passagem de Linha — Descrição do passo a passo</label>
+      <textarea id="info-linha-desc" placeholder="Descreva o passo a passo da passagem de linha desta máquina..."></textarea>
+    </div>
+    <div class="field">
+      <label>▶️ Link de Vídeo / Imagem do passo a passo (opcional)</label>
+      <input type="text" id="info-linha-link" placeholder="Ex: https://youtube.com/... ou https://drive.google.com/...">
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-title">&#128197; Dados da Manutencao</div>
     <div class="row2">
@@ -281,6 +380,7 @@ window.dispatchEvent(new Event('firebase-ready'));
 </div>
 </div>
 
+<!-- ABA HISTÓRICO -->
 <div id="tab-historico" class="tab-content">
 <div class="container">
   <div class="card">
@@ -305,6 +405,7 @@ window.dispatchEvent(new Event('firebase-ready'));
 </div>
 </div>
 
+<!-- ABA QR CODE -->
 <div id="tab-qrcode" class="tab-content">
 <div class="container">
   <div class="card">
@@ -327,7 +428,7 @@ window.dispatchEvent(new Event('firebase-ready'));
 </div>
 </div>
 
-<!-- Modal de Edição -->
+<!-- MODAL DE EDIÇÃO -->
 <div id="modal-editar">
   <div class="modal-box">
     <div class="modal-title">✏️ Editar Registro</div>
@@ -353,6 +454,15 @@ window.dispatchEvent(new Event('firebase-ready'));
         <option value="revisao">Revisao Geral</option>
       </select>
     </div>
+    <div class="field">
+      <label>✅ Serviços Realizados</label>
+      <div class="check-grid" id="edit-servicos-grid" style="margin-top:6px"></div>
+    </div>
+    <div class="field">
+      <label>🔧 Peças Trocadas</label>
+      <div id="edit-pecas-list" style="margin-top:6px"></div>
+      <button class="btn-add" onclick="addEditPeca()" style="margin-top:6px">+ Adicionar peça</button>
+    </div>
     <div class="field"><label>Tecnico</label><input type="text" id="edit-tecnico"></div>
     <div class="field"><label>Responsavel</label><input type="text" id="edit-responsavel"></div>
     <div class="field"><label>Manual da Maquina (link)</label><input type="text" id="edit-manual" placeholder="URL do manual"></div>
@@ -376,19 +486,36 @@ const SERVICOS = [
   {id:'bobina',  label:'Ajuste de bobina',     icon:'&#128260;'},
   {id:'motor',   label:'Verificacao do motor', icon:'&#9889;'},
   {id:'eletrica',label:'Teste eletrico',       icon:'&#128268;'},
-  {id:'registro', label:'Registro de Maquina',  icon:'&#128196;'},
+  {id:'registro',label:'Registro de Maquina',  icon:'&#128196;'},
   {id:'outros',  label:'Outros',               icon:'&#128295;'},
 ];
+
 function renderServicos() {
   const grid = document.getElementById('servicos-grid');
   grid.innerHTML = SERVICOS.map(s => `<label class="check-item" id="chk-${s.id}" onclick="toggleCheck('${s.id}')"><input type="checkbox" id="cb-${s.id}"><span class="check-icon">${s.icon}</span><span>${s.label}</span></label>`).join('');
 }
+
+function renderEditServicos(selecionados) {
+  const grid = document.getElementById('edit-servicos-grid');
+  grid.innerHTML = SERVICOS.map(s => {
+    const marcado = selecionados && selecionados.includes(s.label);
+    return `<label class="check-item${marcado?' checked':''}" id="edit-chk-${s.id}" onclick="toggleEditCheck('${s.id}')"><input type="checkbox" id="edit-cb-${s.id}"${marcado?' checked':''}><span class="check-icon">${s.icon}</span><span>${s.label}</span></label>`;
+  }).join('');
+}
+
 function toggleCheck(id) {
   const el = document.getElementById('chk-'+id);
   const cb = document.getElementById('cb-'+id);
   cb.checked = !cb.checked;
   el.classList.toggle('checked', cb.checked);
 }
+function toggleEditCheck(id) {
+  const el = document.getElementById('edit-chk-'+id);
+  const cb = document.getElementById('edit-cb-'+id);
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+}
+
 let pecaIdx = 0;
 function addPeca() {
   const id = 'peca-'+pecaIdx++;
@@ -398,6 +525,16 @@ function addPeca() {
   document.getElementById('pecas-list').appendChild(div);
 }
 function removePeca(id) { document.getElementById(id)?.remove(); }
+
+let editPecaIdx = 0;
+function addEditPeca(val) {
+  const id = 'edit-peca-'+editPecaIdx++;
+  const div = document.createElement('div');
+  div.className = 'peca-row'; div.id = id;
+  div.innerHTML = '<input type="text" placeholder="Nome / codigo da peca" class="edit-peca-input" value="'+(val||'')+'"><button class="btn-remove" onclick="document.getElementById(\''+id+'\').remove()">&#10005;</button>';
+  document.getElementById('edit-pecas-list').appendChild(div);
+}
+
 function initCanvas(id) {
   const canvas = document.getElementById(id);
   const ctx = canvas.getContext('2d');
@@ -413,6 +550,7 @@ function initCanvas(id) {
   canvas.addEventListener('touchend', ()=>drawing=false);
 }
 function clearSig(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
+
 function setStatus(state, msg) {
   document.getElementById('status-text').textContent = msg;
   const dot = document.getElementById('status-dot');
@@ -420,6 +558,7 @@ function setStatus(state, msg) {
   if(state==='online') dot.classList.add('online');
   if(state==='error')  dot.classList.add('error');
 }
+
 async function salvarRegistro() {
   if(!window._fbReady) { alert('Firebase nao configurado.'); return; }
   const modelo = document.getElementById('modelo').value.trim();
@@ -431,19 +570,23 @@ async function salvarRegistro() {
   const sigResponsavel = document.getElementById('sig-responsavel').toDataURL();
   const reg = {
     ts: Date.now(),
-    empresa: document.getElementById('empresa').value.trim(),
+    empresa:       document.getElementById('empresa').value.trim(),
     modelo, serial: document.getElementById('serial').value.trim(),
-    setor: document.getElementById('setor').value.trim(),
+    setor:         document.getElementById('setor').value.trim(),
     data, proxima: document.getElementById('proxima').value,
-    tipo: document.getElementById('tipo').value,
+    tipo:          document.getElementById('tipo').value,
     servicos, pecas,
-    obs: document.getElementById('obs').value.trim(),
-    tecnico: document.getElementById('tecnico').value.trim(),
-    responsavel: document.getElementById('responsavel').value.trim(),
-    manualLink: document.getElementById('manual-link').value.trim(),
+    obs:           document.getElementById('obs').value.trim(),
+    tecnico:       document.getElementById('tecnico').value.trim(),
+    responsavel:   document.getElementById('responsavel').value.trim(),
+    manualLink:    document.getElementById('manual-link').value.trim(),
+    infoAgulha:    document.getElementById('info-agulha').value.trim(),
+    infoPonto:     document.getElementById('info-ponto').value.trim(),
+    infoLinhaDesc: document.getElementById('info-linha-desc').value.trim(),
+    infoLinhaLink: document.getElementById('info-linha-link').value.trim(),
     sigTecnico, sigResponsavel,
-    fotoMaquina:  window._fotos?.maquina  || null,
-    fotoProblema: window._fotos?.problema || null,
+    fotoMaquina:   window._fotos?.maquina  || null,
+    fotoProblema:  window._fotos?.problema || null,
   };
   try {
     setStatus('', 'Salvando...');
@@ -454,15 +597,24 @@ async function salvarRegistro() {
     limparForm();
   } catch(e) { setStatus('error', 'Erro'); alert('Erro ao salvar: ' + e.message); }
 }
+
 function limparForm() {
-  ['empresa','modelo','serial','setor','data','proxima','obs','tecnico','responsavel','manual-link'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  ['empresa','modelo','serial','setor','data','proxima','obs','tecnico','responsavel','manual-link',
+   'info-agulha','info-ponto','info-linha-desc','info-linha-link'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
   document.getElementById('tipo').value = '';
-  SERVICOS.forEach(s => { const cb=document.getElementById('cb-'+s.id); const chk=document.getElementById('chk-'+s.id); if(cb) cb.checked=false; if(chk) chk.classList.remove('checked'); });
+  SERVICOS.forEach(s => {
+    const cb=document.getElementById('cb-'+s.id);
+    const chk=document.getElementById('chk-'+s.id);
+    if(cb) cb.checked=false; if(chk) chk.classList.remove('checked');
+  });
   document.getElementById('pecas-list').innerHTML = '';
   clearSig('sig-tecnico'); clearSig('sig-responsavel');
   removerFoto('maquina'); removerFoto('problema');
   document.getElementById('data').value = new Date().toISOString().split('T')[0];
 }
+
 window._fotos = { maquina: null, problema: null };
 function carregarFoto(tipo, input) {
   const file = input.files[0]; if (!file) return;
@@ -489,10 +641,10 @@ function removerFoto(tipo) {
   document.getElementById('img-' + tipo).src = '';
   document.getElementById('area-' + tipo).style.display = 'block';
   document.getElementById('preview-' + tipo).style.display = 'none';
-  const area = document.getElementById('area-' + tipo);
-  const input = area.querySelector('input[type=file]');
+  const input = document.getElementById('area-' + tipo).querySelector('input[type=file]');
   if (input) input.value = '';
 }
+
 let todosRegistros = [];
 function iniciarEscuta() {
   if(!window._fbReady) return;
@@ -504,11 +656,18 @@ function iniciarEscuta() {
     setStatus('online', 'Online');
     filtrarHistorico();
     if(sessionStorage.getItem('auth') === 'admin') ativarAdmin();
+    // Atualiza tela pública se estiver aberta
+    const maqParam = new URLSearchParams(window.location.search).get('maquina');
+    if(maqParam && document.getElementById('tela-qr-publica').style.display !== 'none') {
+      popularInfoPublica(maqParam);
+      renderQrPubHistorico(maqParam);
+    }
   }, err => {
     setStatus('error', 'Sem conexao');
     document.getElementById('historico-lista').innerHTML = '<div class="historico-empty">Erro ao carregar dados.</div>';
   });
 }
+
 function filtrarHistorico() {
   const filtroEmpresa = document.getElementById('filtro-empresa')?.value.toLowerCase() || '';
   const filtroModelo  = document.getElementById('filtro-modelo')?.value.toLowerCase() || '';
@@ -521,53 +680,78 @@ function filtrarHistorico() {
   });
   renderHistorico(regs);
 }
+
+function buildRegistroCard(r, comBotoes) {
+  const dataFmt  = r.data    ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
+  const proxFmt  = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
+  const tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
+  const tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Nao informado';
+  const servTags  = (r.servicos||[]).map(s=>'<span class="tag">'+s+'</span>').join('');
+  const pecaTags  = (r.pecas||[]).map(p=>'<span class="tag">'+p+'</span>').join('');
+  const tecSig    = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '-';
+  const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '-';
+  const fotosMaq  = r.fotoMaquina  ? '<div class="reg-foto-item"><img src="'+r.fotoMaquina+'"><div class="reg-foto-label">Maquina</div></div>' : '';
+  const fotosProb = r.fotoProblema ? '<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>' : '';
+  const fotosHtml = (fotosMaq||fotosProb) ? '<div class="reg-fotos">'+fotosMaq+fotosProb+'</div>' : '';
+  const manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">&#128196; Abrir manual</a></div>' : '';
+  const botoesHtml = comBotoes
+    ? '<div class="btn-excluir-wrap" style="display:none;margin-top:10px"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button> <button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">Excluir</button></div>'
+    : '';
+  return '<div class="registro-card">'
+    +'<div class="reg-header"><div><div class="reg-date">'+(r.modelo||'-')+'</div>'
+    +'<div style="font-size:.8rem;color:var(--muted)">'+dataFmt+(r.setor?' — '+r.setor:'')+'</div></div>'
+    +'<span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'
+    +(servTags?'<div class="reg-tags">'+servTags+'</div>':'')
+    +(pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')
+    +(r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')
+    +(proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Próxima: '+proxFmt+'</div>':'')
+    +fotosHtml+manualHtml
+    +'<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Técnico')+'</div></div>'
+    +'<div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsável')+'</div></div></div>'
+    +botoesHtml+'</div>';
+}
+
 function renderHistorico(regs) {
   const lista = document.getElementById('historico-lista');
   if(!regs || !regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhum registro encontrado.</div>'; return; }
-  lista.innerHTML = regs.map(r => {
-    const dataFmt = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
-    const proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
-    const tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
-    const tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Nao informado';
-    const servTags  = (r.servicos||[]).map(s=>'<span class="tag">'+s+'</span>').join('');
-    const pecaTags  = (r.pecas||[]).map(p=>'<span class="tag">'+p+'</span>').join('');
-    const tecSig    = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '-';
-    const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '-';
-    const fotosMaq  = r.fotoMaquina  ? '<div class="reg-foto-item"><img src="'+r.fotoMaquina+'"><div class="reg-foto-label">Maquina</div></div>' : '';
-    const fotosProb = r.fotoProblema ? '<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>' : '';
-    const fotosHtml = (fotosMaq || fotosProb) ? '<div class="reg-fotos">'+fotosMaq+fotosProb+'</div>' : '';
-    const manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">&#128196; Abrir manual da maquina</a></div>' : '';
-    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+(r.modelo||'-')+'</div><div style="font-size:.8rem;color:var(--muted)">'+dataFmt+(r.setor?' - '+r.setor:'')+'</div></div><span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+(servTags?'<div class="reg-tags">'+servTags+'</div>':'')+(pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+(r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+(proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+fotosHtml+manualHtml+'<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div><div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div><div class="btn-excluir-wrap" style="display:none;margin-top:10px"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button> <button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">Excluir</button></div></div>';
-  }).join('');
+  lista.innerHTML = regs.map(r => buildRegistroCard(r, true)).join('');
 }
+
 async function excluirRegistro(fbKey) {
   if(!confirm('Excluir este registro da nuvem?')) return;
   try { const { db, ref, remove } = window._fb; await remove(ref(db, 'manutencoes/'+fbKey)); }
   catch(e) { alert('Erro ao excluir: ' + e.message); }
 }
+
 function editarRegistro(fbKey) {
   const r = todosRegistros.find(x => x.fbKey === fbKey);
   if(!r) return;
-  document.getElementById('edit-fbkey').value = fbKey;
-  document.getElementById('edit-empresa').value   = r.empresa   || '';
-  document.getElementById('edit-modelo').value    = r.modelo    || '';
-  document.getElementById('edit-serial').value    = r.serial    || '';
-  document.getElementById('edit-setor').value     = r.setor     || '';
-  document.getElementById('edit-data').value      = r.data      || '';
-  document.getElementById('edit-proxima').value   = r.proxima   || '';
-  document.getElementById('edit-tipo').value      = r.tipo      || '';
-  document.getElementById('edit-tecnico').value   = r.tecnico   || '';
-  document.getElementById('edit-responsavel').value = r.responsavel || '';
-  document.getElementById('edit-manual').value    = r.manualLink || '';
-  document.getElementById('edit-obs').value       = r.obs       || '';
+  document.getElementById('edit-fbkey').value       = fbKey;
+  document.getElementById('edit-empresa').value     = r.empresa    || '';
+  document.getElementById('edit-modelo').value      = r.modelo     || '';
+  document.getElementById('edit-serial').value      = r.serial     || '';
+  document.getElementById('edit-setor').value       = r.setor      || '';
+  document.getElementById('edit-data').value        = r.data       || '';
+  document.getElementById('edit-proxima').value     = r.proxima    || '';
+  document.getElementById('edit-tipo').value        = r.tipo       || '';
+  document.getElementById('edit-tecnico').value     = r.tecnico    || '';
+  document.getElementById('edit-responsavel').value = r.responsavel|| '';
+  document.getElementById('edit-manual').value      = r.manualLink || '';
+  document.getElementById('edit-obs').value         = r.obs        || '';
+  renderEditServicos(r.servicos || []);
+  document.getElementById('edit-pecas-list').innerHTML = '';
+  editPecaIdx = 0;
+  (r.pecas || []).forEach(p => addEditPeca(p));
   document.getElementById('modal-editar').classList.add('aberto');
 }
-function fecharModal() {
-  document.getElementById('modal-editar').classList.remove('aberto');
-}
+
+function fecharModal() { document.getElementById('modal-editar').classList.remove('aberto'); }
+
 async function salvarEdicao() {
   const fbKey = document.getElementById('edit-fbkey').value;
   if(!fbKey) return;
+  const servicosEdit = SERVICOS.filter(s => document.getElementById('edit-cb-'+s.id)?.checked).map(s=>s.label);
+  const pecasEdit    = [...document.querySelectorAll('.edit-peca-input')].map(i=>i.value.trim()).filter(Boolean);
   const updates = {
     empresa:     document.getElementById('edit-empresa').value.trim(),
     modelo:      document.getElementById('edit-modelo').value.trim(),
@@ -580,6 +764,8 @@ async function salvarEdicao() {
     responsavel: document.getElementById('edit-responsavel').value.trim(),
     manualLink:  document.getElementById('edit-manual').value.trim(),
     obs:         document.getElementById('edit-obs').value.trim(),
+    servicos:    servicosEdit,
+    pecas:       pecasEdit,
   };
   try {
     const { db, ref } = window._fb;
@@ -589,17 +775,16 @@ async function salvarEdicao() {
     alert('Registro atualizado com sucesso!');
   } catch(e) { alert('Erro ao editar: ' + e.message); }
 }
+
 function atualizarManualPreview() {
   const val = document.getElementById('manual-link').value.trim();
   const prev = document.getElementById('manual-link-preview');
   if(val && (val.startsWith('http://') || val.startsWith('https://'))) {
     prev.style.display = 'block';
     prev.innerHTML = '<a class="manual-link" href="'+val+'" target="_blank">&#128196; Abrir manual</a>';
-  } else {
-    prev.style.display = 'none';
-    prev.innerHTML = '';
-  }
+  } else { prev.style.display = 'none'; prev.innerHTML = ''; }
 }
+
 function updateQR() {
   const val = document.getElementById('qr-modelo').value.trim();
   const div = document.getElementById('qrcode');
@@ -618,6 +803,7 @@ function updateQR() {
   btnImprimir.style.display = 'inline-block';
   urlText.textContent = url; urlDisplay.style.display = 'block';
 }
+
 function imprimirQR() {
   const modelo = document.getElementById('qr-modelo').value.trim();
   const qrHTML = document.getElementById('qrcode').innerHTML;
@@ -626,30 +812,85 @@ function imprimirQR() {
   w.document.write('<html><head><title>QR - '+modelo+'</title><style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fff;padding:24px;gap:12px}h2{font-size:1.1rem;margin:0;text-align:center}canvas{border-radius:8px}.url{font-size:.6rem;color:#999;word-break:break-all;text-align:center;max-width:240px}</style></head><body><h2>Ficha de Manutencao</h2>'+qrHTML+'<h2>'+modelo+'</h2><div class="url">'+urlLink+'</div><sc'+'ript>window.onload=function(){window.print()}</sc'+'ript></body></html>');
   w.document.close();
 }
+
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   if(btn) btn.classList.add('active');
 }
-function checkURLParams() {
-  const params = new URLSearchParams(window.location.search);
-  const maquina = params.get('maquina');
-  if(maquina) {
-    // Preenche o campo modelo na aba Registrar
-    const campoModelo = document.getElementById('modelo');
-    if(campoModelo) campoModelo.value = maquina;
-    // Vai para aba historico e filtra
-    switchTab('historico', null);
-    document.querySelectorAll('.tab-btn')[1].classList.add('active');
-    document.querySelectorAll('.tab-btn')[0].classList.remove('active');
-    document.getElementById('filtro-modelo').value = maquina;
-    filtrarHistorico();
+
+// ===== TELA PÚBLICA QR =====
+function popularInfoPublica(maquina) {
+  const regs = todosRegistros.filter(r => r.modelo && r.modelo.toLowerCase() === maquina.toLowerCase());
+  document.getElementById('qr-pub-nome').textContent = maquina;
+  if(regs.length > 0) {
+    const r = regs[0];
+    document.getElementById('qr-pub-empresa').textContent     = r.empresa || '';
+    document.getElementById('qr-pub-agulha').textContent      = r.infoAgulha    || 'Não informado';
+    document.getElementById('qr-pub-ponto').textContent       = r.infoPonto     || 'Não informado';
+    document.getElementById('qr-pub-linha-desc').textContent  = r.infoLinhaDesc || 'Não informado';
+    const linkEl = document.getElementById('qr-pub-linha-link');
+    const lnk = r.infoLinhaLink;
+    if(lnk && (lnk.startsWith('http://') || lnk.startsWith('https://'))) {
+      linkEl.href = lnk; linkEl.style.display = 'inline-flex';
+    } else { linkEl.style.display = 'none'; }
   }
 }
+
+function renderQrPubHistorico(maquina) {
+  const regs = todosRegistros.filter(r => r.modelo && r.modelo.toLowerCase() === maquina.toLowerCase());
+  const lista = document.getElementById('qr-pub-hist-lista');
+  if(!regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhuma manutenção registrada ainda.</div>'; return; }
+  lista.innerHTML = regs.map(r => buildRegistroCard(r, false)).join('');
+}
+
+let historicoAberto = false;
+function toggleQrHistorico() {
+  historicoAberto = !historicoAberto;
+  document.getElementById('qr-pub-historico').style.display = historicoAberto ? 'block' : 'none';
+  document.getElementById('btn-hist-label').textContent = historicoAberto ? 'Ocultar Histórico' : 'Ver Histórico de Manutenções';
+}
+
+function abrirModalSenhaTec() {
+  document.getElementById('modal-senha-tec').classList.add('aberto');
+  setTimeout(()=>{ const el=document.getElementById('campo-senha-tec'); if(el) el.focus(); }, 100);
+}
+function fecharModalSenhaTec() {
+  document.getElementById('modal-senha-tec').classList.remove('aberto');
+  document.getElementById('campo-senha-tec').value = '';
+  document.getElementById('senha-tec-erro').style.display = 'none';
+}
+function verificarSenhaTec() {
+  const val  = document.getElementById('campo-senha-tec').value.trim();
+  const erro = document.getElementById('senha-tec-erro');
+  if(val === SENHA_CORRETA || val === SENHA_ADMIN) {
+    const nivel = val === SENHA_ADMIN ? 'admin' : '1';
+    sessionStorage.setItem('auth', nivel);
+    fecharModalSenhaTec();
+    document.getElementById('tela-qr-publica').style.display = 'none';
+    document.getElementById('tela-senha').style.display = 'none';
+    if(nivel === 'admin') ativarAdmin();
+    history.replaceState({}, '', window.location.pathname);
+    switchTab('historico', document.querySelectorAll('.tab-btn')[1]);
+    document.querySelectorAll('.tab-btn')[0].classList.remove('active');
+  } else {
+    document.getElementById('campo-senha-tec').classList.add('erro');
+    erro.style.display = 'block';
+    document.getElementById('campo-senha-tec').value = '';
+    setTimeout(()=>document.getElementById('campo-senha-tec').classList.remove('erro'), 400);
+  }
+}
+
+// ===== SENHAS =====
 var SENHA_CORRETA = 'Primeiroentrar2026';
 var SENHA_ADMIN   = 'Segundoadmin2026';
-function ativarAdmin() { document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){ el.style.display='flex'; el.style.gap='8px'; el.style.justifyContent='flex-end'; }); }
+
+function ativarAdmin() {
+  document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){
+    el.style.display='flex'; el.style.gap='8px'; el.style.justifyContent='flex-end';
+  });
+}
 function verificarSenha() {
   var input = document.getElementById('campo-senha');
   var erro  = document.getElementById('senha-erro');
@@ -665,6 +906,7 @@ function verificarSenha() {
     setTimeout(function(){ input.classList.remove('erro'); }, 400);
   }
 }
+
 var auth = sessionStorage.getItem('auth');
 if(auth === '1' || auth === 'admin') {
   document.addEventListener('DOMContentLoaded', function(){
@@ -672,6 +914,30 @@ if(auth === '1' || auth === 'admin') {
     if(auth === 'admin') ativarAdmin();
   });
 }
+
+function checkURLParams() {
+  const params  = new URLSearchParams(window.location.search);
+  const maquina = params.get('maquina');
+  if(!maquina) return;
+  const authAtual = sessionStorage.getItem('auth');
+  if(authAtual === '1' || authAtual === 'admin') {
+    // Já autenticado: vai direto para o histórico filtrado
+    document.getElementById('tela-senha').style.display = 'none';
+    const campoModelo = document.getElementById('modelo');
+    if(campoModelo) campoModelo.value = maquina;
+    switchTab('historico', document.querySelectorAll('.tab-btn')[1]);
+    document.querySelectorAll('.tab-btn')[0].classList.remove('active');
+    document.getElementById('filtro-modelo').value = maquina;
+    filtrarHistorico();
+  } else {
+    // Não autenticado: mostra tela pública
+    document.getElementById('tela-senha').style.display = 'none';
+    document.getElementById('tela-qr-publica').style.display = 'block';
+    popularInfoPublica(maquina);
+    renderQrPubHistorico(maquina);
+  }
+}
+
 window.addEventListener('load', () => {
   renderServicos();
   initCanvas('sig-tecnico');
