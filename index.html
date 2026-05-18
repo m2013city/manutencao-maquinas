@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -900,7 +899,12 @@ function abrirTelaPublica(maquina) {
   if (logoEl) logoEl.src = LOGO_SRC;
   window._maquinaQR = maquina;
   function popular() {
-    var m = todasMaquinas.find(function(x){ return x.modelo && x.modelo.toLowerCase() === maquina.toLowerCase(); });
+    var maqL = maquina ? maquina.toLowerCase() : '';
+    var m = todasMaquinas.find(function(x){
+      if (!x.modelo) return false;
+      var xL = x.modelo.toLowerCase();
+      return xL === maqL || xL.includes(maqL) || maqL.includes(xL);
+    });
     document.getElementById('qr-pub-nome').textContent = maquina;
     if (m) {
       document.getElementById('qr-pub-empresa').textContent = m.empresa || '';
@@ -927,9 +931,15 @@ function abrirTelaPublica(maquina) {
 }
 
 function renderQrPubHistorico(maquina, fbKey) {
+  var maqLower = maquina ? maquina.toLowerCase() : '';
   var regs = todosRegistros.filter(function(r){
     if (fbKey && r.maquinaKey === fbKey) return true;
-    if (r.modelo && r.modelo.toLowerCase() === maquina.toLowerCase()) return true;
+    if (r.modelo) {
+      var rLower = r.modelo.toLowerCase();
+      if (rLower === maqLower) return true;
+      // Busca parcial - se um contem o outro
+      if (maqLower && (rLower.includes(maqLower) || maqLower.includes(rLower))) return true;
+    }
     return false;
   });
   var lista = document.getElementById('qr-pub-hist-lista');
@@ -966,13 +976,44 @@ function verificarSenhaTec() {
     document.getElementById('tela-qr-publica').style.display='none';
     history.replaceState({}, '', window.location.pathname);
     if (val===SENHA_ADMIN) ativarAdmin();
-    // Se veio de QR, ir direto para o historico filtrado
+    // Se veio de QR - pre-preencher modelo em registrar e filtrar historico
     if (window._maquinaQR) {
-      switchTab('historico', null);
-      var btns = document.querySelectorAll('.tab-btn');
-      btns[0].classList.remove('active'); btns[1].classList.add('active');
-      document.getElementById('filtro-modelo').value = window._maquinaQR;
+      var maq = window._maquinaQR;
+      // Pre-preencher campo modelo no registrar
+      var campoModelo = document.getElementById('modelo');
+      if (campoModelo) campoModelo.value = maq;
+      // Pre-preencher empresa se disponivel
+      var maqObj = todasMaquinas.find(function(x){ return x.modelo && x.modelo.toLowerCase() === maq.toLowerCase(); });
+      if (maqObj) {
+        var campoEmpresa = document.getElementById('empresa');
+        if (campoEmpresa) campoEmpresa.value = maqObj.empresa || '';
+        var campoSetor = document.getElementById('setor');
+        if (campoSetor && maqObj.setor) campoSetor.value = maqObj.setor;
+        // Pre-preencher infos tecnicas
+        if (document.getElementById('info-agulha')) document.getElementById('info-agulha').value = maqObj.infoAgulha || '';
+        if (document.getElementById('info-ponto')) document.getElementById('info-ponto').value = maqObj.infoPonto || '';
+        if (document.getElementById('info-linha-desc')) document.getElementById('info-linha-desc').value = maqObj.infoLinhaDesc || '';
+        if (document.getElementById('info-linha-link')) document.getElementById('info-linha-link').value = maqObj.infoLinhaLink || '';
+        if (document.getElementById('info-alerta')) document.getElementById('info-alerta').value = maqObj.infoAlerta || '';
+        if (document.getElementById('manual-link')) document.getElementById('manual-link').value = maqObj.manualLink || '';
+      }
+      // Pre-selecionar maquina no pedido de pecas
+      popularSelectPedido();
+      setTimeout(function(){
+        var sel = document.getElementById('pedido-select-maquina');
+        if (sel && maqObj) {
+          sel.value = maqObj.fbKey;
+          selecionarMaquinaPedido();
+        }
+      }, 500);
+      // Filtrar historico
+      document.getElementById('filtro-modelo').value = maq;
       filtrarHistorico();
+      // Ir para aba registrar para facilitar nova manutencao
+      switchTab('registrar', null);
+      var btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(function(b){ b.classList.remove('active'); });
+      btns[0].classList.add('active');
     }
   } else {
     document.getElementById('campo-senha-tec').classList.add('erro');
