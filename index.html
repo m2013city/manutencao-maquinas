@@ -493,6 +493,11 @@ window.dispatchEvent(new Event('firebase-ready'));
     <div class="field"><label>Tecnico</label><input type="text" id="edit-tecnico"></div>
     <div class="field"><label>Responsavel</label><input type="text" id="edit-responsavel"></div>
     <div class="field"><label>Manual da Maquina (link)</label><input type="text" id="edit-manual" placeholder="URL do manual"></div>
+    <div class="field"><label>&#129521; Tipo de Agulha</label><input type="text" id="edit-info-agulha" placeholder="Ex: DCX27 n11, DBx1 n14..."></div>
+    <div class="field"><label>&#128208; Tipo de Ponto</label><input type="text" id="edit-info-ponto" placeholder="Ex: Ponto fixo 301, Overlock 3 fios..."></div>
+    <div class="field"><label>&#129525; Passagem de Linha</label><textarea id="edit-info-linha-desc" placeholder="Passo a passo..."></textarea></div>
+    <div class="field"><label>&#9654;&#65039; Link Video</label><input type="text" id="edit-info-linha-link" placeholder="https://youtube.com/..."></div>
+    <div class="field"><label>&#9888;&#65039; Alerta antes do uso</label><textarea id="edit-info-alerta" placeholder="Ex: Verificar nivel de oleo, posicao da agulha e facas..."></textarea></div>
     <div class="field"><label>Observacoes</label><textarea id="edit-obs" style="min-height:80px"></textarea></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
@@ -703,8 +708,13 @@ function editarRegistro(fbKey) {
   document.getElementById('edit-tipo').value      = r.tipo      || '';
   document.getElementById('edit-tecnico').value   = r.tecnico   || '';
   document.getElementById('edit-responsavel').value = r.responsavel || '';
-  document.getElementById('edit-manual').value    = r.manualLink || '';
-  document.getElementById('edit-obs').value       = r.obs       || '';
+  document.getElementById('edit-manual').value           = r.manualLink    || '';
+  document.getElementById('edit-info-agulha').value     = r.infoAgulha    || '';
+  document.getElementById('edit-info-ponto').value      = r.infoPonto     || '';
+  document.getElementById('edit-info-linha-desc').value = r.infoLinhaDesc || '';
+  document.getElementById('edit-info-linha-link').value = r.infoLinhaLink || '';
+  document.getElementById('edit-info-alerta').value     = r.infoAlerta    || '';
+  document.getElementById('edit-obs').value             = r.obs           || '';
   document.getElementById('modal-editar').classList.add('aberto');
 }
 function fecharModal() {
@@ -723,8 +733,13 @@ async function salvarEdicao() {
     tipo:        document.getElementById('edit-tipo').value,
     tecnico:     document.getElementById('edit-tecnico').value.trim(),
     responsavel: document.getElementById('edit-responsavel').value.trim(),
-    manualLink:  document.getElementById('edit-manual').value.trim(),
-    obs:         document.getElementById('edit-obs').value.trim(),
+    manualLink:   document.getElementById('edit-manual').value.trim(),
+    infoAgulha:   document.getElementById('edit-info-agulha').value.trim(),
+    infoPonto:    document.getElementById('edit-info-ponto').value.trim(),
+    infoLinhaDesc:document.getElementById('edit-info-linha-desc').value.trim(),
+    infoLinhaLink:document.getElementById('edit-info-linha-link').value.trim(),
+    infoAlerta:   document.getElementById('edit-info-alerta').value.trim(),
+    obs:          document.getElementById('edit-obs').value.trim(),
   };
   try {
     const { db, ref } = window._fb;
