@@ -192,6 +192,9 @@ window.dispatchEvent(new Event('firebase-ready'));
   .foto-item{position:relative;width:100px;height:100px;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
   .foto-item img{width:100%;height:100%;object-fit:cover;}
   .foto-item-remove{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center;}
+  /* MODAL EDITAR MAQUINA */
+  #modal-editar-maquina{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:14px;}
+  #modal-editar-maquina.aberto{display:flex;}
   /* SERVICOS COM DETALHE */
   .check-item-detalhe{display:none;margin-top:5px;width:100%;}
   .check-item-detalhe input{font-size:.78rem;padding:5px 8px;}
@@ -462,6 +465,34 @@ window.dispatchEvent(new Event('firebase-ready'));
     <div id="migracao-status" style="display:none;margin-top:9px;padding:9px;border-radius:8px;font-size:.8rem;"></div>
   </div>
 </div>
+</div>
+
+
+<!-- MODAL EDITAR MAQUINA -->
+<div id="modal-editar-maquina">
+  <div class="modal-box">
+    <div class="modal-title">&#128295; Dados da Maquina</div>
+    <input type="hidden" id="editmaq-fbkey">
+    <div class="field"><label>Empresa / Cliente</label><input type="text" id="editmaq-empresa"></div>
+    <div class="row2">
+      <div class="field"><label>Modelo / Nome</label><input type="text" id="editmaq-modelo"></div>
+      <div class="field"><label>N Serie / Patrimonio</label><input type="text" id="editmaq-serial"></div>
+    </div>
+    <div class="field"><label>Local / Setor</label><input type="text" id="editmaq-setor"></div>
+    <div class="field"><label>Manual (link)</label><input type="text" id="editmaq-manual" placeholder="https://..."></div>
+    <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px;">
+      <div class="card-title" style="margin-bottom:10px;">&#129525; Informacoes Tecnicas</div>
+      <div class="field"><label>&#129521; Tipo de Agulha</label><input type="text" id="editmaq-agulha" placeholder="Ex: DCX27 n11, DBx1 n14..."></div>
+      <div class="field"><label>&#128208; Tipo de Ponto</label><input type="text" id="editmaq-ponto" placeholder="Ex: Ponto fixo 301, Overlock 3 fios..."></div>
+      <div class="field"><label>&#129525; Passagem de Linha</label><textarea id="editmaq-linha-desc" placeholder="Passo a passo..."></textarea></div>
+      <div class="field"><label>&#9654;&#65039; Link Video</label><input type="text" id="editmaq-linha-link" placeholder="https://youtube.com/..."></div>
+      <div class="field"><label>&#9888;&#65039; Alerta antes do uso</label><textarea id="editmaq-alerta" placeholder="Ex: Verificar nivel de oleo, posicao da agulha e facas..."></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="fecharModalEditarMaquina()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEdicaoMaquina()">&#128190; Salvar Maquina</button>
+    </div>
+  </div>
 </div>
 
 <div id="modal-editar">
@@ -783,7 +814,7 @@ function imprimirQR() {
   const qrHTML = document.getElementById('qrcode').innerHTML;
   const urlLink = document.getElementById('qr-url-text').textContent;
   const w = window.open('','_blank','width=400,height=560');
-  w.document.write('<html><head><title>QR - '+modelo+'</title><style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fff;padding:24px;gap:12px}h2{font-size:1.1rem;margin:0;text-align:center}canvas{border-radius:8px}.url{font-size:.6rem;color:#999;word-break:break-all;text-align:center;max-width:240px}</style></head><body><h2>Ficha de Manutencao</h2>'+qrHTML+'<h2>'+modelo+'</h2><div class="url">'+urlLink+'</div><sc'+'ript>window.onload=function(){window.print()}</sc'+'ript></body></html>');
+  w.document.write('<html><head><title>QR - '+modelo+'</title><style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fff;padding:20px;gap:8px}img.ql{height:54px;border-radius:8px}h2{font-size:.95rem;margin:0;text-align:center}.url{font-size:.52rem;color:#999;word-break:break-all;text-align:center;max-width:210px}</style></head><body><img class="ql" src="' + LOGO_SRC + '">'+qrHTML+'<h2>'+modelo+'</h2><div class="url">'+urlLink+'</div><sc'+'ript>window.onload=function(){window.print()}<\/sc'+'ript></body></html>');
   w.document.close();
 }
 function switchTab(name, btn) {
@@ -1149,6 +1180,62 @@ async function migrarDados() {
   } catch(e) {
     st.style.background='#fde8e8'; st.style.color='var(--accent2)';
     st.textContent='Erro: '+e.message;
+  }
+}
+
+
+// ===== EDITAR MAQUINA =====
+function abrirEditarMaquinaPorModelo(modeloEncoded) {
+  var modelo = decodeURIComponent(modeloEncoded);
+  var m = todasMaquinas.find(function(x){ return x.modelo === modelo; });
+  if (!m) {
+    alert('Maquina nao encontrada no cadastro. Use a aba Registrar para adicionar as informacoes tecnicas.');
+    return;
+  }
+  abrirEditarMaquina(m);
+}
+
+function abrirEditarMaquina(m) {
+  document.getElementById('editmaq-fbkey').value      = m.fbKey || '';
+  document.getElementById('editmaq-empresa').value    = m.empresa || '';
+  document.getElementById('editmaq-modelo').value     = m.modelo || '';
+  document.getElementById('editmaq-serial').value     = m.serial || '';
+  document.getElementById('editmaq-setor').value      = m.setor || '';
+  document.getElementById('editmaq-manual').value     = m.manualLink || '';
+  document.getElementById('editmaq-agulha').value     = m.infoAgulha || '';
+  document.getElementById('editmaq-ponto').value      = m.infoPonto || '';
+  document.getElementById('editmaq-linha-desc').value = m.infoLinhaDesc || '';
+  document.getElementById('editmaq-linha-link').value = m.infoLinhaLink || '';
+  document.getElementById('editmaq-alerta').value     = m.infoAlerta || '';
+  document.getElementById('modal-editar-maquina').classList.add('aberto');
+}
+
+function fecharModalEditarMaquina() {
+  document.getElementById('modal-editar-maquina').classList.remove('aberto');
+}
+
+async function salvarEdicaoMaquina() {
+  var fbKey = document.getElementById('editmaq-fbkey').value;
+  if (!fbKey) { alert('Erro: maquina nao identificada.'); return; }
+  var updates = {
+    empresa:      document.getElementById('editmaq-empresa').value.trim(),
+    modelo:       document.getElementById('editmaq-modelo').value.trim(),
+    serial:       document.getElementById('editmaq-serial').value.trim(),
+    setor:        document.getElementById('editmaq-setor').value.trim(),
+    manualLink:   document.getElementById('editmaq-manual').value.trim(),
+    infoAgulha:   document.getElementById('editmaq-agulha').value.trim(),
+    infoPonto:    document.getElementById('editmaq-ponto').value.trim(),
+    infoLinhaDesc:document.getElementById('editmaq-linha-desc').value.trim(),
+    infoLinhaLink:document.getElementById('editmaq-linha-link').value.trim(),
+    infoAlerta:   document.getElementById('editmaq-alerta').value.trim(),
+  };
+  try {
+    var fb = window._fb;
+    await fb.update(fb.ref(fb.db, 'maquinas/' + fbKey), updates);
+    fecharModalEditarMaquina();
+    alert('Maquina atualizada! As informacoes aparecerao no QR Code.');
+  } catch(e) {
+    alert('Erro ao salvar: ' + e.message);
   }
 }
 
