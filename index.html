@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -733,31 +732,44 @@ function filtrarHistorico() {
   });
   renderHistorico(regs);
 }
-function renderHistorico(regs) {
-  const lista = document.getElementById('historico-lista');
-  if(!regs || !regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhum registro encontrado.</div>'; return; }
-  lista.innerHTML = regs.map(r => {
-    const dataFmt = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
-    const proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
-    const tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
-    const tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Nao informado';
-    const servTags  = (r.servicos||[]).map(s=>'<span class="tag">'+s+'</span>').join('');
-    const pecaTags  = (r.pecas||[]).map(p=>'<span class="tag">'+p+'</span>').join('');
-    const tecSig    = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '-';
-    const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '-';
-    const fotosMaq  = (r.fotosMaquina||[]).map(f=>'<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Maquina</div></div>').join('') || (r.fotoMaquina?'<div class="reg-foto-item"><img src="'+r.fotoMaquina+'"><div class="reg-foto-label">Maquina</div></div>':'');
-    const fotosProb = (r.fotosProblema||[]).map(f=>'<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Problema</div></div>').join('') || (r.fotoProblema?'<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>':'');
-    const fotosHtml = (fotosMaq || fotosProb) ? '<div class="reg-fotos">'+fotosMaq+fotosProb+'</div>' : '';
-    const manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">&#128196; Abrir manual da maquina</a></div>' : '';
-    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+(r.modelo||'-')+'</div><div style="font-size:.8rem;color:var(--muted)">'+dataFmt+(r.setor?' - '+r.setor:'')+'</div></div><span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+(servTags?'<div class="reg-tags">'+servTags+'</div>':'')+(pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+(r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+(proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+fotosHtml+manualHtml+'<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div><div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div>'+(comBotoes?'<div class="btn-excluir-wrap" style="display:none;margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\''+( r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div>':'')+'</div>';
+function buildRegistroCard(r, comBotoes) {
+  var dataFmt = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
+  var proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
+  var tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
+  var tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Nao informado';
+  var servTags = (r.servicos||[]).map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('');
+  var pecaTags = (r.pecas||[]).map(function(p){ return '<span class="tag">'+p+'</span>'; }).join('');
+  var tecSig = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '-';
+  var resSig = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '-';
+  var fotosM = (r.fotosMaquina||[]).map(function(f){ return '<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Maquina</div></div>'; }).join('');
+  if (!fotosM && r.fotoMaquina) fotosM = '<div class="reg-foto-item"><img src="'+r.fotoMaquina+'"><div class="reg-foto-label">Maquina</div></div>';
+  var fotosP = (r.fotosProblema||[]).map(function(f){ return '<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Problema</div></div>'; }).join('');
+  if (!fotosP && r.fotoProblema) fotosP = '<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>';
+  var fotosHtml = (fotosM||fotosP) ? '<div class="reg-fotos">'+fotosM+fotosP+'</div>' : '';
+  var manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">Manual</a></div>' : '';
+  var botoesHtml = comBotoes ? '<div class="btn-excluir-wrap" style="display:none;margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\''+( r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div>' : '';
+  return '<div class="registro-card">'+
+    '<div class="reg-header"><div><div class="reg-date">'+dataFmt+'</div>'+
+    '<div style="font-size:.8rem;color:var(--muted)">'+(r.empresa||'')+(r.setor?' - '+r.setor:'')+'</div></div>'+
+    '<span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+
+    (servTags?'<div class="reg-tags">'+servTags+'</div>':'')+
+    (pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+
+    (r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+
+    (proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+
+    fotosHtml+manualHtml+
+    '<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div>'+
+    '<div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div>'+
+    botoesHtml+'</div>';
+}
 
-  }).join('');
+function renderHistorico(regs) {
+  var lista = document.getElementById('historico-lista');
+  if (!regs || !regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhum registro encontrado.</div>'; return; }
+  lista.innerHTML = regs.map(function(r){ return buildRegistroCard(r, true); }).join('');
+  if (sessionStorage.getItem('auth') === 'admin') ativarAdmin();
 }
-async function excluirRegistro(fbKey) {
-  if(!confirm('Excluir este registro da nuvem?')) return;
-  try { const { db, ref, remove } = window._fb; await remove(ref(db, 'manutencoes/'+fbKey)); }
-  catch(e) { alert('Erro ao excluir: ' + e.message); }
-}
+
+
 function editarRegistro(fbKey) {
   const r = todosRegistros.find(x => x.fbKey === fbKey);
   if(!r) return;
