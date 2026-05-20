@@ -755,7 +755,7 @@ function filtrarHistorico() {
   const filtroTipo    = document.getElementById('filtro-tipo')?.value || '';
   let regs = todosRegistros.filter(r => {
     if(filtroEmpresa && !r.empresa?.toLowerCase().includes(filtroEmpresa)) return false;
-    if(filtroModelo  && !r.modelo?.toLowerCase().includes(filtroModelo))  return false;
+    if(filtroModelo  && !normStr(r.modelo).includes(normStr(filtroModelo)))  return false;
     if(filtroTipo    && r.tipo !== filtroTipo) return false;
     return true;
   });
@@ -958,6 +958,11 @@ window.addEventListener('load', () => {
   }
 });
 
+
+function normStr(s) {
+  return (s||'').toLowerCase().replace(/[\u2013\u2014]/g,'-').replace(/\s+/g,' ').trim();
+}
+
 // ===== VARIAVEIS GLOBAIS =====
 var CONFIG = {emailMgCity: 'mgcity.assistenciatecnica@gmail.com'};
 var EMAILJS_PUBLIC_KEY = 'gu4DqMQsrWgA0aWtg';
@@ -1024,11 +1029,11 @@ function abrirTelaPublica(maquina) {
   if (logoEl) logoEl.src = LOGO_SRC;
   window._maquinaQR = maquina;
   function popular() {
-    var maqL = maquina ? maquina.toLowerCase() : '';
+    var maqN = normStr(maquina);
     var m = todasMaquinas.find(function(x){
       if (!x.modelo) return false;
-      var xL = x.modelo.toLowerCase();
-      return xL === maqL || xL.includes(maqL) || maqL.includes(xL);
+      var xN = normStr(x.modelo);
+      return xN === maqN || xN.includes(maqN) || maqN.includes(xN);
     });
     document.getElementById('qr-pub-nome').textContent = maquina;
     if (m) {
@@ -1056,14 +1061,13 @@ function abrirTelaPublica(maquina) {
 }
 
 function renderQrPubHistorico(maquina, fbKey) {
-  var maqLower = maquina ? maquina.toLowerCase() : '';
+  var maqNorm = normStr(maquina);
   var regs = todosRegistros.filter(function(r){
     if (fbKey && r.maquinaKey === fbKey) return true;
     if (r.modelo) {
-      var rLower = r.modelo.toLowerCase();
-      if (rLower === maqLower) return true;
-      // Busca parcial - se um contem o outro
-      if (maqLower && (rLower.includes(maqLower) || maqLower.includes(rLower))) return true;
+      var rNorm = normStr(r.modelo);
+      if (rNorm === maqNorm) return true;
+      if (maqNorm && (rNorm.includes(maqNorm) || maqNorm.includes(rNorm))) return true;
     }
     return false;
   });
