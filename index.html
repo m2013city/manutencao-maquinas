@@ -159,6 +159,23 @@ window.dispatchEvent(new Event('firebase-ready'));
   .manual-link { display:inline-flex; align-items:center; gap:6px; color:var(--accent); font-size:.85rem; text-decoration:none; font-weight:600; margin-top:6px; }
   .manual-link:hover { text-decoration:underline; }
 
+  /* EMPRESAS */
+  .empresa-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s;}
+  .empresa-card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(26,107,154,.12);}
+  .empresa-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .empresa-card-nome{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--accent);}
+  .empresa-card-stats{display:flex;gap:10px;}
+  .empresa-stat{background:var(--tag-bg);color:var(--accent);border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:600;}
+  .empresa-maquinas{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .maquina-chip{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:.78rem;cursor:pointer;transition:all .15s;}
+  .maquina-chip:hover{border-color:var(--accent);color:var(--accent);}
+  /* TELA FICHA MAQUINA */
+  #tela-ficha-maquina{display:none;position:fixed;inset:0;z-index:9995;background:var(--bg);overflow-y:auto;}
+  .ficha-header{background:var(--accent);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;}
+  .ficha-back{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;}
+  .ficha-back:hover{background:rgba(255,255,255,.3);}
+  .ficha-titulo{font-family:'DM Serif Display',serif;font-size:1.1rem;}
+  .ficha-sub{font-size:.72rem;opacity:.75;}
   /* TELA PUBLICA QR */
   #tela-qr-publica{display:none;position:fixed;inset:0;z-index:9998;background:var(--bg);overflow-y:auto;}
   .qr-pub-header{background:var(--accent);color:#fff;padding:13px 17px;display:flex;align-items:center;gap:11px;}
@@ -275,11 +292,12 @@ window.dispatchEvent(new Event('firebase-ready'));
 </header>
 
 <div class="tabs">
+  <button class="tab-btn" onclick="switchTab('empresas', this)">&#127981; Empresas</button>
   <button class="tab-btn active" onclick="switchTab('registrar', this)">+ Registrar</button>
   <button class="tab-btn" onclick="switchTab('historico', this)">&#128203; Histórico</button>
   <button class="tab-btn" onclick="switchTab('qrcode', this)">&#11035; QR Code</button>
   <button class="tab-btn" onclick="switchTab('pedido', this)">&#128230; Pedido Pecas</button>
-  <button class="tab-btn" onclick="switchTab('config', this)">&#9881; Config</button>
+  <button class="tab-btn" onclick="switchTab('config', this)">&#9881;</button>
 </div>
 
 <div id="tab-registrar" class="tab-content active">
@@ -718,7 +736,8 @@ function renderHistorico(regs) {
     const fotosProb = (r.fotosProblema||[]).map(f=>'<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Problema</div></div>').join('') || (r.fotoProblema?'<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>':'');
     const fotosHtml = (fotosMaq || fotosProb) ? '<div class="reg-fotos">'+fotosMaq+fotosProb+'</div>' : '';
     const manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">&#128196; Abrir manual da maquina</a></div>' : '';
-    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+(r.modelo||'-')+'</div><div style="font-size:.8rem;color:var(--muted)">'+dataFmt+(r.setor?' - '+r.setor:'')+'</div></div><span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+(servTags?'<div class="reg-tags">'+servTags+'</div>':'')+(pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+(r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+(proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+fotosHtml+manualHtml+'<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div><div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div><div class="btn-excluir-wrap" style="display:none;margin-top:8px;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(\''+encodeURIComponent(r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">Excluir</button></div></div>';
+    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+(r.modelo||'-')+'</div><div style="font-size:.8rem;color:var(--muted)">'+dataFmt+(r.setor?' - '+r.setor:'')+'</div></div><span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+(servTags?'<div class="reg-tags">'+servTags+'</div>':'')+(pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+(r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+(proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+fotosHtml+manualHtml+'<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div><div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div><div class="btn-excluir-wrap" style="display:none;margin-top:8px;gap:6px;flex-wrap:wrap;display:flex"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick=\"abrirEditarMaquinaPorModelo(\'' + encodeURIComponent(r.modelo||'') + '\')\">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div></div>';
+
   }).join('');
 }
 async function excluirRegistro(fbKey) {
@@ -1237,6 +1256,916 @@ async function salvarEdicaoMaquina() {
   } catch(e) {
     alert('Erro ao salvar: ' + e.message);
   }
+}
+
+
+// ===== TELA EMPRESAS =====
+var maquinaAtual = null;
+
+function renderEmpresas() {
+  var busca = (document.getElementById('busca-empresa')||{value:''}).value.toLowerCase();
+  var lista = document.getElementById('empresas-lista');
+  if (!lista) return;
+  var empresas = {};
+  todasMaquinas.forEach(function(m) {
+    var emp = m.empresa || 'Sem empresa';
+    if (!empresas[emp]) empresas[emp] = [];
+    empresas[emp].push(m);
+  });
+  var nomes = Object.keys(empresas).filter(function(e) {
+    return !busca || e.toLowerCase().includes(busca);
+  }).sort();
+  if (!nomes.length) {
+    lista.innerHTML = '<div class="historico-empty">Nenhuma empresa encontrada.</div>';
+    return;
+  }
+  lista.innerHTML = nomes.map(function(emp) {
+    var mqs = empresas[emp];
+    var totalMan = todosRegistros.filter(function(r) {
+      return mqs.some(function(m){ return m.fbKey === r.maquinaKey || m.modelo === r.modelo; });
+    }).length;
+    var chips = mqs.map(function(m) {
+      var fk = m.fbKey;
+      return '<span class="maquina-chip" onclick="abrirFichaMaquina(\''+fk+'\')">'+( m.modelo||'Sem modelo')+'</span>';
+    }).join('');
+    return '<div class="empresa-card">'+
+      '<div class="empresa-card-header">'+
+        '<div class="empresa-card-nome">&#127981; '+emp+'</div>'+
+        '<div class="empresa-card-stats">'+
+          '<span class="empresa-stat">'+mqs.length+' maquina'+(mqs.length!==1?'s':'')+'</span>'+
+          '<span class="empresa-stat">'+totalMan+' manutencao'+(totalMan!==1?'es':'')+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="empresa-maquinas">'+chips+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function abrirFichaMaquina(fbKey) {
+  var m = todasMaquinas.find(function(x){ return x.fbKey === fbKey; });
+  if (!m) return;
+  maquinaAtual = m;
+  document.getElementById('ficha-maq-titulo').textContent = m.modelo || '—';
+  document.getElementById('ficha-maq-sub').textContent = m.empresa || '—';
+  var alerta = m.infoAlerta ? '<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:8px;margin-top:8px;font-size:.8rem;color:#856404;">&#9888; '+m.infoAlerta+'</div>' : '';
+  var info = document.getElementById('ficha-maq-info');
+  info.innerHTML = '<div class="card-title">&#128295; Informacoes da Maquina</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'+
+      '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">Empresa</div><div style="font-size:.88rem">'+(m.empresa||'—')+'</div></div>'+
+      '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">N Serie</div><div style="font-size:.88rem">'+(m.serial||'—')+'</div></div>'+
+      '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">Setor</div><div style="font-size:.88rem">'+(m.setor||'—')+'</div></div>'+
+    '</div>'+
+    '<div style="border-top:1px solid var(--border);padding-top:10px;">'+
+      '<div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Informacoes Tecnicas</div>'+
+      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Agulha:</b> '+(m.infoAgulha||'Nao informado')+'</div>'+
+      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Ponto:</b> '+(m.infoPonto||'Nao informado')+'</div>'+
+      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Passagem de Linha:</b> '+(m.infoLinhaDesc||'Nao informado')+'</div>'+
+      alerta+
+    '</div>';
+  var regs = todosRegistros.filter(function(r){
+    return r.maquinaKey === m.fbKey || (r.modelo && r.modelo === m.modelo);
+  });
+  var histEl = document.getElementById('ficha-maq-historico');
+  if (!regs.length) {
+    histEl.innerHTML = '<div class="historico-empty">Nenhuma manutencao registrada.</div>';
+  } else {
+    histEl.innerHTML = regs.map(function(r){ return buildRegistroCard(r, true); }).join('');
+    if (sessionStorage.getItem('auth') === 'admin') ativarAdmin();
+  }
+  document.getElementById('tela-ficha-maquina').style.display = 'block';
+}
+
+function fecharFichaMaquina() {
+  document.getElementById('tela-ficha-maquina').style.display = 'none';
+  maquinaAtual = null;
+}
+
+function novaManutencaoFicha() {
+  if (!maquinaAtual) return;
+  var m = maquinaAtual;
+  ['empresa','modelo','serial','setor','info-agulha','info-ponto','info-linha-desc','info-linha-link','info-alerta','manual-link'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (id==='empresa') el.value = m.empresa||'';
+    else if (id==='modelo') el.value = m.modelo||'';
+    else if (id==='serial') el.value = m.serial||'';
+    else if (id==='setor') el.value = m.setor||'';
+    else if (id==='info-agulha') el.value = m.infoAgulha||'';
+    else if (id==='info-ponto') el.value = m.infoPonto||'';
+    else if (id==='info-linha-desc') el.value = m.infoLinhaDesc||'';
+    else if (id==='info-linha-link') el.value = m.infoLinhaLink||'';
+    else if (id==='info-alerta') el.value = m.infoAlerta||'';
+    else if (id==='manual-link') el.value = m.manualLink||'';
+  });
+  fecharFichaMaquina();
+  switchTab('registrar', null);
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  var regBtn = document.querySelector('[onclick*="registrar"]');
+  if (regBtn) regBtn.classList.add('active');
+}
+
+function editarInfoMaquinaFicha() {
+  if (!maquinaAtual) return;
+  abrirEditarMaquina(maquinaAtual);
+}
+
+</script>
+</body>
+</html>btn-excluir-wrap" style="display:none;margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\'' + (r.modelo||'') + '\''))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">Excluir</button></div>'
+function renderServicos() {
+  var grid = document.getElementById('servicos-grid');
+  grid.innerHTML = SERVICOS.map(function(s) {
+    var det = s.detalhe ? '<div class="check-item-detalhe"><input type="text" id="det-'+s.id+'" placeholder="'+( s.placeholder||'')+'" onclick="event.stopPropagation()"></div>' : '';
+    return '<label class="check-item" id="chk-'+s.id+'" onclick="toggleCheck(\''+s.id+'\')"><input type="checkbox" id="cb-'+s.id+'"><span>'+s.icon+'</span><span>'+s.label+'</span>'+det+'</label>';
+  }).join('');
+}
+function toggleCheck(id) {
+  const el = document.getElementById('chk-'+id);
+  const cb = document.getElementById('cb-'+id);
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+}
+let pecaIdx = 0;
+function addPeca() {
+  const id = 'peca-'+pecaIdx++;
+  const div = document.createElement('div');
+  div.className = 'peca-row'; div.id = id;
+  div.innerHTML = '<input type="text" placeholder="Nome / codigo da peca" class="peca-input"><button class="btn-remove" onclick="removePeca(\''+id+'\')">&#10005;</button>';
+  document.getElementById('pecas-list').appendChild(div);
+}
+function removePeca(id) { document.getElementById(id)?.remove(); }
+function initCanvas(id) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+  let drawing = false;
+  const getPos = e => { const r = canvas.getBoundingClientRect(); const src = e.touches ? e.touches[0] : e; return { x: src.clientX - r.left, y: src.clientY - r.top }; };
+  canvas.addEventListener('mousedown', e => { drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x,p.y); });
+  canvas.addEventListener('mousemove', e => { if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#1a1a18'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke(); });
+  canvas.addEventListener('mouseup', ()=>drawing=false);
+  canvas.addEventListener('mouseleave', ()=>drawing=false);
+  canvas.addEventListener('touchstart', e=>{ e.preventDefault(); drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x,p.y); }, {passive:false});
+  canvas.addEventListener('touchmove', e=>{ e.preventDefault(); if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#1a1a18'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke(); }, {passive:false});
+  canvas.addEventListener('touchend', ()=>drawing=false);
+}
+function clearSig(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
+function setStatus(state, msg) {
+  document.getElementById('status-text').textContent = msg;
+  const dot = document.getElementById('status-dot');
+  dot.className = '';
+  if(state==='online') dot.classList.add('online');
+  if(state==='error')  dot.classList.add('error');
+}
+async function salvarRegistro() {
+  if(!window._fbReady) { alert('Firebase nao configurado.'); return; }
+  const modelo = document.getElementById('modelo').value.trim();
+  const data   = document.getElementById('data').value;
+  if (!modelo || !data) { alert('Preencha ao menos o modelo da maquina e a data.'); return; }
+  const servicos = SERVICOS.filter(s => document.getElementById('cb-'+s.id)?.checked).map(function(s){
+    var det = document.getElementById('det-'+s.id);
+    return det && det.value.trim() ? s.label+': '+det.value.trim() : s.label;
+  });
+  const pecas    = [...document.querySelectorAll('.peca-input')].map(i=>i.value.trim()).filter(Boolean);
+  const sigTecnico     = document.getElementById('sig-tecnico').toDataURL();
+  const sigResponsavel = document.getElementById('sig-responsavel').toDataURL();
+  const reg = {
+    ts: Date.now(),
+    empresa: document.getElementById('empresa').value.trim(),
+    modelo, serial: document.getElementById('serial').value.trim(),
+    setor: document.getElementById('setor').value.trim(),
+    data, proxima: document.getElementById('proxima').value,
+    tipo: document.getElementById('tipo').value,
+    servicos, pecas,
+    obs: document.getElementById('obs').value.trim(),
+    tecnico: document.getElementById('tecnico').value.trim(),
+    responsavel: document.getElementById('responsavel').value.trim(),
+    manualLink: document.getElementById('manual-link').value.trim(),
+    sigTecnico, sigResponsavel,
+    fotosMaquina:  _fotosMultiplas.maquina || [],
+    fotosProblema: _fotosMultiplas.problema || [],
+  };
+  try {
+    setStatus('', 'Salvando...');
+    const { db, ref, push } = window._fb;
+    await push(ref(db, 'manutencoes'), reg);
+    setStatus('online', 'Online');
+    alert('Registro salvo na nuvem com sucesso!');
+    limparForm();
+  } catch(e) { setStatus('error', 'Erro'); alert('Erro ao salvar: ' + e.message); }
+}
+function limparForm() {
+  ['empresa','modelo','serial','setor','data','proxima','obs','tecnico','responsavel','manual-link','info-agulha','info-ponto','info-linha-desc','info-linha-link','info-alerta'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('tipo').value = '';
+  SERVICOS.forEach(s => { const cb=document.getElementById('cb-'+s.id); const chk=document.getElementById('chk-'+s.id); if(cb) cb.checked=false; if(chk) chk.classList.remove('checked'); });
+  document.getElementById('pecas-list').innerHTML = '';
+  clearSig('sig-tecnico'); clearSig('sig-responsavel');
+  _fotosMultiplas.maquina=[]; _fotosMultiplas.problema=[]; renderFotosGrid('maquina'); renderFotosGrid('problema');
+  document.getElementById('data').value = new Date().toISOString().split('T')[0];
+}
+window._fotos = { maquina: null, problema: null };
+function carregarFoto(tipo, input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 800; let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h * MAX / w); w = MAX; } else { w = Math.round(w * MAX / h); h = MAX; } }
+      const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+      window._fotos[tipo] = dataUrl;
+      document.getElementById('img-' + tipo).src = dataUrl;
+      document.getElementById('area-' + tipo).style.display = 'none';
+      document.getElementById('preview-' + tipo).style.display = 'block';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function removerFoto(tipo) {
+  window._fotos[tipo] = null;
+  document.getElementById('img-' + tipo).src = '';
+  document.getElementById('area-' + tipo).style.display = 'block';
+  document.getElementById('preview-' + tipo).style.display = 'none';
+  const area = document.getElementById('area-' + tipo);
+  const input = area.querySelector('input[type=file]');
+  if (input) input.value = '';
+}
+let todosRegistros = [];
+function iniciarEscuta() {
+  if(!window._fbReady) return;
+  const { db, ref, onValue } = window._fb;
+  onValue(ref(db, 'manutencoes'), snapshot => {
+    todosRegistros = [];
+    snapshot.forEach(child => { todosRegistros.push({ fbKey: child.key, ...child.val() }); });
+    todosRegistros.sort((a,b) => b.ts - a.ts);
+    setStatus('online', 'Online');
+    filtrarHistorico();
+    if(sessionStorage.getItem('auth') === 'admin') ativarAdmin();
+  }, err => {
+    setStatus('error', 'Sem conexao');
+    document.getElementById('historico-lista').innerHTML = '<div class="historico-empty">Erro ao carregar dados.</div>';
+  });
+}
+function filtrarHistorico() {
+  const filtroEmpresa = document.getElementById('filtro-empresa')?.value.toLowerCase() || '';
+  const filtroModelo  = document.getElementById('filtro-modelo')?.value.toLowerCase() || '';
+  const filtroTipo    = document.getElementById('filtro-tipo')?.value || '';
+  let regs = todosRegistros.filter(r => {
+    if(filtroEmpresa && !r.empresa?.toLowerCase().includes(filtroEmpresa)) return false;
+    if(filtroModelo  && !r.modelo?.toLowerCase().includes(filtroModelo))  return false;
+    if(filtroTipo    && r.tipo !== filtroTipo) return false;
+    return true;
+  });
+  renderHistorico(regs);
+}
+function renderHistorico(regs) {
+  const lista = document.getElementById('historico-lista');
+  if(!regs || !regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhum registro encontrado.</div>'; return; }
+  lista.innerHTML = regs.map(r => {
+    const dataFmt = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
+    const proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
+    const tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
+    const tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Nao informado';
+    const servTags  = (r.servicos||[]).map(s=>'<span class="tag">'+s+'</span>').join('');
+    const pecaTags  = (r.pecas||[]).map(p=>'<span class="tag">'+p+'</span>').join('');
+    const tecSig    = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '-';
+    const resSig    = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '-';
+    const fotosMaq  = (r.fotosMaquina||[]).map(f=>'<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Maquina</div></div>').join('') || (r.fotoMaquina?'<div class="reg-foto-item"><img src="'+r.fotoMaquina+'"><div class="reg-foto-label">Maquina</div></div>':'');
+    const fotosProb = (r.fotosProblema||[]).map(f=>'<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Problema</div></div>').join('') || (r.fotoProblema?'<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>':'');
+    const fotosHtml = (fotosMaq || fotosProb) ? '<div class="reg-fotos">'+fotosMaq+fotosProb+'</div>' : '';
+    const manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">&#128196; Abrir manual da maquina</a></div>' : '';
+    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+(r.modelo||'-')+'</div><div style="font-size:.8rem;color:var(--muted)">'+dataFmt+(r.setor?' - '+r.setor:'')+'</div></div><span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+(servTags?'<div class="reg-tags">'+servTags+'</div>':'')+(pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+(r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+(proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+fotosHtml+manualHtml+'<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div><div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div><div class="btn-excluir-wrap" style="display:none;margin-top:10px"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button> <button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">Excluir</button></div></div>';
+  }).join('');
+}
+async function excluirRegistro(fbKey) {
+  if(!confirm('Excluir este registro da nuvem?')) return;
+  try { const { db, ref, remove } = window._fb; await remove(ref(db, 'manutencoes/'+fbKey)); }
+  catch(e) { alert('Erro ao excluir: ' + e.message); }
+}
+function editarRegistro(fbKey) {
+  const r = todosRegistros.find(x => x.fbKey === fbKey);
+  if(!r) return;
+  document.getElementById('edit-fbkey').value = fbKey;
+  document.getElementById('edit-empresa').value   = r.empresa   || '';
+  document.getElementById('edit-modelo').value    = r.modelo    || '';
+  document.getElementById('edit-serial').value    = r.serial    || '';
+  document.getElementById('edit-setor').value     = r.setor     || '';
+  document.getElementById('edit-data').value      = r.data      || '';
+  document.getElementById('edit-proxima').value   = r.proxima   || '';
+  document.getElementById('edit-tipo').value      = r.tipo      || '';
+  document.getElementById('edit-tecnico').value   = r.tecnico   || '';
+  document.getElementById('edit-responsavel').value = r.responsavel || '';
+  document.getElementById('edit-manual').value           = r.manualLink    || '';
+  document.getElementById('edit-info-agulha').value     = r.infoAgulha    || '';
+  document.getElementById('edit-info-ponto').value      = r.infoPonto     || '';
+  document.getElementById('edit-info-linha-desc').value = r.infoLinhaDesc || '';
+  document.getElementById('edit-info-linha-link').value = r.infoLinhaLink || '';
+  document.getElementById('edit-info-alerta').value     = r.infoAlerta    || '';
+  document.getElementById('edit-obs').value             = r.obs           || '';
+  document.getElementById('modal-editar').classList.add('aberto');
+}
+function fecharModal() {
+  document.getElementById('modal-editar').classList.remove('aberto');
+}
+async function salvarEdicao() {
+  const fbKey = document.getElementById('edit-fbkey').value;
+  if(!fbKey) return;
+  const updates = {
+    empresa:     document.getElementById('edit-empresa').value.trim(),
+    modelo:      document.getElementById('edit-modelo').value.trim(),
+    serial:      document.getElementById('edit-serial').value.trim(),
+    setor:       document.getElementById('edit-setor').value.trim(),
+    data:        document.getElementById('edit-data').value,
+    proxima:     document.getElementById('edit-proxima').value,
+    tipo:        document.getElementById('edit-tipo').value,
+    tecnico:     document.getElementById('edit-tecnico').value.trim(),
+    responsavel: document.getElementById('edit-responsavel').value.trim(),
+    manualLink:   document.getElementById('edit-manual').value.trim(),
+    infoAgulha:   document.getElementById('edit-info-agulha').value.trim(),
+    infoPonto:    document.getElementById('edit-info-ponto').value.trim(),
+    infoLinhaDesc:document.getElementById('edit-info-linha-desc').value.trim(),
+    infoLinhaLink:document.getElementById('edit-info-linha-link').value.trim(),
+    infoAlerta:   document.getElementById('edit-info-alerta').value.trim(),
+    obs:          document.getElementById('edit-obs').value.trim(),
+  };
+  try {
+    const { db, ref } = window._fb;
+    const { update } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
+    await update(ref(db, 'manutencoes/'+fbKey), updates);
+    fecharModal();
+    alert('Registro atualizado com sucesso!');
+  } catch(e) { alert('Erro ao editar: ' + e.message); }
+}
+function atualizarManualPreview() {
+  const val = document.getElementById('manual-link').value.trim();
+  const prev = document.getElementById('manual-link-preview');
+  if(val && (val.startsWith('http://') || val.startsWith('https://'))) {
+    prev.style.display = 'block';
+    prev.innerHTML = '<a class="manual-link" href="'+val+'" target="_blank">&#128196; Abrir manual</a>';
+  } else {
+    prev.style.display = 'none';
+    prev.innerHTML = '';
+  }
+}
+function updateQR() {
+  const val = document.getElementById('qr-modelo').value.trim();
+  const div = document.getElementById('qrcode');
+  const instrucao = document.getElementById('qr-instrucao');
+  const badge = document.getElementById('qr-machine-label');
+  const btnImprimir = document.getElementById('btn-imprimir');
+  const urlDisplay = document.getElementById('qr-url-display');
+  const urlText = document.getElementById('qr-url-text');
+  if(!val) { div.innerHTML=''; instrucao.textContent='Digite o nome/modelo da maquina acima para gerar o QR Code.'; badge.style.display='none'; btnImprimir.style.display='none'; urlDisplay.style.display='none'; return; }
+  const base = window.location.href.split('?')[0];
+  const url  = base + '?maquina=' + encodeURIComponent(val);
+  div.innerHTML = '';
+  new QRCode(div, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.H });
+  instrucao.textContent = 'QR Code gerado! Imprima e cole na maquina.';
+  badge.textContent = val; badge.style.display = 'inline-block';
+  btnImprimir.style.display = 'inline-block';
+  urlText.textContent = url; urlDisplay.style.display = 'block';
+}
+function imprimirQR() {
+  const modelo = document.getElementById('qr-modelo').value.trim();
+  const qrHTML = document.getElementById('qrcode').innerHTML;
+  const urlLink = document.getElementById('qr-url-text').textContent;
+  const w = window.open('','_blank','width=400,height=560');
+  w.document.write('<html><head><title>QR - '+modelo+'</title><style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#fff;padding:20px;gap:8px}img.ql{height:54px;border-radius:8px}h2{font-size:.95rem;margin:0;text-align:center}.url{font-size:.52rem;color:#999;word-break:break-all;text-align:center;max-width:210px}</style></head><body><img class="ql" src="' + LOGO_SRC + '">'+qrHTML+'<h2>'+modelo+'</h2><div class="url">'+urlLink+'</div><sc'+'ript>window.onload=function(){window.print()}<\/sc'+'ript></body></html>');
+  w.document.close();
+}
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+function checkURLParams() {
+  var params = new URLSearchParams(window.location.search);
+  var maquina = params.get('maquina');
+  if (!maquina) return;
+  var authAtual = sessionStorage.getItem('auth');
+  if (authAtual === '1' || authAtual === 'admin') {
+    document.getElementById('tela-senha').style.display = 'none';
+    switchTab('historico', null);
+    var btns = document.querySelectorAll('.tab-btn');
+    if(btns[1]) btns[1].classList.add('active');
+    if(btns[0]) btns[0].classList.remove('active');
+    document.getElementById('filtro-modelo').value = maquina;
+    filtrarHistorico();
+  } else {
+    abrirTelaPublica(maquina);
+  }
+}
+var SENHA_CORRETA = 'Primeiroentrar2026';
+var SENHA_ADMIN   = 'Segundoadmin2026';
+function ativarAdmin() { document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){ el.style.display='flex'; el.style.gap='8px'; el.style.justifyContent='flex-end'; }); }
+function verificarSenha() {
+  var input = document.getElementById('campo-senha');
+  var erro  = document.getElementById('senha-erro');
+  var val   = input.value.trim();
+  if(val === SENHA_ADMIN) {
+    document.getElementById('tela-senha').style.display = 'none';
+    sessionStorage.setItem('auth', 'admin'); ativarAdmin();
+  } else if(val === SENHA_CORRETA) {
+    document.getElementById('tela-senha').style.display = 'none';
+    sessionStorage.setItem('auth', '1');
+  } else {
+    input.classList.add('erro'); erro.style.display = 'block'; input.value = '';
+    setTimeout(function(){ input.classList.remove('erro'); }, 400);
+  }
+}
+var auth = sessionStorage.getItem('auth');
+if(auth === '1' || auth === 'admin') {
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('tela-senha').style.display = 'none';
+    if(auth === 'admin') ativarAdmin();
+  });
+}
+window.addEventListener('load', () => {
+  carregarConfig();
+  iniciarEscutaMaquinas();
+  renderServicos();
+  initCanvas('sig-tecnico');
+  initCanvas('sig-responsavel');
+  document.getElementById('data').value = new Date().toISOString().split('T')[0];
+  if(window._fbReady) { iniciarEscuta(); checkURLParams(); }
+  else {
+    window.addEventListener('firebase-ready', () => { iniciarEscuta(); checkURLParams(); });
+    setTimeout(() => { if(!window._fbReady) setStatus('error', 'Nao configurado'); }, 3000);
+  }
+});
+
+// ===== VARIAVEIS GLOBAIS =====
+var CONFIG = {emailMgCity: 'mgcity.assistenciatecnica@gmail.com'};
+var EMAILJS_PUBLIC_KEY = 'gu4DqMQsrWgA0aWtg';
+var EMAILJS_SERVICE_ID = 'mgcity_gmail';
+var EMAILJS_TEMPLATE_ID = 'template_2jbnjq9';
+var todasMaquinas = [];
+var LOGO_SRC = 'data:image/jpeg;base64,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';
+var pedidoPecaIdx = 0;
+var _fotosMultiplas = {maquina: [], problema: []};
+
+// ===== CONFIG =====
+function salvarConfig() {
+  var e = document.getElementById('config-email-mgcity').value.trim();
+  if (e) CONFIG.emailMgCity = e;
+  localStorage.setItem('mgcity_config', JSON.stringify(CONFIG));
+  alert('Configuracoes salvas!');
+}
+function carregarConfig() {
+  var s = localStorage.getItem('mgcity_config');
+  if (s) CONFIG = JSON.parse(s);
+  var el = document.getElementById('config-email-mgcity');
+  if (el) el.value = CONFIG.emailMgCity;
+}
+
+// ===== MULTIPLAS FOTOS =====
+function carregarFotos(tipo, input) {
+  var files = Array.from(input.files);
+  if (!files.length) return;
+  files.forEach(function(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var MAX = 800; var w = img.width, h = img.height;
+        if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
+        var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+        _fotosMultiplas[tipo].push(dataUrl);
+        renderFotosGrid(tipo);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderFotosGrid(tipo) {
+  var grid = document.getElementById('fotos-' + tipo);
+  if (!grid) return;
+  grid.innerHTML = _fotosMultiplas[tipo].map(function(src, i) {
+    return '<div class="foto-item"><img src="'+src+'"><button class="foto-item-remove" onclick="removerFotoIdx(\''+tipo+'\','+i+')">x</button></div>';
+  }).join('');
+}
+function removerFotoIdx(tipo, idx) {
+  _fotosMultiplas[tipo].splice(idx, 1);
+  renderFotosGrid(tipo);
+}
+
+// ===== TELA PUBLICA =====
+function abrirTelaPublica(maquina) {
+  document.getElementById('tela-qr-publica').style.display = 'block';
+  document.getElementById('tela-senha').style.display = 'none';
+  var logoEl = document.getElementById('qr-pub-logo-img');
+  if (logoEl) logoEl.src = LOGO_SRC;
+  window._maquinaQR = maquina;
+  function popular() {
+    var maqL = maquina ? maquina.toLowerCase() : '';
+    var m = todasMaquinas.find(function(x){
+      if (!x.modelo) return false;
+      var xL = x.modelo.toLowerCase();
+      return xL === maqL || xL.includes(maqL) || maqL.includes(xL);
+    });
+    document.getElementById('qr-pub-nome').textContent = maquina;
+    if (m) {
+      document.getElementById('qr-pub-empresa').textContent = m.empresa || '';
+      document.getElementById('qr-pub-agulha').textContent = m.infoAgulha || 'Nao informado';
+      document.getElementById('qr-pub-ponto').textContent = m.infoPonto || 'Nao informado';
+      document.getElementById('qr-pub-linha-desc').textContent = m.infoLinhaDesc || 'Nao informado';
+      var lnk = document.getElementById('qr-pub-linha-link');
+      if (m.infoLinhaLink && m.infoLinhaLink.startsWith('http')) { lnk.href = m.infoLinhaLink; lnk.style.display = 'inline-flex'; }
+      else lnk.style.display = 'none';
+      // Alerta
+      var alerta = document.getElementById('qr-pub-alerta');
+      var alertaTxt = document.getElementById('qr-pub-alerta-texto');
+      if (m.infoAlerta && m.infoAlerta.trim()) {
+        alerta.style.display = 'block';
+        alertaTxt.textContent = m.infoAlerta;
+      } else {
+        alerta.style.display = 'none';
+      }
+    }
+    renderQrPubHistorico(maquina, m ? m.fbKey : null);
+  }
+  if (todasMaquinas.length > 0) popular();
+  else { var t = setInterval(function(){ if(todasMaquinas.length>0){clearInterval(t);popular();} }, 300); }
+}
+
+function renderQrPubHistorico(maquina, fbKey) {
+  var maqLower = maquina ? maquina.toLowerCase() : '';
+  var regs = todosRegistros.filter(function(r){
+    if (fbKey && r.maquinaKey === fbKey) return true;
+    if (r.modelo) {
+      var rLower = r.modelo.toLowerCase();
+      if (rLower === maqLower) return true;
+      // Busca parcial - se um contem o outro
+      if (maqLower && (rLower.includes(maqLower) || maqLower.includes(rLower))) return true;
+    }
+    return false;
+  });
+  var lista = document.getElementById('qr-pub-hist-lista');
+  if (!regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhuma manutencao registrada.</div>'; return; }
+  lista.innerHTML = regs.map(function(r) {
+    var df = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
+    var tc = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
+    var tl = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : '-';
+    var st = (r.servicos||[]).map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('');
+    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+df+'</div></div><span class="reg-tipo '+tc+'">'+tl+'</span></div>'+(st?'<div class="reg-tags">'+st+'</div>':'')+(r.obs?'<div style="font-size:.76rem;color:var(--muted);margin-top:5px">'+r.obs+'</div>':'')+'</div>';
+  }).join('');
+}
+
+var historicoAberto = false;
+function toggleQrHistorico() {
+  historicoAberto = !historicoAberto;
+  document.getElementById('qr-pub-historico').style.display = historicoAberto ? 'block' : 'none';
+  document.getElementById('btn-hist-label').textContent = historicoAberto ? 'Ocultar Historico' : 'Ver Historico de Manutencoes';
+}
+function abrirModalSenhaTec() {
+  document.getElementById('modal-senha-tec').classList.add('aberto');
+  setTimeout(function(){ var el=document.getElementById('campo-senha-tec'); if(el)el.focus(); }, 100);
+}
+function fecharModalSenhaTec() {
+  document.getElementById('modal-senha-tec').classList.remove('aberto');
+  document.getElementById('campo-senha-tec').value='';
+  document.getElementById('senha-tec-erro').style.display='none';
+}
+function verificarSenhaTec() {
+  var val = document.getElementById('campo-senha-tec').value.trim();
+  if (val === SENHA_CORRETA || val === SENHA_ADMIN) {
+    sessionStorage.setItem('auth', val===SENHA_ADMIN ? 'admin' : '1');
+    fecharModalSenhaTec();
+    document.getElementById('tela-qr-publica').style.display='none';
+    history.replaceState({}, '', window.location.pathname);
+    if (val===SENHA_ADMIN) ativarAdmin();
+    // Se veio de QR - pre-preencher modelo em registrar e filtrar historico
+    if (window._maquinaQR) {
+      var maq = window._maquinaQR;
+      // Pre-preencher campo modelo no registrar
+      var campoModelo = document.getElementById('modelo');
+      if (campoModelo) campoModelo.value = maq;
+      // Pre-preencher empresa se disponivel
+      var maqObj = todasMaquinas.find(function(x){ return x.modelo && x.modelo.toLowerCase() === maq.toLowerCase(); });
+      if (maqObj) {
+        var campoEmpresa = document.getElementById('empresa');
+        if (campoEmpresa) campoEmpresa.value = maqObj.empresa || '';
+        var campoSetor = document.getElementById('setor');
+        if (campoSetor && maqObj.setor) campoSetor.value = maqObj.setor;
+        // Pre-preencher infos tecnicas
+        if (document.getElementById('info-agulha')) document.getElementById('info-agulha').value = maqObj.infoAgulha || '';
+        if (document.getElementById('info-ponto')) document.getElementById('info-ponto').value = maqObj.infoPonto || '';
+        if (document.getElementById('info-linha-desc')) document.getElementById('info-linha-desc').value = maqObj.infoLinhaDesc || '';
+        if (document.getElementById('info-linha-link')) document.getElementById('info-linha-link').value = maqObj.infoLinhaLink || '';
+        if (document.getElementById('info-alerta')) document.getElementById('info-alerta').value = maqObj.infoAlerta || '';
+        if (document.getElementById('manual-link')) document.getElementById('manual-link').value = maqObj.manualLink || '';
+      }
+      // Pre-selecionar maquina no pedido de pecas
+      popularSelectPedido();
+      setTimeout(function(){
+        var sel = document.getElementById('pedido-select-maquina');
+        if (sel && maqObj) {
+          sel.value = maqObj.fbKey;
+          selecionarMaquinaPedido();
+        }
+      }, 500);
+      // Filtrar historico
+      document.getElementById('filtro-modelo').value = maq;
+      filtrarHistorico();
+      // Ir para aba registrar para facilitar nova manutencao
+      switchTab('registrar', null);
+      var btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(function(b){ b.classList.remove('active'); });
+      btns[0].classList.add('active');
+    }
+  } else {
+    document.getElementById('campo-senha-tec').classList.add('erro');
+    document.getElementById('senha-tec-erro').style.display='block';
+    document.getElementById('campo-senha-tec').value='';
+    setTimeout(function(){document.getElementById('campo-senha-tec').classList.remove('erro');}, 400);
+  }
+}
+
+// ===== PEDIDO DE PECAS =====
+function popularSelectPedido() {
+  var sel = document.getElementById('pedido-select-maquina');
+  if (!sel) return;
+  var opts = '<option value="">Selecione a maquina...</option>';
+  todasMaquinas.forEach(function(m){
+    opts += '<option value="'+m.fbKey+'">'+(m.empresa?m.empresa+' - ':'')+m.modelo+'</option>';
+  });
+  sel.innerHTML = opts;
+}
+function selecionarMaquinaPedido() {
+  var fbKey = document.getElementById('pedido-select-maquina').value;
+  var info = document.getElementById('pedido-maq-info');
+  if (!fbKey) { info.style.display='none'; return; }
+  var m = todasMaquinas.find(function(x){return x.fbKey===fbKey;});
+  if (!m) return;
+  info.style.display='block';
+  document.getElementById('pedido-modelo-maq').textContent = m.modelo||'-';
+  document.getElementById('pedido-empresa-maq').textContent = m.empresa||'-';
+}
+function addPedidoPeca() {
+  var id = 'pp-' + (pedidoPecaIdx++);
+  var div = document.createElement('div');
+  div.className = 'pedido-grid'; div.id = id;
+  var i1 = document.createElement('input'); i1.type='text'; i1.placeholder='1'; i1.style.textAlign='center';
+  var i2 = document.createElement('input'); i2.type='text'; i2.placeholder='Codigo';
+  var i3 = document.createElement('input'); i3.type='text'; i3.placeholder='Descricao';
+  var i4 = document.createElement('input'); i4.type='text'; i4.placeholder='Observacao';
+  var btn = document.createElement('button'); btn.className='btn-remove'; btn.textContent='X';
+  btn.onclick = function(){ div.remove(); };
+  div.appendChild(i1); div.appendChild(i2); div.appendChild(i3); div.appendChild(i4); div.appendChild(btn);
+  document.getElementById('pedido-pecas-list').appendChild(div);
+}
+async function enviarPedido() {
+  var emailEmpresa = document.getElementById('pedido-email-empresa').value.trim();
+  var tecnico = document.getElementById('pedido-tecnico').value.trim();
+  var modeloEl = document.getElementById('pedido-modelo-maq');
+  var empresaEl = document.getElementById('pedido-empresa-maq');
+  var modeloMaq = modeloEl ? modeloEl.textContent : '-';
+  var empresaMaq = empresaEl ? empresaEl.textContent : '-';
+  if (!emailEmpresa) { alert('Digite o email da empresa.'); return; }
+  if (!tecnico) { alert('Digite o nome do tecnico.'); return; }
+  var rows = document.querySelectorAll('.pedido-grid');
+  var linhas = [];
+  rows.forEach(function(row) {
+    var ins = row.querySelectorAll('input');
+    var q = ins[0]?ins[0].value.trim():'1';
+    var c = ins[1]?ins[1].value.trim():'';
+    var d = ins[2]?ins[2].value.trim():'';
+    var o = ins[3]?ins[3].value.trim():'';
+    if (c||d) linhas.push('Qtd: '+(q||'1')+' | Cod: '+(c||'-')+' | '+(d||'-')+(o?' | Obs: '+o:''));
+  });
+  if (!linhas.length) { alert('Adicione pelo menos uma peca.'); return; }
+  var pecasTexto = linhas.join('\n');
+  var st = document.getElementById('pedido-status');
+  st.style.display='block'; st.style.background='#e0f0fa'; st.style.color='var(--accent)'; st.textContent='Enviando...';
+  try {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    var params = {modelo_maquina:modeloMaq, empresa:empresaMaq, tecnico:tecnico, data:new Date().toLocaleDateString('pt-BR'), pecas:pecasTexto, name:'MG City'};
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, Object.assign({}, params, {email:emailEmpresa}));
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, Object.assign({}, params, {email:CONFIG.emailMgCity}));
+    st.style.background='#e8f5e9'; st.style.color='#2e7d32'; st.textContent='Pedido enviado com sucesso!';
+  } catch(e) {
+    st.style.background='#fde8e8'; st.style.color='var(--accent2)';
+    st.textContent='Erro: '+(e.text||e.message||'Erro desconhecido');
+  }
+}
+
+// ===== ESCUTA MAQUINAS =====
+function iniciarEscutaMaquinas() {
+  if (!window._fbReady) return;
+  var fb = window._fb;
+  fb.onValue(fb.ref(fb.db, 'maquinas'), function(snap) {
+    todasMaquinas = [];
+    snap.forEach(function(c){ var v=c.val(); v.fbKey=c.key; todasMaquinas.push(v); });
+    todasMaquinas.sort(function(a,b){return (a.empresa||'').localeCompare(b.empresa||'');});
+    popularSelectPedido();
+  });
+}
+
+// ===== MIGRACAO =====
+async function migrarDados() {
+  var st = document.getElementById('migracao-status');
+  st.style.display='block'; st.style.background='#e0f0fa'; st.style.color='var(--accent)'; st.textContent='Buscando registros antigos...';
+  try {
+    var fb = window._fb;
+    var snap = await fb.get(fb.ref(fb.db, 'manutencoes'));
+    var migrados=0, pulados=0, novasMaq=[];
+    var promises = [];
+    snap.forEach(function(child) {
+      var r = child.val();
+      if (r.maquinaKey) { pulados++; return; }
+      var fazer = async function() {
+        var maq = todasMaquinas.find(function(m){ return m.modelo&&m.empresa&&m.modelo.toLowerCase()===r.modelo?.toLowerCase()&&m.empresa.toLowerCase()===r.empresa?.toLowerCase(); });
+        if (!maq) maq = novasMaq.find(function(m){ return m.modelo&&m.modelo.toLowerCase()===r.modelo?.toLowerCase(); });
+        if (!maq) {
+          var nm = {ts:Date.now(),empresa:r.empresa||'',modelo:r.modelo||'',serial:r.serial||'',setor:r.setor||'',manualLink:r.manualLink||'',infoAgulha:r.infoAgulha||'',infoPonto:r.infoPonto||'',infoLinhaDesc:r.infoLinhaDesc||'',infoLinhaLink:r.infoLinhaLink||'',infoAlerta:r.infoAlerta||''};
+          var nr = await fb.push(fb.ref(fb.db,'maquinas'), nm);
+          maq = Object.assign({fbKey:nr.key}, nm); novasMaq.push(maq);
+        }
+        await fb.update(fb.ref(fb.db,'manutencoes/'+child.key), {maquinaKey:maq.fbKey});
+        migrados++;
+      };
+      promises.push(fazer());
+    });
+    await Promise.all(promises);
+    st.style.background='#e8f5e9'; st.style.color='#2e7d32';
+    st.textContent='Concluido! '+migrados+' migrados, '+pulados+' ja estavam no novo formato.';
+  } catch(e) {
+    st.style.background='#fde8e8'; st.style.color='var(--accent2)';
+    st.textContent='Erro: '+e.message;
+  }
+}
+
+
+// ===== EDITAR MAQUINA =====
+function abrirEditarMaquinaPorModelo(modeloEncoded) {
+  var modelo = decodeURIComponent(modeloEncoded);
+  var m = todasMaquinas.find(function(x){ return x.modelo === modelo; });
+  if (!m) {
+    alert('Maquina nao encontrada no cadastro. Use a aba Registrar para adicionar as informacoes tecnicas.');
+    return;
+  }
+  abrirEditarMaquina(m);
+}
+
+function abrirEditarMaquina(m) {
+  document.getElementById('editmaq-fbkey').value      = m.fbKey || '';
+  document.getElementById('editmaq-empresa').value    = m.empresa || '';
+  document.getElementById('editmaq-modelo').value     = m.modelo || '';
+  document.getElementById('editmaq-serial').value     = m.serial || '';
+  document.getElementById('editmaq-setor').value      = m.setor || '';
+  document.getElementById('editmaq-manual').value     = m.manualLink || '';
+  document.getElementById('editmaq-agulha').value     = m.infoAgulha || '';
+  document.getElementById('editmaq-ponto').value      = m.infoPonto || '';
+  document.getElementById('editmaq-linha-desc').value = m.infoLinhaDesc || '';
+  document.getElementById('editmaq-linha-link').value = m.infoLinhaLink || '';
+  document.getElementById('editmaq-alerta').value     = m.infoAlerta || '';
+  document.getElementById('modal-editar-maquina').classList.add('aberto');
+}
+
+function fecharModalEditarMaquina() {
+  document.getElementById('modal-editar-maquina').classList.remove('aberto');
+}
+
+async function salvarEdicaoMaquina() {
+  var fbKey = document.getElementById('editmaq-fbkey').value;
+  if (!fbKey) { alert('Erro: maquina nao identificada.'); return; }
+  var updates = {
+    empresa:      document.getElementById('editmaq-empresa').value.trim(),
+    modelo:       document.getElementById('editmaq-modelo').value.trim(),
+    serial:       document.getElementById('editmaq-serial').value.trim(),
+    setor:        document.getElementById('editmaq-setor').value.trim(),
+    manualLink:   document.getElementById('editmaq-manual').value.trim(),
+    infoAgulha:   document.getElementById('editmaq-agulha').value.trim(),
+    infoPonto:    document.getElementById('editmaq-ponto').value.trim(),
+    infoLinhaDesc:document.getElementById('editmaq-linha-desc').value.trim(),
+    infoLinhaLink:document.getElementById('editmaq-linha-link').value.trim(),
+    infoAlerta:   document.getElementById('editmaq-alerta').value.trim(),
+  };
+  try {
+    var fb = window._fb;
+    await fb.update(fb.ref(fb.db, 'maquinas/' + fbKey), updates);
+    fecharModalEditarMaquina();
+    alert('Maquina atualizada! As informacoes aparecerao no QR Code.');
+  } catch(e) {
+    alert('Erro ao salvar: ' + e.message);
+  }
+}
+
+
+// ===== TELA EMPRESAS =====
+var maquinaAtual = null;
+
+function renderEmpresas() {
+  var busca = (document.getElementById('busca-empresa')||{value:''}).value.toLowerCase();
+  var lista = document.getElementById('empresas-lista');
+  if (!lista) return;
+  var empresas = {};
+  todasMaquinas.forEach(function(m) {
+    var emp = m.empresa || 'Sem empresa';
+    if (!empresas[emp]) empresas[emp] = [];
+    empresas[emp].push(m);
+  });
+  var nomes = Object.keys(empresas).filter(function(e) {
+    return !busca || e.toLowerCase().includes(busca);
+  }).sort();
+  if (!nomes.length) {
+    lista.innerHTML = '<div class="historico-empty">Nenhuma empresa encontrada.</div>';
+    return;
+  }
+  lista.innerHTML = nomes.map(function(emp) {
+    var mqs = empresas[emp];
+    var totalMan = todosRegistros.filter(function(r) {
+      return mqs.some(function(m){ return m.fbKey === r.maquinaKey || m.modelo === r.modelo; });
+    }).length;
+    var chips = mqs.map(function(m) {
+      var fk = m.fbKey;
+      return '<span class="maquina-chip" onclick="abrirFichaMaquina(\''+fk+'\')">'+( m.modelo||'Sem modelo')+'</span>';
+    }).join('');
+    return '<div class="empresa-card">'+
+      '<div class="empresa-card-header">'+
+        '<div class="empresa-card-nome">&#127981; '+emp+'</div>'+
+        '<div class="empresa-card-stats">'+
+          '<span class="empresa-stat">'+mqs.length+' maquina'+(mqs.length!==1?'s':'')+'</span>'+
+          '<span class="empresa-stat">'+totalMan+' manutencao'+(totalMan!==1?'es':'')+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="empresa-maquinas">'+chips+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function abrirFichaMaquina(fbKey) {
+  var m = todasMaquinas.find(function(x){ return x.fbKey === fbKey; });
+  if (!m) return;
+  maquinaAtual = m;
+  document.getElementById('ficha-maq-titulo').textContent = m.modelo || '—';
+  document.getElementById('ficha-maq-sub').textContent = m.empresa || '—';
+  var alerta = m.infoAlerta ? '<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:8px;margin-top:8px;font-size:.8rem;color:#856404;">&#9888; '+m.infoAlerta+'</div>' : '';
+  var info = document.getElementById('ficha-maq-info');
+  info.innerHTML = '<div class="card-title">&#128295; Informacoes da Maquina</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'+
+      '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">Empresa</div><div style="font-size:.88rem">'+(m.empresa||'—')+'</div></div>'+
+      '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">N Serie</div><div style="font-size:.88rem">'+(m.serial||'—')+'</div></div>'+
+      '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">Setor</div><div style="font-size:.88rem">'+(m.setor||'—')+'</div></div>'+
+    '</div>'+
+    '<div style="border-top:1px solid var(--border);padding-top:10px;">'+
+      '<div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Informacoes Tecnicas</div>'+
+      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Agulha:</b> '+(m.infoAgulha||'Nao informado')+'</div>'+
+      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Ponto:</b> '+(m.infoPonto||'Nao informado')+'</div>'+
+      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Passagem de Linha:</b> '+(m.infoLinhaDesc||'Nao informado')+'</div>'+
+      alerta+
+    '</div>';
+  var regs = todosRegistros.filter(function(r){
+    return r.maquinaKey === m.fbKey || (r.modelo && r.modelo === m.modelo);
+  });
+  var histEl = document.getElementById('ficha-maq-historico');
+  if (!regs.length) {
+    histEl.innerHTML = '<div class="historico-empty">Nenhuma manutencao registrada.</div>';
+  } else {
+    histEl.innerHTML = regs.map(function(r){ return buildRegistroCard(r, true); }).join('');
+    if (sessionStorage.getItem('auth') === 'admin') ativarAdmin();
+  }
+  document.getElementById('tela-ficha-maquina').style.display = 'block';
+}
+
+function fecharFichaMaquina() {
+  document.getElementById('tela-ficha-maquina').style.display = 'none';
+  maquinaAtual = null;
+}
+
+function novaManutencaoFicha() {
+  if (!maquinaAtual) return;
+  var m = maquinaAtual;
+  ['empresa','modelo','serial','setor','info-agulha','info-ponto','info-linha-desc','info-linha-link','info-alerta','manual-link'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (id==='empresa') el.value = m.empresa||'';
+    else if (id==='modelo') el.value = m.modelo||'';
+    else if (id==='serial') el.value = m.serial||'';
+    else if (id==='setor') el.value = m.setor||'';
+    else if (id==='info-agulha') el.value = m.infoAgulha||'';
+    else if (id==='info-ponto') el.value = m.infoPonto||'';
+    else if (id==='info-linha-desc') el.value = m.infoLinhaDesc||'';
+    else if (id==='info-linha-link') el.value = m.infoLinhaLink||'';
+    else if (id==='info-alerta') el.value = m.infoAlerta||'';
+    else if (id==='manual-link') el.value = m.manualLink||'';
+  });
+  fecharFichaMaquina();
+  switchTab('registrar', null);
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  var regBtn = document.querySelector('[onclick*="registrar"]');
+  if (regBtn) regBtn.classList.add('active');
+}
+
+function editarInfoMaquinaFicha() {
+  if (!maquinaAtual) return;
+  abrirEditarMaquina(maquinaAtual);
 }
 
 </script>
