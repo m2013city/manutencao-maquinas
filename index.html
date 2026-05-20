@@ -768,7 +768,7 @@ function buildRegistroCard(r, comBotoes) {
   var tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Nao informado';
   var servList = (r.servicos||[]);
   var pecaList = (r.pecas||[]);
-  var uid = r.fbKey || Math.random().toString(36).substr(2,6);
+  var uid = (r.fbKey || Math.random().toString(36).substr(2,6)).replace(/[^a-zA-Z0-9]/g,'');
   var servTags = servList.length > 0 ?
     '<div class="tags-toggle" onclick="toggleTags(\'serv-'+uid+'\')">&#9989; Servicos ('+servList.length+') &#9660;</div>'+
     '<div class="tags-content" id="serv-'+uid+'">'+servList.map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('')+'</div>' : '';
