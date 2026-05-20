@@ -159,6 +159,12 @@ window.dispatchEvent(new Event('firebase-ready'));
   .manual-link { display:inline-flex; align-items:center; gap:6px; color:var(--accent); font-size:.85rem; text-decoration:none; font-weight:600; margin-top:6px; }
   .manual-link:hover { text-decoration:underline; }
 
+  /* EXPANDIR TAGS */
+  .tags-toggle{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:.75rem;color:var(--muted);cursor:pointer;margin-bottom:4px;transition:all .15s;}
+  .tags-toggle:hover{border-color:var(--accent);color:var(--accent);}
+  .tags-toggle.aberto{border-color:var(--accent);color:var(--accent);background:var(--tag-bg);}
+  .tags-content{display:none;flex-wrap:wrap;gap:5px;margin-bottom:6px;}
+  .tags-content.aberto{display:flex;}
   /* EMPRESAS */
   .empresa-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s;}
   .empresa-card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(26,107,154,.12);}
@@ -276,6 +282,29 @@ window.dispatchEvent(new Event('firebase-ready'));
     <button class="senha-btn" onclick="verificarSenhaTec()">&#128275; Entrar</button>
     <div class="senha-erro" id="senha-tec-erro">Senha incorreta.</div>
     <button onclick="fecharModalSenhaTec()" style="margin-top:11px;background:none;border:none;color:var(--muted);font-size:.8rem;cursor:pointer;">Cancelar</button>
+  </div>
+</div>
+
+
+<!-- TELA FICHA DA MAQUINA -->
+<div id="tela-ficha-maquina">
+  <div class="ficha-header">
+    <button class="ficha-back" onclick="fecharFichaMaquina()">&#8592; Voltar</button>
+    <div>
+      <div class="ficha-titulo" id="ficha-maq-titulo">-</div>
+      <div class="ficha-sub" id="ficha-maq-sub">-</div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="card" id="ficha-maq-info"></div>
+    <div class="card">
+      <div class="card-title">&#128203; Historico de Manutencoes</div>
+      <div id="ficha-maq-historico"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="novaManutencaoFicha()" style="flex:1">+ Nova Manutencao</button>
+      <button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;flex:1" onclick="editarInfoMaquinaFicha()">&#9881; Editar Informacoes</button>
+    </div>
   </div>
 </div>
 
@@ -737,8 +766,15 @@ function buildRegistroCard(r, comBotoes) {
   var proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
   var tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
   var tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Nao informado';
-  var servTags = (r.servicos||[]).map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('');
-  var pecaTags = (r.pecas||[]).map(function(p){ return '<span class="tag">'+p+'</span>'; }).join('');
+  var servList = (r.servicos||[]);
+  var pecaList = (r.pecas||[]);
+  var uid = r.fbKey || Math.random().toString(36).substr(2,6);
+  var servTags = servList.length > 0 ?
+    '<div class="tags-toggle" onclick="toggleTags(\'serv-'+uid+'\')">&#9989; Servicos ('+servList.length+') &#9660;</div>'+
+    '<div class="tags-content" id="serv-'+uid+'">'+servList.map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('')+'</div>' : '';
+  var pecaTags = pecaList.length > 0 ?
+    '<div class="tags-toggle" onclick="toggleTags(\'peca-'+uid+'\')">&#128295; Pecas ('+pecaList.length+') &#9660;</div>'+
+    '<div class="tags-content" id="peca-'+uid+'">'+pecaList.map(function(p){ return '<span class="tag">'+p+'</span>'; }).join('')+'</div>' : '';
   var tecSig = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '-';
   var resSig = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '-';
   var fotosM = (r.fotosMaquina||[]).map(function(f){ return '<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Maquina</div></div>'; }).join('');
@@ -752,8 +788,7 @@ function buildRegistroCard(r, comBotoes) {
     '<div class="reg-header"><div><div class="reg-date">'+dataFmt+'</div>'+
     '<div style="font-size:.8rem;color:var(--muted)">'+(r.empresa||'')+(r.setor?' - '+r.setor:'')+'</div></div>'+
     '<span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+
-    (servTags?'<div class="reg-tags">'+servTags+'</div>':'')+
-    (pecaTags?'<div class="reg-tags">'+pecaTags+'</div>':'')+
+    servTags+pecaTags+
     (r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+
     (proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+
     fotosHtml+manualHtml+
@@ -1392,6 +1427,15 @@ function novaManutencaoFicha() {
 function editarInfoMaquinaFicha() {
   if (!maquinaAtual) return;
   abrirEditarMaquina(maquinaAtual);
+}
+
+
+function toggleTags(id) {
+  var el = document.getElementById(id);
+  var btn = el ? el.previousElementSibling : null;
+  if (!el) return;
+  el.classList.toggle('aberto');
+  if (btn) btn.classList.toggle('aberto');
 }
 
 </script>
