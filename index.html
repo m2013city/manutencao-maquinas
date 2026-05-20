@@ -1056,8 +1056,14 @@ function abrirTelaPublica(maquina) {
     }
     renderQrPubHistorico(maquina, m ? m.fbKey : null);
   }
-  if (todasMaquinas.length > 0) popular();
-  else { var t = setInterval(function(){ if(todasMaquinas.length>0){clearInterval(t);popular();} }, 300); }
+  function tentarPopular() {
+    if (todasMaquinas.length > 0 && todosRegistros !== undefined) {
+      popular();
+    } else {
+      setTimeout(tentarPopular, 300);
+    }
+  }
+  tentarPopular();
 }
 
 function renderQrPubHistorico(maquina, fbKey) {
@@ -1068,6 +1074,10 @@ function renderQrPubHistorico(maquina, fbKey) {
       var rNorm = normStr(r.modelo);
       if (rNorm === maqNorm) return true;
       if (maqNorm && (rNorm.includes(maqNorm) || maqNorm.includes(rNorm))) return true;
+      // Busca palavra por palavra
+      var words = maqNorm.split(/\s+/).filter(function(w){ return w.length > 2; });
+      var matches = words.filter(function(w){ return rNorm.includes(w); });
+      if (matches.length >= Math.ceil(words.length * 0.7)) return true;
     }
     return false;
   });
