@@ -50,13 +50,13 @@ window.dispatchEvent(new Event('firebase-ready'));
   #status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffd700; flex-shrink: 0; }
   #status-dot.online { background: #7ec97f; }
   #status-dot.error  { background: #f88; }
-  .tabs { display: flex; background: #1e4220; padding: 0 16px; }
+  .tabs { display: flex; background: #FFE066; padding: 0 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .tab-btn {
-    background: none; border: none; color: rgba(255,255,255,.6);
+    background: none; border: none; color: #333333;
     font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500;
     padding: 12px 18px; cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s;
   }
-  .tab-btn.active { color: #FFD700; border-bottom-color: #FFD700; font-weight: 700; }
+  .tab-btn.active { color: #1e4220; border-bottom-color: #1e4220; font-weight: 800; }
   .container { max-width: 680px; margin: 0 auto; padding: 24px 16px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
   .card-title {
@@ -265,8 +265,9 @@ window.dispatchEvent(new Event('firebase-ready'));
       </div>
     </div>
     <div class="qr-pub-botoes">
-      <button class="qr-pub-btn qr-pub-btn-hist" onclick="toggleQrHistorico()"><span id="btn-hist-label">Ver Historico de Manutencoes</span></button>
-      <button class="qr-pub-btn qr-pub-btn-tec" onclick="abrirModalSenhaTec()">&#128274; Area do Tecnico</button>
+      <button class="qr-pub-btn qr-pub-btn-hist" onclick="toggleQrHistorico()"><span id="btn-hist-label">&#128203; Ver Historico de Manutencoes</span></button>
+      <button class="qr-pub-btn" style="background:#1a6b9a;color:#fff;" onclick="abrirModalSenhaTec()">&#128295; Area do Tecnico - Registrar Manutencao</button>
+      <button class="qr-pub-btn" style="background:#f5f0e8;color:#1a6b9a;border:2px solid #1a6b9a;" onclick="abrirTodasMaquinas()">&#127981; Ver Todas as Maquinas</button>
     </div>
     <div id="qr-pub-historico">
       <div id="qr-pub-hist-lista"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
@@ -534,6 +535,24 @@ window.dispatchEvent(new Event('firebase-ready'));
 
 
 <!-- MODAL EDITAR MAQUINA -->
+
+<!-- MODAL TODAS AS MAQUINAS (somente leitura) -->
+<div id="modal-todas-maquinas" style="display:none;position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,.6);align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;">
+  <div style="background:var(--surface);border-radius:14px;padding:20px;width:100%;max-width:600px;margin-top:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+      <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--accent);">&#127981; Todas as Maquinas</div>
+      <button onclick="fecharTodasMaquinas()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);">&#10005;</button>
+    </div>
+    <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px;background:#fff3cd;padding:8px;border-radius:6px;">&#128274; Visualizacao somente leitura. Para registrar manutencoes use a Area do Tecnico.</div>
+    <input type="text" id="busca-todas-maquinas" placeholder="Buscar empresa ou maquina..." oninput="renderTodasMaquinasModal()" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;font-family:'DM Sans',sans-serif;font-size:.85rem;background:var(--bg);outline:none;">
+    <div id="todas-maquinas-lista"></div>
+    <div id="hist-maquina-modal" style="display:none;margin-top:14px;">
+      <button onclick="voltarTodasMaquinas()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.78rem;margin-bottom:10px;">&#8592; Voltar</button>
+      <div id="hist-maquina-modal-content"></div>
+    </div>
+  </div>
+</div>
+
 <div id="modal-editar-maquina">
   <div class="modal-box">
     <div class="modal-title">&#128295; Dados da Maquina</div>
@@ -798,7 +817,7 @@ function buildRegistroCard(r, comBotoes) {
     (r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+
     (proxFmt?'<div style="font-size:.78rem;color:var(--accent);margin-top:6px;font-weight:600">Proxima: '+proxFmt+'</div>':'')+
     fotosHtml+manualHtml+
-    '<div class="reg-sigs"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div>'+
+    '<div class="reg-sigs" style="flex-direction:column;gap:10px;"><div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Tecnico')+'</div></div>'+
     '<div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsavel')+'</div></div></div>'+
     botoesHtml+'</div>';
 }
@@ -1513,6 +1532,53 @@ function switchTabRestrito(name, btn) {
   if (btn) btn.classList.add('active');
   var btnAC = document.getElementById('btn-acesso-completo');
   if (btnAC) btnAC.style.display = window._modoRestrito ? 'inline-block' : 'none';
+}
+
+
+function abrirTodasMaquinas() {
+  document.getElementById('modal-todas-maquinas').style.display = 'flex';
+  document.getElementById('hist-maquina-modal').style.display = 'none';
+  document.getElementById('todas-maquinas-lista').style.display = 'block';
+  renderTodasMaquinasModal();
+}
+function fecharTodasMaquinas() {
+  document.getElementById('modal-todas-maquinas').style.display = 'none';
+}
+function voltarTodasMaquinas() {
+  document.getElementById('hist-maquina-modal').style.display = 'none';
+  document.getElementById('todas-maquinas-lista').style.display = 'block';
+}
+function renderTodasMaquinasModal() {
+  var busca = (document.getElementById('busca-todas-maquinas')||{value:''}).value.toLowerCase();
+  var lista = document.getElementById('todas-maquinas-lista');
+  var empresas = {};
+  todasMaquinas.forEach(function(m) {
+    var emp = m.empresa || 'Sem empresa';
+    if (!empresas[emp]) empresas[emp] = [];
+    empresas[emp].push(m);
+  });
+  var nomes = Object.keys(empresas).filter(function(e){
+    return !busca || e.toLowerCase().includes(busca) || empresas[e].some(function(m){ return m.modelo && m.modelo.toLowerCase().includes(busca); });
+  }).sort();
+  if (!nomes.length) { lista.innerHTML = '<div class="historico-empty">Nenhuma empresa encontrada.</div>'; return; }
+  lista.innerHTML = nomes.map(function(emp) {
+    var mqs = empresas[emp];
+    var chips = mqs.map(function(m) {
+      return '<span class="maquina-chip" style="cursor:pointer" onclick="verHistMaquinaModal(\''+m.fbKey+'\')">'+( m.modelo||'Sem modelo')+'</span>';
+    }).join('');
+    return '<div style="margin-bottom:14px"><div style="font-weight:700;color:var(--green);margin-bottom:6px">'+emp+'</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+chips+'</div></div>';
+  }).join('');
+}
+function verHistMaquinaModal(fbKey) {
+  var m = todasMaquinas.find(function(x){ return x.fbKey === fbKey; });
+  if (!m) return;
+  document.getElementById('todas-maquinas-lista').style.display = 'none';
+  document.getElementById('hist-maquina-modal').style.display = 'block';
+  var regs = todosRegistros.filter(function(r){ return r.maquinaKey === m.fbKey || (r.modelo && r.modelo === m.modelo); });
+  var content = document.getElementById('hist-maquina-modal-content');
+  content.innerHTML = '<div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:4px">'+m.modelo+'</div>'+
+    '<div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">'+m.empresa+'</div>'+
+    (regs.length ? regs.map(function(r){ return buildRegistroCard(r, false); }).join('') : '<div class="historico-empty">Nenhuma manutencao registrada.</div>');
 }
 
 </script>
