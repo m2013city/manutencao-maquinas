@@ -56,7 +56,7 @@ window.dispatchEvent(new Event('firebase-ready'));
     font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500;
     padding: 12px 18px; cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s;
   }
-  .tab-btn.active { color: #fff; border-bottom-color: #7ec97f; }
+  .tab-btn.active { color: #FFD700; border-bottom-color: #FFD700; font-weight: 700; }
   .container { max-width: 680px; margin: 0 auto; padding: 24px 16px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
   .card-title {
@@ -278,7 +278,10 @@ window.dispatchEvent(new Event('firebase-ready'));
     <div class="senha-logo">&#128274;</div>
     <div class="senha-titulo">Area do Tecnico</div>
     <div class="senha-sub">Digite a senha para acessar</div>
-    <input type="password" id="campo-senha-tec" class="senha-input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" onkeydown="if(event.key==='Enter')verificarSenhaTec()">
+    <div style="position:relative;margin-bottom:12px;">
+      <input type="password" id="campo-senha-tec" class="senha-input" style="margin-bottom:0;padding-right:44px;" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')verificarSenhaTec()">
+      <button onclick="toggleSenhaVis('campo-senha-tec',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--muted);">&#128065;</button>
+    </div>
     <button class="senha-btn" onclick="verificarSenhaTec()">&#128275; Entrar</button>
     <div class="senha-erro" id="senha-tec-erro">Senha incorreta.</div>
     <button onclick="fecharModalSenhaTec()" style="margin-top:11px;background:none;border:none;color:var(--muted);font-size:.8rem;cursor:pointer;">Cancelar</button>
@@ -321,12 +324,13 @@ window.dispatchEvent(new Event('firebase-ready'));
 </header>
 
 <div class="tabs">
-  <button class="tab-btn" onclick="switchTab('empresas', this)" title="Empresas">&#127981;</button>
-  <button class="tab-btn active" onclick="switchTab('registrar', this)" title="Registrar">&#43; Reg</button>
-  <button class="tab-btn" onclick="switchTab('historico', this)" title="Historico">&#128203;</button>
-  <button class="tab-btn" onclick="switchTab('qrcode', this)" title="QR Code">&#11035;</button>
-  <button class="tab-btn" onclick="switchTab('pedido', this)" title="Pedido Pecas">&#128230;</button>
-  <button class="tab-btn" onclick="switchTab('config', this)" title="Config">&#9881;</button>
+  <button class="tab-btn" onclick="switchTab('empresas', this)" title="Empresas">&#127981; Empresas</button>
+  <button class="tab-btn active" onclick="switchTab('registrar', this)" title="Nova Manutencao">&#128393; Registrar</button>
+  <button class="tab-btn" onclick="switchTab('historico', this)" title="Historico">&#128336; Historico</button>
+  <button class="tab-btn" onclick="switchTab('qrcode', this)" title="QR Code">&#10074;&#10074; QR</button>
+  <button class="tab-btn" onclick="switchTab('pedido', this)" title="Pedido de Pecas">&#128230; Pecas</button>
+  <button class="tab-btn" onclick="switchTab('config', this)" title="Configuracoes">&#9881;</button>
+  <button class="tab-btn" id="btn-acesso-completo" onclick="pedirAcessoCompleto()" title="Acesso Completo" style="display:none">&#128275; Acesso Completo</button>
 </div>
 
 
@@ -919,8 +923,8 @@ function checkURLParams() {
     abrirTelaPublica(maquina);
   }
 }
-var SENHA_CORRETA = 'Primeiroentrar2026';
-var SENHA_ADMIN   = 'Segundoadmin2026';
+var SENHA_CORRETA = '1°acesso26';
+var SENHA_ADMIN   = '2°Adm26';
 function ativarAdmin() { document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){ el.style.display='flex'; el.style.gap='8px'; el.style.justifyContent='flex-end'; }); }
 function verificarSenha() {
   var input = document.getElementById('campo-senha');
@@ -1119,8 +1123,10 @@ function verificarSenhaTec() {
     document.getElementById('tela-qr-publica').style.display='none';
     history.replaceState({}, '', window.location.pathname);
     if (val===SENHA_ADMIN) ativarAdmin();
-    // Se veio de QR - pre-preencher modelo em registrar e filtrar historico
+    // Se veio de QR - modo restrito (so aquela maquina)
     if (window._maquinaQR) {
+      window._modoRestrito = true;
+      window._maquinaRestrita = window._maquinaQR;
       var maq = window._maquinaQR;
       // Pre-preencher campo modelo no registrar
       var campoModelo = document.getElementById('modelo');
@@ -1152,8 +1158,11 @@ function verificarSenhaTec() {
       // Filtrar historico
       document.getElementById('filtro-modelo').value = maq;
       filtrarHistorico();
+      // Mostrar botao acesso completo
+      var btnAC = document.getElementById('btn-acesso-completo');
+      if (btnAC) btnAC.style.display = 'block';
       // Ir para aba registrar para facilitar nova manutencao
-      switchTab('registrar', null);
+      _switchTabOriginal('registrar', null);
       var btns = document.querySelectorAll('.tab-btn');
       btns.forEach(function(b){ b.classList.remove('active'); });
       btns[0].classList.add('active');
@@ -1458,6 +1467,54 @@ function toggleTags(id) {
   if (!el) return;
   el.classList.toggle('aberto');
   if (btn) btn.classList.toggle('aberto');
+}
+
+
+function toggleSenhaVis(id, btn) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  if (el.type === 'password') {
+    el.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    el.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
+
+function pedirAcessoCompleto() {
+  var senha = prompt('Digite a senha para acesso completo:');
+  if (!senha) return;
+  if (senha === SENHA_CORRETA || senha === SENHA_ADMIN) {
+    window._modoRestrito = false;
+    window._maquinaRestrita = null;
+    document.getElementById('btn-acesso-completo').style.display = 'none';
+    if (senha === SENHA_ADMIN) ativarAdmin();
+    alert('Acesso completo liberado!');
+  } else {
+    alert('Senha incorreta.');
+  }
+}
+
+// Controle modo restrito - bloquear acesso a outras abas
+var _switchTabOriginal = switchTab;
+function switchTab(name, btn) {
+  if (window._modoRestrito && name !== 'registrar' && name !== 'historico' && name !== 'qrcode' && name !== 'pedido') {
+    // Permitir config apenas para admin
+    if (name === 'config' && sessionStorage.getItem('auth') === 'admin') {
+      _switchTabOriginal(name, btn);
+      return;
+    }
+    if (name === 'empresas') {
+      alert('Acesso restrito. Use o botao Acesso Completo para ver todas as empresas.');
+      return;
+    }
+  }
+  _switchTabOriginal(name, btn);
+  // Mostrar botao acesso completo se modo restrito
+  var btnAC = document.getElementById('btn-acesso-completo');
+  if (btnAC) btnAC.style.display = window._modoRestrito ? 'block' : 'none';
 }
 
 </script>
