@@ -330,7 +330,9 @@ window.dispatchEvent(new Event('firebase-ready'));
   <button class="tab-btn" onclick="switchTabRestrito('qrcode', this)">QR Code</button>
   <button class="tab-btn" onclick="switchTabRestrito('pedido', this)">Pecas</button>
   <button class="tab-btn" onclick="switchTabRestrito('config', this)">Config</button>
-  <button class="tab-btn" id="btn-acesso-completo" onclick="pedirAcessoCompleto()" style="display:none;color:#FFD700">+ Acesso</button>
+</div>
+<div id="barra-acesso" style="display:none;background:#1a6b9a;padding:6px 14px;text-align:center;">
+  <button onclick="pedirAcessoCompleto()" style="background:#FFD700;color:#1e4220;border:none;border-radius:8px;padding:6px 16px;font-weight:700;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128275; Acesso Completo - Ver todas as empresas</button>
 </div>
 
 
@@ -1489,7 +1491,7 @@ function pedirAcessoCompleto() {
   if (senha === SENHA_CORRETA || senha === SENHA_ADMIN) {
     window._modoRestrito = false;
     window._maquinaRestrita = null;
-    document.getElementById('btn-acesso-completo').style.display = 'none';
+    var barraAcesso = document.getElementById('barra-acesso'); if(barraAcesso) barraAcesso.style.display = 'none';
     if (senha === SENHA_ADMIN) ativarAdmin();
     alert('Acesso completo liberado!');
   } else {
