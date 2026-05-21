@@ -277,7 +277,7 @@ window.dispatchEvent(new Event('firebase-ready'));
 <div id="modal-senha-tec">
   <div class="senha-box">
     <div class="senha-logo">&#128274;</div>
-    <div class="senha-titulo">Area do Tecnico</div>
+    <div class="senha-titulo">Área do Técnico</div>
     <div class="senha-sub">Digite a senha para acessar</div>
     <div style="position:relative;margin-bottom:12px;">
       <input type="password" id="campo-senha-tec" class="senha-input" style="margin-bottom:0;padding-right:44px;" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')verificarSenhaTec()">
@@ -329,7 +329,7 @@ window.dispatchEvent(new Event('firebase-ready'));
   <button class="tab-btn active" onclick="switchTabRestrito('registrar', this)">+ Reg</button>
   <button class="tab-btn" onclick="switchTabRestrito('historico', this)">Hist</button>
   <button class="tab-btn" onclick="switchTabRestrito('qrcode', this)">QR</button>
-  <button class="tab-btn" onclick="switchTabRestrito('pedido', this)">Pecas</button>
+  <button class="tab-btn" onclick="switchTabRestrito('pedido', this)">Peças</button>
   <button class="tab-btn" onclick="switchTabRestrito('config', this)">&#9881;</button>
 </div>
 <div id="barra-acesso" style="display:none;background:#1a6b9a;padding:6px 14px;text-align:center;">
@@ -492,7 +492,7 @@ window.dispatchEvent(new Event('firebase-ready'));
 <div class="container">
   <div class="card">
     <div class="card-title">&#128230; Pedido de Pecas</div>
-    <div class="field"><label>Maquina</label>
+    <div class="field"><label>Máquina</label>
       <select id="pedido-select-maquina" onchange="selecionarMaquinaPedido()"><option value="">Selecione a maquina...</option></select>
     </div>
     <div id="pedido-maq-info" style="display:none;background:var(--tag-bg);border-radius:8px;padding:10px;margin-bottom:10px;font-size:.82rem;">
@@ -544,7 +544,7 @@ window.dispatchEvent(new Event('firebase-ready'));
       <button onclick="fecharTodasMaquinas()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);">&#10005;</button>
     </div>
     <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px;background:#fff3cd;padding:8px;border-radius:6px;">&#128274; Visualizacao somente leitura. Para registrar manutencoes use a Area do Tecnico.</div>
-    <input type="text" id="busca-todas-maquinas" placeholder="Buscar empresa ou maquina..." oninput="renderTodasMaquinasModal()" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;font-family:'DM Sans',sans-serif;font-size:.85rem;background:var(--bg);outline:none;">
+    <input type="text" id="busca-todas-maquinas" placeholder="Buscar empresa ou máquina..." oninput="renderTodasMaquinasModal()" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;font-family:'DM Sans',sans-serif;font-size:.85rem;background:var(--bg);outline:none;">
     <div id="todas-maquinas-lista"></div>
     <div id="hist-maquina-modal" style="display:none;margin-top:14px;">
       <button onclick="voltarTodasMaquinas()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.78rem;margin-bottom:10px;">&#8592; Voltar</button>
@@ -790,7 +790,7 @@ function buildRegistroCard(r, comBotoes) {
   var dataFmt = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
   var proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
   var tipoClass = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
-  var tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Nao informado';
+  var tipoLabel = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : 'Não informado';
   var servList = (r.servicos||[]);
   var pecaList = (r.pecas||[]);
   var uid = (r.fbKey || Math.random().toString(36).substr(2,6)).replace(/[^a-zA-Z0-9]/g,'');
@@ -802,14 +802,14 @@ function buildRegistroCard(r, comBotoes) {
     '<div class="tags-content" id="peca-'+uid+'">'+pecaList.map(function(p){ return '<span class="tag">'+p+'</span>'; }).join('')+'</div>' : '';
   var tecSig = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '-';
   var resSig = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '-';
-  var fotosM = (r.fotosMaquina||[]).map(function(f){ return '<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Maquina</div></div>'; }).join('');
-  if (!fotosM && r.fotoMaquina) fotosM = '<div class="reg-foto-item"><img src="'+r.fotoMaquina+'"><div class="reg-foto-label">Maquina</div></div>';
+  var fotosM = (r.fotosMaquina||[]).map(function(f){ return '<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Máquina</div></div>'; }).join('');
+  if (!fotosM && r.fotoMaquina) fotosM = '<div class="reg-foto-item"><img src="'+r.fotoMaquina+'"><div class="reg-foto-label">Máquina</div></div>';
   var fotosP = (r.fotosProblema||[]).map(function(f){ return '<div class="reg-foto-item"><img src="'+f+'"><div class="reg-foto-label">Problema</div></div>'; }).join('');
   if (!fotosP && r.fotoProblema) fotosP = '<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>';
   var fotosHtml = (fotosM||fotosP) ? '<div class="reg-fotos">'+fotosM+fotosP+'</div>' : '';
   var manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">Manual</a></div>' : '';
   var isAdmin = sessionStorage.getItem('auth') === 'admin';
-  var botoesHtml = (comBotoes && isAdmin) ? '<div class="btn-excluir-wrap" style="display:flex;margin-top:8px;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\''+( r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div>' : '';
+  var botoesHtml = comBotoes ? '<div class="btn-excluir-wrap" style="display:'+(isAdmin?'flex':'none')+';margin-top:8px;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\''+( r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div>' : '';
   return '<div class="registro-card">'+
     '<div class="reg-header"><div><div class="reg-date">'+dataFmt+'</div>'+
     '<div style="font-size:.8rem;color:var(--muted)">'+(r.empresa||'')+(r.setor?' - '+r.setor:'')+'</div></div>'+
@@ -1061,12 +1061,13 @@ function abrirTelaPublica(maquina) {
       var xN = normStr(x.modelo);
       return xN === maqN || xN.includes(maqN) || maqN.includes(xN);
     });
-    document.getElementById('qr-pub-nome').textContent = maquina;
+    var maqSerial = m ? (m.serial ? ' - ' + m.serial : '') : '';
+      document.getElementById('qr-pub-nome').textContent = maquina + maqSerial;
     if (m) {
       document.getElementById('qr-pub-empresa').textContent = m.empresa || '';
-      document.getElementById('qr-pub-agulha').textContent = m.infoAgulha || 'Nao informado';
-      document.getElementById('qr-pub-ponto').textContent = m.infoPonto || 'Nao informado';
-      document.getElementById('qr-pub-linha-desc').textContent = m.infoLinhaDesc || 'Nao informado';
+      document.getElementById('qr-pub-agulha').textContent = m.infoAgulha || 'Não informado';
+      document.getElementById('qr-pub-ponto').textContent = m.infoPonto || 'Não informado';
+      document.getElementById('qr-pub-linha-desc').textContent = m.infoLinhaDesc || 'Não informado';
       var lnk = document.getElementById('qr-pub-linha-link');
       if (m.infoLinhaLink && m.infoLinhaLink.startsWith('http')) { lnk.href = m.infoLinhaLink; lnk.style.display = 'inline-flex'; }
       else lnk.style.display = 'none';
@@ -1126,7 +1127,7 @@ var historicoAberto = false;
 function toggleQrHistorico() {
   historicoAberto = !historicoAberto;
   document.getElementById('qr-pub-historico').style.display = historicoAberto ? 'block' : 'none';
-  document.getElementById('btn-hist-label').textContent = historicoAberto ? 'Ocultar Historico' : 'Ver Historico de Manutencoes';
+  document.getElementById('btn-hist-label').textContent = historicoAberto ? 'Ocultar Histórico' : 'Ver Histórico de Manutenções';
 }
 function abrirModalSenhaTec() {
   document.getElementById('modal-senha-tec').classList.add('aberto');
@@ -1399,7 +1400,7 @@ function renderEmpresas() {
     }).length;
     var chips = mqs.map(function(m) {
       var fk = m.fbKey;
-      return '<span class="maquina-chip" onclick="abrirFichaMaquina(\''+fk+'\')">'+( m.modelo||'Sem modelo')+'</span>';
+      return '<span class="maquina-chip" onclick="abrirFichaMaquina(\''+fk+'\')">'+( m.modelo||'Sem modelo')+(m.serial?' ('+m.serial+')':'')+'</span>';
     }).join('');
     return '<div class="empresa-card">'+
       '<div class="empresa-card-header">'+
@@ -1425,14 +1426,14 @@ function abrirFichaMaquina(fbKey) {
   info.innerHTML = '<div class="card-title">&#128295; Informacoes da Maquina</div>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'+
       '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">Empresa</div><div style="font-size:.88rem">'+(m.empresa||'—')+'</div></div>'+
-      '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">N Serie</div><div style="font-size:.88rem">'+(m.serial||'—')+'</div></div>'+
+      '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">N° Série</div><div style="font-size:.88rem">'+(m.serial||'—')+'</div></div>'+
       '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">Setor</div><div style="font-size:.88rem">'+(m.setor||'—')+'</div></div>'+
     '</div>'+
     '<div style="border-top:1px solid var(--border);padding-top:10px;">'+
-      '<div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Informacoes Tecnicas</div>'+
-      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Agulha:</b> '+(m.infoAgulha||'Nao informado')+'</div>'+
-      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Ponto:</b> '+(m.infoPonto||'Nao informado')+'</div>'+
-      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Passagem de Linha:</b> '+(m.infoLinhaDesc||'Nao informado')+'</div>'+
+      '<div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Informações Técnicas</div>'+
+      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Agulha:</b> '+(m.infoAgulha||'Não informado')+'</div>'+
+      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Ponto:</b> '+(m.infoPonto||'Não informado')+'</div>'+
+      '<div style="font-size:.82rem;margin-bottom:4px;"><b>Passagem de Linha:</b> '+(m.infoLinhaDesc||'Não informado')+'</div>'+
       alerta+
     '</div>';
   var regs = todosRegistros.filter(function(r){
