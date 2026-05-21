@@ -326,11 +326,11 @@ window.dispatchEvent(new Event('firebase-ready'));
 
 <div class="tabs">
   <button class="tab-btn" onclick="switchTabRestrito('empresas', this)">Empresas</button>
-  <button class="tab-btn active" onclick="switchTabRestrito('registrar', this)">+ Registrar</button>
-  <button class="tab-btn" onclick="switchTabRestrito('historico', this)">Historico</button>
-  <button class="tab-btn" onclick="switchTabRestrito('qrcode', this)">QR Code</button>
+  <button class="tab-btn active" onclick="switchTabRestrito('registrar', this)">+ Reg</button>
+  <button class="tab-btn" onclick="switchTabRestrito('historico', this)">Hist</button>
+  <button class="tab-btn" onclick="switchTabRestrito('qrcode', this)">QR</button>
   <button class="tab-btn" onclick="switchTabRestrito('pedido', this)">Pecas</button>
-  <button class="tab-btn" onclick="switchTabRestrito('config', this)">Config</button>
+  <button class="tab-btn" onclick="switchTabRestrito('config', this)">&#9881;</button>
 </div>
 <div id="barra-acesso" style="display:none;background:#1a6b9a;padding:6px 14px;text-align:center;">
   <button onclick="pedirAcessoCompleto()" style="background:#FFD700;color:#1e4220;border:none;border-radius:8px;padding:6px 16px;font-weight:700;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128275; Acesso Completo - Ver todas as empresas</button>
@@ -808,7 +808,8 @@ function buildRegistroCard(r, comBotoes) {
   if (!fotosP && r.fotoProblema) fotosP = '<div class="reg-foto-item"><img src="'+r.fotoProblema+'"><div class="reg-foto-label">Problema</div></div>';
   var fotosHtml = (fotosM||fotosP) ? '<div class="reg-fotos">'+fotosM+fotosP+'</div>' : '';
   var manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">Manual</a></div>' : '';
-  var botoesHtml = comBotoes ? '<div class="btn-excluir-wrap" style="display:none;margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\''+( r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div>' : '';
+  var isAdmin = sessionStorage.getItem('auth') === 'admin';
+  var botoesHtml = (comBotoes && isAdmin) ? '<div class="btn-excluir-wrap" style="display:flex;margin-top:8px;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\''+( r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div>' : '';
   return '<div class="registro-card">'+
     '<div class="reg-header"><div><div class="reg-date">'+dataFmt+'</div>'+
     '<div style="font-size:.8rem;color:var(--muted)">'+(r.empresa||'')+(r.setor?' - '+r.setor:'')+'</div></div>'+
@@ -1552,7 +1553,14 @@ function renderTodasMaquinasModal() {
   var busca = (document.getElementById('busca-todas-maquinas')||{value:''}).value.toLowerCase();
   var lista = document.getElementById('todas-maquinas-lista');
   var empresas = {};
-  todasMaquinas.forEach(function(m) {
+  // Filtrar apenas maquinas da mesma empresa quando veio do QR
+  var maqsFiltradas = todasMaquinas.filter(function(m){
+    if (!window._maquinaQR) return true; // sem QR, mostra todas
+    var maqAtual = todasMaquinas.find(function(x){ return normStr(x.modelo) === normStr(window._maquinaQR); });
+    if (!maqAtual) return true;
+    return normStr(m.empresa) === normStr(maqAtual.empresa);
+  });
+  maqsFiltradas.forEach(function(m) {
     var emp = m.empresa || 'Sem empresa';
     if (!empresas[emp]) empresas[emp] = [];
     empresas[emp].push(m);
