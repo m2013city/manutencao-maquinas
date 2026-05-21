@@ -1253,7 +1253,11 @@ async function migrarDados() {
     var promises = [];
     snap.forEach(function(child) {
       var r = child.val();
-      if (r.maquinaKey) { pulados++; return; }
+      // Verificar se maquinaKey existe E se a maquina ainda existe
+      if (r.maquinaKey) {
+        var maqExiste = todasMaquinas.find(function(m){ return m.fbKey === r.maquinaKey; });
+        if (maqExiste) { pulados++; return; }
+      }
       var fazer = async function() {
         var maq = todasMaquinas.find(function(m){ return m.modelo&&m.empresa&&m.modelo.toLowerCase()===r.modelo?.toLowerCase()&&m.empresa.toLowerCase()===r.empresa?.toLowerCase(); });
         if (!maq) maq = novasMaq.find(function(m){ return m.modelo&&m.modelo.toLowerCase()===r.modelo?.toLowerCase(); });
