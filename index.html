@@ -324,13 +324,13 @@ window.dispatchEvent(new Event('firebase-ready'));
 </header>
 
 <div class="tabs">
-  <button class="tab-btn" onclick="switchTab('empresas', this)" title="Empresas">&#127981; Empresas</button>
-  <button class="tab-btn active" onclick="switchTab('registrar', this)" title="Nova Manutencao">&#128393; Registrar</button>
-  <button class="tab-btn" onclick="switchTab('historico', this)" title="Historico">&#128336; Historico</button>
-  <button class="tab-btn" onclick="switchTab('qrcode', this)" title="QR Code">&#10074;&#10074; QR</button>
-  <button class="tab-btn" onclick="switchTab('pedido', this)" title="Pedido de Pecas">&#128230; Pecas</button>
-  <button class="tab-btn" onclick="switchTab('config', this)" title="Configuracoes">&#9881;</button>
-  <button class="tab-btn" id="btn-acesso-completo" onclick="pedirAcessoCompleto()" title="Acesso Completo" style="display:none">&#128275; Acesso Completo</button>
+  <button class="tab-btn" onclick="switchTabRestrito('empresas', this)">Empresas</button>
+  <button class="tab-btn active" onclick="switchTabRestrito('registrar', this)">+ Registrar</button>
+  <button class="tab-btn" onclick="switchTabRestrito('historico', this)">Historico</button>
+  <button class="tab-btn" onclick="switchTabRestrito('qrcode', this)">QR Code</button>
+  <button class="tab-btn" onclick="switchTabRestrito('pedido', this)">Pecas</button>
+  <button class="tab-btn" onclick="switchTabRestrito('config', this)">Config</button>
+  <button class="tab-btn" id="btn-acesso-completo" onclick="pedirAcessoCompleto()" style="display:none;color:#FFD700">+ Acesso</button>
 </div>
 
 
@@ -1497,24 +1497,20 @@ function pedirAcessoCompleto() {
   }
 }
 
-// Controle modo restrito - bloquear acesso a outras abas
-var _switchTabOriginal = switchTab;
-function switchTab(name, btn) {
-  if (window._modoRestrito && name !== 'registrar' && name !== 'historico' && name !== 'qrcode' && name !== 'pedido') {
-    // Permitir config apenas para admin
-    if (name === 'config' && sessionStorage.getItem('auth') === 'admin') {
-      _switchTabOriginal(name, btn);
-      return;
-    }
-    if (name === 'empresas') {
-      alert('Acesso restrito. Use o botao Acesso Completo para ver todas as empresas.');
-      return;
-    }
+// Modo restrito - apenas bloqueia aba Empresas
+function switchTabRestrito(name, btn) {
+  if (window._modoRestrito && name === 'empresas') {
+    alert('Acesso restrito a esta maquina. Use o botao + Acesso para ver todas as empresas.');
+    return;
   }
-  _switchTabOriginal(name, btn);
-  // Mostrar botao acesso completo se modo restrito
+  // Chamar switchTab original do sistema
+  document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(el){ el.classList.remove('active'); });
+  var tabEl = document.getElementById('tab-'+name);
+  if (tabEl) tabEl.classList.add('active');
+  if (btn) btn.classList.add('active');
   var btnAC = document.getElementById('btn-acesso-completo');
-  if (btnAC) btnAC.style.display = window._modoRestrito ? 'block' : 'none';
+  if (btnAC) btnAC.style.display = window._modoRestrito ? 'inline-block' : 'none';
 }
 
 </script>
