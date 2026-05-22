@@ -243,7 +243,7 @@ window.dispatchEvent(new Event('firebase-ready'));
 <div id="tela-qr-publica">
   <div class="qr-pub-header">
     <img class="qr-pub-logo" id="qr-pub-logo-img" src="" alt="MG City">
-    <div><div class="qr-pub-titulo">Ficha da Maquina</div><div class="qr-pub-sub">MG City - Assistencia Tecnica</div></div>
+    <div><div class="qr-pub-titulo">Ficha da Máquina</div><div class="qr-pub-sub">MG City — Assistência Técnica</div></div>
   </div>
   <div class="qr-pub-container">
     <div class="qr-pub-machine">
@@ -251,11 +251,11 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div class="qr-pub-machine-empresa" id="qr-pub-empresa"></div>
     </div>
     <div class="qr-pub-alerta" id="qr-pub-alerta" style="display:none">
-      <div class="qr-pub-alerta-titulo">&#9888;&#65039; Atencao antes de usar</div>
+      <div class="qr-pub-alerta-titulo">&#9888;&#65039; Atenção antes de usar</div>
       <div id="qr-pub-alerta-texto"></div>
     </div>
     <div class="info-card">
-      <div class="info-card-titulo">&#128295; Informacoes Tecnicas</div>
+      <div class="info-card-titulo">&#128295; Informações Técnicas</div>
       <div class="info-linha"><span class="info-rotulo">Tipo de Agulha</span><span class="info-valor" id="qr-pub-agulha">-</span></div>
       <div class="info-linha"><span class="info-rotulo">Tipo de Ponto</span><span class="info-valor" id="qr-pub-ponto">-</span></div>
       <div class="info-linha">
@@ -265,9 +265,9 @@ window.dispatchEvent(new Event('firebase-ready'));
       </div>
     </div>
     <div class="qr-pub-botoes">
-      <button class="qr-pub-btn qr-pub-btn-hist" onclick="toggleQrHistorico()"><span id="btn-hist-label">&#128203; Ver Historico de Manutencoes</span></button>
-      <button class="qr-pub-btn" style="background:#1a6b9a;color:#fff;" onclick="abrirModalSenhaTec()">&#128295; Area do Tecnico - Registrar Manutencao</button>
-      <button class="qr-pub-btn" style="background:#f5f0e8;color:#1a6b9a;border:2px solid #1a6b9a;" onclick="abrirTodasMaquinas()">&#127981; Ver Todas as Maquinas</button>
+      <button class="qr-pub-btn qr-pub-btn-hist" onclick="toggleQrHistorico()"><span id="btn-hist-label">&#128203; Ver Histórico de Manutenções</span></button>
+      <button class="qr-pub-btn" style="background:#1a6b9a;color:#fff;" onclick="abrirModalSenhaTec()">&#128295; Área do Técnico — Registrar Manutenção</button>
+      <button class="qr-pub-btn" style="background:#f5f0e8;color:#1a6b9a;border:2px solid #1a6b9a;" onclick="abrirTodasMaquinas()">&#127981; Ver Todas as Máquinas</button>
     </div>
     <div id="qr-pub-historico">
       <div id="qr-pub-hist-lista"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
@@ -302,12 +302,12 @@ window.dispatchEvent(new Event('firebase-ready'));
   <div class="container">
     <div class="card" id="ficha-maq-info"></div>
     <div class="card">
-      <div class="card-title">&#128203; Historico de Manutencoes</div>
+      <div class="card-title">&#128203; Histórico de Manutenções</div>
       <div id="ficha-maq-historico"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-      <button class="btn btn-primary" onclick="novaManutencaoFicha()" style="flex:1">+ Nova Manutencao</button>
-      <button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;flex:1" onclick="editarInfoMaquinaFicha()">&#9881; Editar Informacoes</button>
+      <button class="btn btn-primary" onclick="novaManutencaoFicha()" style="flex:1">+ Nova Manutenção</button>
+      <button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;flex:1" onclick="editarInfoMaquinaFicha()">&#9881; Editar Informações</button>
     </div>
   </div>
 </div>
@@ -374,7 +374,7 @@ window.dispatchEvent(new Event('firebase-ready'));
     </div>
   </div>
   <div class="card">
-    <div class="card-title">&#129525; Informacoes Tecnicas</div>
+    <div class="card-title">&#129525; Informações Técnicas</div>
     <div class="field"><label>&#129521; Tipo de Agulha</label><input type="text" id="info-agulha" placeholder="Ex: DCX27 n11, DBx1 n14..."></div>
     <div class="field"><label>&#128208; Tipo de Ponto</label><input type="text" id="info-ponto" placeholder="Ex: Ponto fixo 301, Overlock 3 fios..."></div>
     <div class="field"><label>&#129525; Passagem de Linha</label><textarea id="info-linha-desc" placeholder="Passo a passo..."></textarea></div>
@@ -540,10 +540,10 @@ window.dispatchEvent(new Event('firebase-ready'));
 <div id="modal-todas-maquinas" style="display:none;position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,.6);align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;">
   <div style="background:var(--surface);border-radius:14px;padding:20px;width:100%;max-width:600px;margin-top:20px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);">
-      <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--accent);">&#127981; Todas as Maquinas</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--accent);">&#127981; Todas as Máquinas</div>
       <button onclick="fecharTodasMaquinas()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);">&#10005;</button>
     </div>
-    <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px;background:#fff3cd;padding:8px;border-radius:6px;">&#128274; Visualizacao somente leitura. Para registrar manutencoes use a Area do Tecnico.</div>
+    <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px;background:#fff3cd;padding:8px;border-radius:6px;">&#128274; Visualização somente leitura. Para registrar manutenções use a Área do Técnico.</div>
     <input type="text" id="busca-todas-maquinas" placeholder="Buscar empresa ou máquina..." oninput="renderTodasMaquinasModal()" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;font-family:'DM Sans',sans-serif;font-size:.85rem;background:var(--bg);outline:none;">
     <div id="todas-maquinas-lista"></div>
     <div id="hist-maquina-modal" style="display:none;margin-top:14px;">
@@ -565,7 +565,7 @@ window.dispatchEvent(new Event('firebase-ready'));
     <div class="field"><label>Local / Setor</label><input type="text" id="editmaq-setor"></div>
     <div class="field"><label>Manual (link)</label><input type="text" id="editmaq-manual" placeholder="https://..."></div>
     <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px;">
-      <div class="card-title" style="margin-bottom:10px;">&#129525; Informacoes Tecnicas</div>
+      <div class="card-title" style="margin-bottom:10px;">&#129525; Informações Técnicas</div>
       <div class="field"><label>&#129521; Tipo de Agulha</label><input type="text" id="editmaq-agulha" placeholder="Ex: DCX27 n11, DBx1 n14..."></div>
       <div class="field"><label>&#128208; Tipo de Ponto</label><input type="text" id="editmaq-ponto" placeholder="Ex: Ponto fixo 301, Overlock 3 fios..."></div>
       <div class="field"><label>&#129525; Passagem de Linha</label><textarea id="editmaq-linha-desc" placeholder="Passo a passo..."></textarea></div>
@@ -1113,7 +1113,7 @@ function renderQrPubHistorico(maquina, fbKey) {
     return false;
   });
   var lista = document.getElementById('qr-pub-hist-lista');
-  if (!regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhuma manutencao registrada.</div>'; return; }
+  if (!regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhuma manutenção registrada.</div>'; return; }
   lista.innerHTML = regs.map(function(r) {
     var df = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
     var tc = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
@@ -1423,7 +1423,7 @@ function abrirFichaMaquina(fbKey) {
   document.getElementById('ficha-maq-sub').textContent = m.empresa || '—';
   var alerta = m.infoAlerta ? '<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:8px;margin-top:8px;font-size:.8rem;color:#856404;">&#9888; '+m.infoAlerta+'</div>' : '';
   var info = document.getElementById('ficha-maq-info');
-  info.innerHTML = '<div class="card-title">&#128295; Informacoes da Maquina</div>'+
+  info.innerHTML = '<div class="card-title">&#128295; Informações da Máquina</div>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'+
       '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">Empresa</div><div style="font-size:.88rem">'+(m.empresa||'—')+'</div></div>'+
       '<div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase">N° Série</div><div style="font-size:.88rem">'+(m.serial||'—')+'</div></div>'+
@@ -1441,7 +1441,7 @@ function abrirFichaMaquina(fbKey) {
   });
   var histEl = document.getElementById('ficha-maq-historico');
   if (!regs.length) {
-    histEl.innerHTML = '<div class="historico-empty">Nenhuma manutencao registrada.</div>';
+    histEl.innerHTML = '<div class="historico-empty">Nenhuma manutenção registrada.</div>';
   } else {
     histEl.innerHTML = regs.map(function(r){ return buildRegistroCard(r, true); }).join('');
     if (sessionStorage.getItem('auth') === 'admin') ativarAdmin();
@@ -1462,6 +1462,7 @@ function novaManutencaoFicha() {
     if (!el) return;
     if (id==='empresa') el.value = m.empresa||'';
     else if (id==='modelo') el.value = m.modelo||'';
+    else if (id==='serial') el.value = m.serial||'';
     else if (id==='serial') el.value = m.serial||'';
     else if (id==='setor') el.value = m.setor||'';
     else if (id==='info-agulha') el.value = m.infoAgulha||'';
@@ -1587,7 +1588,7 @@ function verHistMaquinaModal(fbKey) {
   var content = document.getElementById('hist-maquina-modal-content');
   content.innerHTML = '<div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:4px">'+m.modelo+'</div>'+
     '<div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">'+m.empresa+'</div>'+
-    (regs.length ? regs.map(function(r){ return buildRegistroCard(r, false); }).join('') : '<div class="historico-empty">Nenhuma manutencao registrada.</div>');
+    (regs.length ? regs.map(function(r){ return buildRegistroCard(r, false); }).join('') : '<div class="historico-empty">Nenhuma manutenção registrada.</div>');
 }
 
 </script>
