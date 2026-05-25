@@ -332,8 +332,9 @@ window.dispatchEvent(new Event('firebase-ready'));
   <button class="tab-btn" onclick="switchTabRestrito('pedido', this)">Peças</button>
   <button class="tab-btn" onclick="switchTabRestrito('config', this)">&#9881;</button>
 </div>
-<div id="barra-acesso" style="display:none;background:#1a6b9a;padding:6px 14px;text-align:center;">
-  <button onclick="pedirAcessoCompleto()" style="background:#FFD700;color:#1e4220;border:none;border-radius:8px;padding:6px 16px;font-weight:700;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128275; Acesso Completo - Ver todas as empresas</button>
+<div id="barra-acesso" style="display:none;background:#1a6b9a;padding:6px 10px;text-align:center;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+  <button onclick="abrirMaquinasEmpresaRestrito()" style="background:#fff;color:#1a6b9a;border:none;border-radius:8px;padding:6px 14px;font-weight:700;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">&#127981; Ver máquinas da empresa</button>
+  <button onclick="pedirAcessoCompleto()" style="background:#FFD700;color:#1e4220;border:none;border-radius:8px;padding:6px 14px;font-weight:700;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128275; Acesso completo</button>
 </div>
 
 
@@ -1067,51 +1068,13 @@ function abrirTelaPublica(maquina) {
   window._maquinaQR = maquina;
   function popular() {
     var maqN = normStr(maquina);
-    // Buscar todas as máquinas que batem com o QR
-    var candidatas = todasMaquinas.filter(function(x){
+    var m = todasMaquinas.find(function(x){
       if (!x.modelo) return false;
       var xN = normStr(x.modelo);
       return xN === maqN || xN.includes(maqN) || maqN.includes(xN);
     });
-    // Se há mais de uma candidata, mostrar seleção de série
-    if (candidatas.length > 1) {
-      mostrarSelecaoMaquina(candidatas);
-      return;
-    }
-    var m = candidatas[0] || null;
-    popularComMaquina(m, maquina);
-  }
-
-  function mostrarSelecaoMaquina(candidatas) {
-    var selHtml = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:13px;">' +
-      '<div style="font-family:serif;font-size:1rem;color:var(--accent);margin-bottom:4px;">&#128269; Qual é a série desta máquina?</div>' +
-      '<div style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Foram encontradas ' + candidatas.length + ' máquinas com esse nome. Selecione a correta:</div>' +
-      candidatas.map(function(m) {
-        var label = m.modelo + (m.serial ? ' \u2014 Série: ' + m.serial : '') + (m.setor ? ' (' + m.setor + ')' : '');
-        return '<button onclick="window._selecionarMaquinaQR(\'' + m.fbKey + '\')" style="display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font-size:.85rem;color:var(--text);">' + label + '</button>';
-      }).join('') +
-      '</div>';
-    var pub = document.getElementById('tela-qr-publica');
-    var existingPicker = document.getElementById('qr-serie-picker');
-    if (existingPicker) existingPicker.remove();
-    var div = document.createElement('div');
-    div.id = 'qr-serie-picker';
-    div.innerHTML = selHtml;
-    var cont = pub.querySelector('.qr-pub-container');
-    if (cont) cont.insertBefore(div, cont.firstChild);
-  }
-
-  window._selecionarMaquinaQR = function(fbKey) {
-    var m = todasMaquinas.find(function(x){ return x.fbKey === fbKey; });
-    if (!m) return;
-    var picker = document.getElementById('qr-serie-picker');
-    if (picker) picker.remove();
-    popularComMaquina(m, m.modelo);
-  };
-
-  function popularComMaquina(m, nomeFallback) {
-    var maqSerial = m ? (m.serial ? ' — Série: ' + m.serial : '') : '';
-    document.getElementById('qr-pub-nome').textContent = (m ? m.modelo : nomeFallback) + maqSerial;
+    var maqSerial = m ? (m.serial ? ' - ' + m.serial : '') : '';
+      document.getElementById('qr-pub-nome').textContent = maquina + maqSerial;
     if (m) {
       document.getElementById('qr-pub-empresa').textContent = m.empresa || '';
       document.getElementById('qr-pub-agulha').textContent = m.infoAgulha || 'Não informado';
@@ -1120,6 +1083,7 @@ function abrirTelaPublica(maquina) {
       var lnk = document.getElementById('qr-pub-linha-link');
       if (m.infoLinhaLink && m.infoLinhaLink.startsWith('http')) { lnk.href = m.infoLinhaLink; lnk.style.display = 'inline-flex'; }
       else lnk.style.display = 'none';
+      // Alerta
       var alerta = document.getElementById('qr-pub-alerta');
       var alertaTxt = document.getElementById('qr-pub-alerta-texto');
       if (m.infoAlerta && m.infoAlerta.trim()) {
@@ -1129,7 +1093,7 @@ function abrirTelaPublica(maquina) {
         alerta.style.display = 'none';
       }
     }
-    renderQrPubHistorico(m ? m.modelo : nomeFallback, m ? m.fbKey : null);
+    renderQrPubHistorico(maquina, m ? m.fbKey : null);
   }
   function tentarPopular() {
     if (todasMaquinas.length > 0 && _registrosCarregados) {
@@ -1164,34 +1128,10 @@ function renderQrPubHistorico(maquina, fbKey) {
   if (!regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhuma manutenção registrada.</div>'; return; }
   lista.innerHTML = regs.map(function(r) {
     var df = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
-    var proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
     var tc = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
     var tl = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : '-';
-    var uid = (r.fbKey||Math.random().toString(36).substr(2,6)).replace(/[^a-zA-Z0-9]/g,'');
-    var servList = (r.servicos||[]);
-    var pecaList = (r.pecas||[]);
-    var servTags = servList.length > 0 ?
-      '<div class="tags-toggle" onclick="toggleTags(&quot;pub-serv-'+uid+'&quot;)">&#9989; Servicos ('+servList.length+') &#9660;</div>'+
-      '<div class="tags-content" id="pub-serv-'+uid+'">'+servList.map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('')+'</div>' : '';
-    var pecaTags = pecaList.length > 0 ?
-      '<div class="tags-toggle" onclick="toggleTags(&quot;pub-peca-'+uid+'&quot;)">&#128295; Pecas ('+pecaList.length+') &#9660;</div>'+
-      '<div class="tags-content" id="pub-peca-'+uid+'">'+pecaList.map(function(p){ return '<span class="tag">'+p+'</span>'; }).join('')+'</div>' : '';
-    var tecSig = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '';
-    var resSig = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '';
-    var sigsHtml = (tecSig||resSig) ? '<div class="reg-sigs" style="flex-direction:column;gap:6px;margin-top:8px;">'+
-      (tecSig?'<div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Técnico')+'</div></div>':'')+
-      (resSig?'<div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsável')+'</div></div>':'')+
-      '</div>' : '';
-    return '<div class="registro-card">'+
-      '<div class="reg-header"><div>'+
-        '<div class="reg-date">'+df+'</div>'+
-        (r.modelo ? '<div style="font-size:.78rem;color:var(--muted);margin-top:1px">'+r.modelo+'</div>' : '')+
-      '</div><span class="reg-tipo '+tc+'">'+tl+'</span></div>'+
-      servTags+pecaTags+
-      (r.obs?'<div style="font-size:.76rem;color:var(--muted);margin-top:5px">'+r.obs+'</div>':'')+
-      (proxFmt?'<div style="font-size:.76rem;color:var(--accent);margin-top:5px;font-weight:600">Próxima: '+proxFmt+'</div>':'')+
-      sigsHtml+
-      '</div>';
+    var st = (r.servicos||[]).map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('');
+    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+df+'</div></div><span class="reg-tipo '+tc+'">'+tl+'</span></div>'+(st?'<div class="reg-tags">'+st+'</div>':'')+(r.obs?'<div style="font-size:.76rem;color:var(--muted);margin-top:5px">'+r.obs+'</div>':'')+'</div>';
   }).join('');
 }
 
@@ -1253,7 +1193,9 @@ function verificarSenhaTec() {
       // Filtrar historico
       document.getElementById('filtro-modelo').value = maq;
       filtrarHistorico();
-      // Mostrar botao acesso completo
+      // Mostrar barra de acesso (ver maquinas da empresa + acesso completo)
+      var barraAcesso = document.getElementById('barra-acesso');
+      if (barraAcesso) barraAcesso.style.display = 'flex';
       var btnAC = document.getElementById('btn-acesso-completo');
       if (btnAC) btnAC.style.display = 'block';
       // Ir para aba registrar para facilitar nova manutencao
@@ -1615,6 +1557,24 @@ function abrirTodasMaquinas() {
   document.getElementById('hist-maquina-modal').style.display = 'none';
   document.getElementById('todas-maquinas-lista').style.display = 'block';
   renderTodasMaquinasModal();
+}
+function abrirMaquinasEmpresaRestrito() {
+  // Descobre a empresa da maquina atual (via QR ou campo empresa)
+  var empresaAtual = '';
+  if (window._maquinaRestrita) {
+    var maqObj = todasMaquinas.find(function(m){
+      return normStr(m.modelo) === normStr(window._maquinaRestrita);
+    });
+    if (maqObj) empresaAtual = maqObj.empresa || '';
+  }
+  if (!empresaAtual) {
+    var campoEmp = document.getElementById('empresa');
+    if (campoEmp) empresaAtual = campoEmp.value.trim();
+  }
+  // Preenche busca com o nome da empresa e abre modal
+  var buscaEl = document.getElementById('busca-todas-maquinas');
+  if (buscaEl && empresaAtual) buscaEl.value = empresaAtual;
+  abrirTodasMaquinas();
 }
 function fecharTodasMaquinas() {
   document.getElementById('modal-todas-maquinas').style.display = 'none';
