@@ -1083,13 +1083,12 @@ function abrirTelaPublica(maquina) {
   }
 
   function mostrarSelecaoMaquina(candidatas) {
-    var container = document.getElementById('qr-pub-container') || document.querySelector('.qr-pub-container');
     var selHtml = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:13px;">' +
-      '<div style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--accent);margin-bottom:4px;">🔍 Qual é a série desta máquina?</div>' +
+      '<div style="font-family:serif;font-size:1rem;color:var(--accent);margin-bottom:4px;">&#128269; Qual é a série desta máquina?</div>' +
       '<div style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Foram encontradas ' + candidatas.length + ' máquinas com esse nome. Selecione a correta:</div>' +
       candidatas.map(function(m) {
-        var label = m.modelo + (m.serial ? ' — Série: ' + m.serial : '') + (m.setor ? ' (' + m.setor + ')' : '');
-        return '<button onclick="window._selecionarMaquinaQR('' + m.fbKey + '')" style="display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);">' + label + '</button>';
+        var label = m.modelo + (m.serial ? ' \u2014 Série: ' + m.serial : '') + (m.setor ? ' (' + m.setor + ')' : '');
+        return '<button onclick="window._selecionarMaquinaQR(\'' + m.fbKey + '\')" style="display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font-size:.85rem;color:var(--text);">' + label + '</button>';
       }).join('') +
       '</div>';
     var pub = document.getElementById('tela-qr-publica');
@@ -1172,10 +1171,10 @@ function renderQrPubHistorico(maquina, fbKey) {
     var servList = (r.servicos||[]);
     var pecaList = (r.pecas||[]);
     var servTags = servList.length > 0 ?
-      '<div class="tags-toggle" onclick="toggleTags('pub-serv-'+uid+'')">&#9989; Servicos ('+servList.length+') &#9660;</div>'+
+      '<div class="tags-toggle" onclick="toggleTags(&quot;pub-serv-'+uid+'&quot;)">&#9989; Servicos ('+servList.length+') &#9660;</div>'+
       '<div class="tags-content" id="pub-serv-'+uid+'">'+servList.map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('')+'</div>' : '';
     var pecaTags = pecaList.length > 0 ?
-      '<div class="tags-toggle" onclick="toggleTags('pub-peca-'+uid+'')">&#128295; Pecas ('+pecaList.length+') &#9660;</div>'+
+      '<div class="tags-toggle" onclick="toggleTags(&quot;pub-peca-'+uid+'&quot;)">&#128295; Pecas ('+pecaList.length+') &#9660;</div>'+
       '<div class="tags-content" id="pub-peca-'+uid+'">'+pecaList.map(function(p){ return '<span class="tag">'+p+'</span>'; }).join('')+'</div>' : '';
     var tecSig = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '';
     var resSig = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '';
