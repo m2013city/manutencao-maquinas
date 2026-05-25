@@ -694,9 +694,18 @@ async function salvarRegistro() {
   const pecas    = [...document.querySelectorAll('.peca-input')].map(i=>i.value.trim()).filter(Boolean);
   const sigTecnico     = document.getElementById('sig-tecnico').toDataURL();
   const sigResponsavel = document.getElementById('sig-responsavel').toDataURL();
+  // Vincular ao cadastro da maquina, se existir
+  const modeloVal = modelo;
+  const empresaVal = document.getElementById('empresa').value.trim();
+  const maqCadastrada = todasMaquinas.find(function(m){
+    return normStr(m.modelo) === normStr(modeloVal) && normStr(m.empresa) === normStr(empresaVal);
+  }) || todasMaquinas.find(function(m){
+    return normStr(m.modelo) === normStr(modeloVal);
+  });
   const reg = {
     ts: Date.now(),
-    empresa: document.getElementById('empresa').value.trim(),
+    maquinaKey: maqCadastrada ? maqCadastrada.fbKey : '',
+    empresa: empresaVal,
     modelo, serial: document.getElementById('serial').value.trim(),
     setor: document.getElementById('setor').value.trim(),
     data, proxima: document.getElementById('proxima').value,
@@ -759,6 +768,7 @@ function removerFoto(tipo) {
   if (input) input.value = '';
 }
 let todosRegistros = [];
+var _registrosCarregados = false;
 function iniciarEscuta() {
   if(!window._fbReady) return;
   const { db, ref, onValue } = window._fb;
@@ -766,6 +776,7 @@ function iniciarEscuta() {
     todosRegistros = [];
     snapshot.forEach(child => { todosRegistros.push({ fbKey: child.key, ...child.val() }); });
     todosRegistros.sort((a,b) => b.ts - a.ts);
+    _registrosCarregados = true;
     setStatus('online', 'Online');
     filtrarHistorico();
     if(sessionStorage.getItem('auth') === 'admin') ativarAdmin();
@@ -1084,7 +1095,7 @@ function abrirTelaPublica(maquina) {
     renderQrPubHistorico(maquina, m ? m.fbKey : null);
   }
   function tentarPopular() {
-    if (todasMaquinas.length > 0 && todosRegistros !== undefined) {
+    if (todasMaquinas.length > 0 && _registrosCarregados) {
       popular();
     } else {
       setTimeout(tentarPopular, 300);
