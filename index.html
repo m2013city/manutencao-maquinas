@@ -998,7 +998,11 @@ window.addEventListener('load', () => {
 
 
 function normStr(s) {
-  return (s||'').toLowerCase().replace(/[\u2013\u2014]/g,'-').replace(/\s+/g,' ').trim();
+  return (s||'').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')  // remove acentos
+    .replace(/[\u2013\u2014]/g,'-')
+    .replace(/\s*-\s*/g,'-')  // normaliza espacos ao redor de hifen
+    .replace(/\s+/g,' ').trim();
 }
 
 // ===== VARIAVEIS GLOBAIS =====
@@ -1146,11 +1150,11 @@ function renderQrPubHistorico(maquina, fbKey) {
       (tecSig?'<div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Técnico')+'</div></div>':'')+
       (resSig?'<div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsável')+'</div></div>':'')+
       '</div>' : '';
-    // Buscar nome da maquina pelo maquinaKey se o modelo nao estiver no registro
+    // Buscar nome da maquina: primeiro no registro, depois pelo maquinaKey
     var nomeModelo = r.modelo || '';
-    if (!nomeModelo && r.maquinaKey) {
+    if (r.maquinaKey) {
       var maqObj = todasMaquinas.find(function(m){ return m.fbKey === r.maquinaKey; });
-      if (maqObj) nomeModelo = maqObj.modelo || '';
+      if (maqObj && maqObj.modelo) nomeModelo = maqObj.modelo;
     }
     return '<div class="registro-card">'+
       '<div class="reg-header"><div>'+
