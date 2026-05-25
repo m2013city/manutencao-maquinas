@@ -1128,10 +1128,40 @@ function renderQrPubHistorico(maquina, fbKey) {
   if (!regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhuma manutenção registrada.</div>'; return; }
   lista.innerHTML = regs.map(function(r) {
     var df = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
+    var proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
     var tc = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
     var tl = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : '-';
-    var st = (r.servicos||[]).map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('');
-    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+df+'</div></div><span class="reg-tipo '+tc+'">'+tl+'</span></div>'+(st?'<div class="reg-tags">'+st+'</div>':'')+(r.obs?'<div style="font-size:.76rem;color:var(--muted);margin-top:5px">'+r.obs+'</div>':'')+'</div>';
+    var uid = (r.fbKey||Math.random().toString(36).substr(2,6)).replace(/[^a-zA-Z0-9]/g,'');
+    var servList = (r.servicos||[]);
+    var pecaList = (r.pecas||[]);
+    var servTags = servList.length > 0 ?
+      '<div class="tags-toggle" onclick="toggleTags(&quot;pub-serv-'+uid+'&quot;)">&#9989; Servicos ('+servList.length+') &#9660;</div>'+
+      '<div class="tags-content" id="pub-serv-'+uid+'">'+servList.map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('')+'</div>' : '';
+    var pecaTags = pecaList.length > 0 ?
+      '<div class="tags-toggle" onclick="toggleTags(&quot;pub-peca-'+uid+'&quot;)">&#128295; Pecas ('+pecaList.length+') &#9660;</div>'+
+      '<div class="tags-content" id="pub-peca-'+uid+'">'+pecaList.map(function(p){ return '<span class="tag">'+p+'</span>'; }).join('')+'</div>' : '';
+    var tecSig = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '';
+    var resSig = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '';
+    var sigsHtml = (tecSig||resSig) ? '<div class="reg-sigs" style="flex-direction:column;gap:6px;margin-top:8px;">'+
+      (tecSig?'<div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Técnico')+'</div></div>':'')+
+      (resSig?'<div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsável')+'</div></div>':'')+
+      '</div>' : '';
+    // Buscar nome da maquina pelo maquinaKey se o modelo nao estiver no registro
+    var nomeModelo = r.modelo || '';
+    if (!nomeModelo && r.maquinaKey) {
+      var maqObj = todasMaquinas.find(function(m){ return m.fbKey === r.maquinaKey; });
+      if (maqObj) nomeModelo = maqObj.modelo || '';
+    }
+    return '<div class="registro-card">'+
+      '<div class="reg-header"><div>'+
+        '<div class="reg-date">'+df+'</div>'+
+        (nomeModelo ? '<div style="font-size:.78rem;color:var(--muted);margin-top:1px">'+nomeModelo+'</div>' : '')+
+      '</div><span class="reg-tipo '+tc+'">'+tl+'</span></div>'+
+      servTags+pecaTags+
+      (r.obs?'<div style="font-size:.76rem;color:var(--muted);margin-top:5px">'+r.obs+'</div>':'')+
+      (proxFmt?'<div style="font-size:.76rem;color:var(--accent);margin-top:5px;font-weight:600">Próxima: '+proxFmt+'</div>':'')+
+      sigsHtml+
+      '</div>';
   }).join('');
 }
 
