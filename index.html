@@ -332,9 +332,8 @@ window.dispatchEvent(new Event('firebase-ready'));
   <button class="tab-btn" onclick="switchTabRestrito('pedido', this)">Peças</button>
   <button class="tab-btn" onclick="switchTabRestrito('config', this)">&#9881;</button>
 </div>
-<div id="barra-acesso" style="display:none;background:#1a6b9a;padding:6px 10px;text-align:center;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-  <button onclick="abrirMaquinasEmpresaRestrito()" style="background:#fff;color:#1a6b9a;border:none;border-radius:8px;padding:6px 14px;font-weight:700;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">&#127981; Ver máquinas da empresa</button>
-  <button onclick="pedirAcessoCompleto()" style="background:#FFD700;color:#1e4220;border:none;border-radius:8px;padding:6px 14px;font-weight:700;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128275; Acesso completo</button>
+<div id="barra-acesso" style="display:none;background:#1a6b9a;padding:6px 14px;text-align:center;">
+  <button onclick="pedirAcessoCompleto()" style="background:#FFD700;color:#1e4220;border:none;border-radius:8px;padding:6px 16px;font-weight:700;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128275; Acesso Completo - Ver todas as empresas</button>
 </div>
 
 
@@ -695,18 +694,9 @@ async function salvarRegistro() {
   const pecas    = [...document.querySelectorAll('.peca-input')].map(i=>i.value.trim()).filter(Boolean);
   const sigTecnico     = document.getElementById('sig-tecnico').toDataURL();
   const sigResponsavel = document.getElementById('sig-responsavel').toDataURL();
-  // Vincular ao cadastro da maquina, se existir
-  const modeloVal = modelo;
-  const empresaVal = document.getElementById('empresa').value.trim();
-  const maqCadastrada = todasMaquinas.find(function(m){
-    return normStr(m.modelo) === normStr(modeloVal) && normStr(m.empresa) === normStr(empresaVal);
-  }) || todasMaquinas.find(function(m){
-    return normStr(m.modelo) === normStr(modeloVal);
-  });
   const reg = {
     ts: Date.now(),
-    maquinaKey: maqCadastrada ? maqCadastrada.fbKey : '',
-    empresa: empresaVal,
+    empresa: document.getElementById('empresa').value.trim(),
     modelo, serial: document.getElementById('serial').value.trim(),
     setor: document.getElementById('setor').value.trim(),
     data, proxima: document.getElementById('proxima').value,
@@ -769,7 +759,6 @@ function removerFoto(tipo) {
   if (input) input.value = '';
 }
 let todosRegistros = [];
-var _registrosCarregados = false;
 function iniciarEscuta() {
   if(!window._fbReady) return;
   const { db, ref, onValue } = window._fb;
@@ -777,7 +766,6 @@ function iniciarEscuta() {
     todosRegistros = [];
     snapshot.forEach(child => { todosRegistros.push({ fbKey: child.key, ...child.val() }); });
     todosRegistros.sort((a,b) => b.ts - a.ts);
-    _registrosCarregados = true;
     setStatus('online', 'Online');
     filtrarHistorico();
     if(sessionStorage.getItem('auth') === 'admin') ativarAdmin();
@@ -824,7 +812,8 @@ function buildRegistroCard(r, comBotoes) {
   var botoesHtml = comBotoes ? '<div class="btn-excluir-wrap" style="display:'+(isAdmin?'flex':'none')+';margin-top:8px;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\''+( r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div>' : '';
   return '<div class="registro-card">'+
     '<div class="reg-header"><div><div class="reg-date">'+dataFmt+'</div>'+
-    '<div style="font-size:.8rem;color:var(--muted)">'+(r.empresa||'')+(r.setor?' - '+r.setor:'')+'</div></div>'+
+    '<div style="font-size:.85rem;font-weight:600;color:var(--accent)">'+(r.modelo||'')+'</div>'+
+    '<div style="font-size:.8rem;color:var(--muted)">'+(r.empresa||'')+(r.setor?' — '+r.setor:'')+'</div></div>'+
     '<span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+
     servTags+pecaTags+
     (r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+
@@ -998,11 +987,7 @@ window.addEventListener('load', () => {
 
 
 function normStr(s) {
-  return (s||'').toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')  // remove acentos
-    .replace(/[\u2013\u2014]/g,'-')
-    .replace(/\s*-\s*/g,'-')  // normaliza espacos ao redor de hifen
-    .replace(/\s+/g,' ').trim();
+  return (s||'').toLowerCase().replace(/[\u2013\u2014]/g,'-').replace(/\s+/g,' ').trim();
 }
 
 // ===== VARIAVEIS GLOBAIS =====
@@ -1100,7 +1085,7 @@ function abrirTelaPublica(maquina) {
     renderQrPubHistorico(maquina, m ? m.fbKey : null);
   }
   function tentarPopular() {
-    if (todasMaquinas.length > 0 && _registrosCarregados) {
+    if (todasMaquinas.length > 0 && todosRegistros !== undefined) {
       popular();
     } else {
       setTimeout(tentarPopular, 300);
@@ -1132,40 +1117,10 @@ function renderQrPubHistorico(maquina, fbKey) {
   if (!regs.length) { lista.innerHTML = '<div class="historico-empty">Nenhuma manutenção registrada.</div>'; return; }
   lista.innerHTML = regs.map(function(r) {
     var df = r.data ? new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR') : '-';
-    var proxFmt = r.proxima ? new Date(r.proxima+'T12:00:00').toLocaleDateString('pt-BR') : null;
     var tc = r.tipo === 'corretiva' ? 'tipo-corretiva' : 'tipo-preventiva';
     var tl = r.tipo ? r.tipo.charAt(0).toUpperCase()+r.tipo.slice(1) : '-';
-    var uid = (r.fbKey||Math.random().toString(36).substr(2,6)).replace(/[^a-zA-Z0-9]/g,'');
-    var servList = (r.servicos||[]);
-    var pecaList = (r.pecas||[]);
-    var servTags = servList.length > 0 ?
-      '<div class="tags-toggle" onclick="toggleTags(&quot;pub-serv-'+uid+'&quot;)">&#9989; Servicos ('+servList.length+') &#9660;</div>'+
-      '<div class="tags-content" id="pub-serv-'+uid+'">'+servList.map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('')+'</div>' : '';
-    var pecaTags = pecaList.length > 0 ?
-      '<div class="tags-toggle" onclick="toggleTags(&quot;pub-peca-'+uid+'&quot;)">&#128295; Pecas ('+pecaList.length+') &#9660;</div>'+
-      '<div class="tags-content" id="pub-peca-'+uid+'">'+pecaList.map(function(p){ return '<span class="tag">'+p+'</span>'; }).join('')+'</div>' : '';
-    var tecSig = r.sigTecnico && r.sigTecnico.length > 200 ? '<img class="sig-preview" src="'+r.sigTecnico+'">' : '';
-    var resSig = r.sigResponsavel && r.sigResponsavel.length > 200 ? '<img class="sig-preview" src="'+r.sigResponsavel+'">' : '';
-    var sigsHtml = (tecSig||resSig) ? '<div class="reg-sigs" style="flex-direction:column;gap:6px;margin-top:8px;">'+
-      (tecSig?'<div class="sig-box">'+tecSig+'<div>'+(r.tecnico||'Técnico')+'</div></div>':'')+
-      (resSig?'<div class="sig-box">'+resSig+'<div>'+(r.responsavel||'Responsável')+'</div></div>':'')+
-      '</div>' : '';
-    // Buscar nome da maquina: primeiro no registro, depois pelo maquinaKey
-    var nomeModelo = r.modelo || '';
-    if (r.maquinaKey) {
-      var maqObj = todasMaquinas.find(function(m){ return m.fbKey === r.maquinaKey; });
-      if (maqObj && maqObj.modelo) nomeModelo = maqObj.modelo;
-    }
-    return '<div class="registro-card">'+
-      '<div class="reg-header"><div>'+
-        '<div class="reg-date">'+df+'</div>'+
-        (nomeModelo ? '<div style="font-size:.78rem;color:var(--muted);margin-top:1px">'+nomeModelo+'</div>' : '')+
-      '</div><span class="reg-tipo '+tc+'">'+tl+'</span></div>'+
-      servTags+pecaTags+
-      (r.obs?'<div style="font-size:.76rem;color:var(--muted);margin-top:5px">'+r.obs+'</div>':'')+
-      (proxFmt?'<div style="font-size:.76rem;color:var(--accent);margin-top:5px;font-weight:600">Próxima: '+proxFmt+'</div>':'')+
-      sigsHtml+
-      '</div>';
+    var st = (r.servicos||[]).map(function(s){ return '<span class="tag">'+s+'</span>'; }).join('');
+    return '<div class="registro-card"><div class="reg-header"><div><div class="reg-date">'+df+'</div></div><span class="reg-tipo '+tc+'">'+tl+'</span></div>'+(st?'<div class="reg-tags">'+st+'</div>':'')+(r.obs?'<div style="font-size:.76rem;color:var(--muted);margin-top:5px">'+r.obs+'</div>':'')+'</div>';
   }).join('');
 }
 
@@ -1227,9 +1182,7 @@ function verificarSenhaTec() {
       // Filtrar historico
       document.getElementById('filtro-modelo').value = maq;
       filtrarHistorico();
-      // Mostrar barra de acesso (ver maquinas da empresa + acesso completo)
-      var barraAcesso = document.getElementById('barra-acesso');
-      if (barraAcesso) barraAcesso.style.display = 'flex';
+      // Mostrar botao acesso completo
       var btnAC = document.getElementById('btn-acesso-completo');
       if (btnAC) btnAC.style.display = 'block';
       // Ir para aba registrar para facilitar nova manutencao
@@ -1592,24 +1545,6 @@ function abrirTodasMaquinas() {
   document.getElementById('todas-maquinas-lista').style.display = 'block';
   renderTodasMaquinasModal();
 }
-function abrirMaquinasEmpresaRestrito() {
-  // Descobre a empresa da maquina atual (via QR ou campo empresa)
-  var empresaAtual = '';
-  if (window._maquinaRestrita) {
-    var maqObj = todasMaquinas.find(function(m){
-      return normStr(m.modelo) === normStr(window._maquinaRestrita);
-    });
-    if (maqObj) empresaAtual = maqObj.empresa || '';
-  }
-  if (!empresaAtual) {
-    var campoEmp = document.getElementById('empresa');
-    if (campoEmp) empresaAtual = campoEmp.value.trim();
-  }
-  // Preenche busca com o nome da empresa e abre modal
-  var buscaEl = document.getElementById('busca-todas-maquinas');
-  if (buscaEl && empresaAtual) buscaEl.value = empresaAtual;
-  abrirTodasMaquinas();
-}
 function fecharTodasMaquinas() {
   document.getElementById('modal-todas-maquinas').style.display = 'none';
 }
@@ -1655,6 +1590,37 @@ function verHistMaquinaModal(fbKey) {
   content.innerHTML = '<div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:4px">'+m.modelo+'</div>'+
     '<div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">'+m.empresa+'</div>'+
     (regs.length ? regs.map(function(r){ return buildRegistroCard(r, false); }).join('') : '<div class="historico-empty">Nenhuma manutenção registrada.</div>');
+}
+
+
+async function excluirRegistro(fbKey) {
+  if (!confirm('Deseja excluir este registro permanentemente?')) return;
+  try {
+    var fb = window._fb;
+    await fb.remove(fb.ref(fb.db, 'manutencoes/' + fbKey));
+    // Remover da lista local
+    todosRegistros = todosRegistros.filter(function(r){ return r.fbKey !== fbKey; });
+    filtrarHistorico();
+    // Atualizar ficha se estiver aberta
+    if (maquinaAtual) renderFichaHistorico();
+  } catch(e) {
+    alert('Erro ao excluir: ' + e.message);
+  }
+}
+
+function renderFichaHistorico() {
+  if (!maquinaAtual) return;
+  var regs = todosRegistros.filter(function(r){
+    return r.maquinaKey === maquinaAtual.fbKey || r.modelo === maquinaAtual.modelo;
+  });
+  var histEl = document.getElementById('ficha-maq-historico');
+  if (!histEl) return;
+  if (!regs.length) {
+    histEl.innerHTML = '<div class="historico-empty">Nenhuma manutenção registrada.</div>';
+  } else {
+    histEl.innerHTML = regs.map(function(r){ return buildRegistroCard(r, true); }).join('');
+    if (sessionStorage.getItem('auth') === 'admin') ativarAdmin();
+  }
 }
 
 </script>
