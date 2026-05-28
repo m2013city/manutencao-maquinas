@@ -934,13 +934,71 @@ function checkURLParams() {
   if (!maquina) return;
   var authAtual = sessionStorage.getItem('auth');
   if (authAtual === '1' || authAtual === 'admin') {
+    // Já logado: aplicar modo restrito igual ao fluxo do QR
     document.getElementById('tela-senha').style.display = 'none';
-    switchTab('historico', null);
-    var btns = document.querySelectorAll('.tab-btn');
-    if(btns[1]) btns[1].classList.add('active');
-    if(btns[0]) btns[0].classList.remove('active');
-    document.getElementById('filtro-modelo').value = maquina;
-    filtrarHistorico();
+    window._maquinaQR = maquina;
+    window._modoRestrito = true;
+    window._maquinaRestrita = maquina;
+    history.replaceState({}, '', window.location.pathname);
+    if (authAtual === 'admin') ativarAdmin();
+
+    function aplicarModoRestrito() {
+      var maqObj = todasMaquinas.find(function(x){ return x.modelo && normStr(x.modelo) === normStr(maquina); });
+
+      // Pré-preencher aba Registrar
+      var campoModelo = document.getElementById('modelo');
+      if (campoModelo) campoModelo.value = maquina;
+      if (maqObj) {
+        var campoEmpresa = document.getElementById('empresa');
+        if (campoEmpresa) campoEmpresa.value = maqObj.empresa || '';
+        var campoSetor = document.getElementById('setor');
+        if (campoSetor && maqObj.setor) campoSetor.value = maqObj.setor;
+        if (document.getElementById('info-agulha')) document.getElementById('info-agulha').value = maqObj.infoAgulha || '';
+        if (document.getElementById('info-ponto')) document.getElementById('info-ponto').value = maqObj.infoPonto || '';
+        if (document.getElementById('info-linha-desc')) document.getElementById('info-linha-desc').value = maqObj.infoLinhaDesc || '';
+        if (document.getElementById('info-linha-link')) document.getElementById('info-linha-link').value = maqObj.infoLinhaLink || '';
+        if (document.getElementById('info-alerta')) document.getElementById('info-alerta').value = maqObj.infoAlerta || '';
+        if (document.getElementById('manual-link')) document.getElementById('manual-link').value = maqObj.manualLink || '';
+      }
+
+      // Pré-selecionar no Pedido de Peças
+      popularSelectPedido();
+      setTimeout(function(){
+        var sel = document.getElementById('pedido-select-maquina');
+        if (sel && maqObj) { sel.value = maqObj.fbKey; selecionarMaquinaPedido(); }
+      }, 600);
+
+      // Filtrar histórico
+      document.getElementById('filtro-modelo').value = maquina;
+      filtrarHistorico();
+
+      // Mostrar botão acesso completo
+      var barraAcesso = document.getElementById('barra-acesso');
+      if (barraAcesso) barraAcesso.style.display = 'block';
+      var btnAC = document.getElementById('btn-acesso-completo');
+      if (btnAC) btnAC.style.display = 'block';
+
+      // Ir para aba Registrar
+      switchTab('registrar', null);
+      var btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(function(b){ b.classList.remove('active'); });
+      // Marcar o botão "+ Reg" como ativo (índice 1)
+      if (btns[1]) btns[1].classList.add('active');
+    }
+
+    // Aguardar máquinas carregarem se necessário
+    if (todasMaquinas.length > 0) {
+      aplicarModoRestrito();
+    } else {
+      var tentativas = 0;
+      var intervalo = setInterval(function(){
+        tentativas++;
+        if (todasMaquinas.length > 0 || tentativas > 20) {
+          clearInterval(intervalo);
+          aplicarModoRestrito();
+        }
+      }, 300);
+    }
   } else {
     abrirTelaPublica(maquina);
   }
