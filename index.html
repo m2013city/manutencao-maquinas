@@ -809,13 +809,7 @@ function buildRegistroCard(r, comBotoes) {
   var fotosHtml = (fotosM||fotosP) ? '<div class="reg-fotos">'+fotosM+fotosP+'</div>' : '';
   var manualHtml = r.manualLink ? '<div style="margin-top:8px"><a class="manual-link" href="'+r.manualLink+'" target="_blank">Manual</a></div>' : '';
   var isAdmin = sessionStorage.getItem('auth') === 'admin';
-  var fk = r.fbKey || '';
-  var mod = encodeURIComponent(r.modelo||'');
-  var botoesHtml = comBotoes ? '<div class="btn-excluir-wrap" style="display:'+(isAdmin?'flex':'none')+';margin-top:8px;gap:6px;flex-wrap:wrap;">'+
-    '<button class="btn btn-edit btn-sm" data-fbkey="'+fk+'" onclick="editarRegistro(this.dataset.fbkey)">✏️ Editar</button>'+
-    '<button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" data-modelo="'+mod+'" onclick="abrirEditarMaquinaPorModelo(this.dataset.modelo)">⚙️ Editar Máquina</button>'+
-    '<button class="btn btn-danger btn-sm" data-fbkey="'+fk+'" onclick="excluirRegistro(this.dataset.fbkey)">❌ Excluir</button>'+
-    '</div>' : '';
+  var botoesHtml = comBotoes ? '<div class="btn-excluir-wrap" style="display:'+(isAdmin?'flex':'none')+';margin-top:8px;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\''+( r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div>' : '';
   return '<div class="registro-card">'+
     '<div class="reg-header"><div><div class="reg-date">'+dataFmt+'</div>'+
     '<div style="font-size:.85rem;font-weight:600;color:var(--accent)">'+(r.modelo||'')+'</div>'+
