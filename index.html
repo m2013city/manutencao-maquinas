@@ -812,8 +812,7 @@ function buildRegistroCard(r, comBotoes) {
   var botoesHtml = comBotoes ? '<div class="btn-excluir-wrap" style="display:'+(isAdmin?'flex':'none')+';margin-top:8px;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit btn-sm" onclick="editarRegistro(\''+r.fbKey+'\')">✏️ Editar</button><button class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7" onclick="abrirEditarMaquinaPorModelo(encodeURIComponent(\''+( r.modelo||'')+'\'))">⚙️ Editar Maquina</button><button class="btn btn-danger btn-sm" onclick="excluirRegistro(\''+r.fbKey+'\')">❌ Excluir</button></div>' : '';
   return '<div class="registro-card">'+
     '<div class="reg-header"><div><div class="reg-date">'+dataFmt+'</div>'+
-    '<div style="font-size:.85rem;font-weight:600;color:var(--accent)">'+(r.modelo||'')+'</div>'+
-    '<div style="font-size:.8rem;color:var(--muted)">'+(r.empresa||'')+(r.setor?' — '+r.setor:'')+'</div></div>'+
+    '<div style="font-size:.8rem;color:var(--muted)">'+(r.empresa||'')+(r.setor?' - '+r.setor:'')+'</div></div>'+
     '<span class="reg-tipo '+tipoClass+'">'+tipoLabel+'</span></div>'+
     servTags+pecaTags+
     (r.obs?'<div style="font-size:.82rem;color:var(--muted);margin-top:6px">'+r.obs+'</div>':'')+
@@ -1590,37 +1589,6 @@ function verHistMaquinaModal(fbKey) {
   content.innerHTML = '<div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:4px">'+m.modelo+'</div>'+
     '<div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">'+m.empresa+'</div>'+
     (regs.length ? regs.map(function(r){ return buildRegistroCard(r, false); }).join('') : '<div class="historico-empty">Nenhuma manutenção registrada.</div>');
-}
-
-
-async function excluirRegistro(fbKey) {
-  if (!confirm('Deseja excluir este registro permanentemente?')) return;
-  try {
-    var fb = window._fb;
-    await fb.remove(fb.ref(fb.db, 'manutencoes/' + fbKey));
-    // Remover da lista local
-    todosRegistros = todosRegistros.filter(function(r){ return r.fbKey !== fbKey; });
-    filtrarHistorico();
-    // Atualizar ficha se estiver aberta
-    if (maquinaAtual) renderFichaHistorico();
-  } catch(e) {
-    alert('Erro ao excluir: ' + e.message);
-  }
-}
-
-function renderFichaHistorico() {
-  if (!maquinaAtual) return;
-  var regs = todosRegistros.filter(function(r){
-    return r.maquinaKey === maquinaAtual.fbKey || r.modelo === maquinaAtual.modelo;
-  });
-  var histEl = document.getElementById('ficha-maq-historico');
-  if (!histEl) return;
-  if (!regs.length) {
-    histEl.innerHTML = '<div class="historico-empty">Nenhuma manutenção registrada.</div>';
-  } else {
-    histEl.innerHTML = regs.map(function(r){ return buildRegistroCard(r, true); }).join('');
-    if (sessionStorage.getItem('auth') === 'admin') ativarAdmin();
-  }
 }
 
 </script>
