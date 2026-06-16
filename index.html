@@ -524,6 +524,16 @@ window.dispatchEvent(new Event('firebase-ready'));
     <div class="field"><label>Email MG City (copia dos pedidos)</label><input type="email" id="config-email-mgcity" placeholder="mgcity.assistenciatecnica@gmail.com"></div>
     <div class="save-bar"><button class="btn btn-primary" onclick="salvarConfig()">Salvar</button></div>
   </div>
+  <div class="card" id="card-gerenciar-senhas" style="display:none">
+    <div class="card-title">&#128273; Gerenciar Senhas por Empresa</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Cada empresa pode ter uma senha própria. O técnico que usar essa senha verá apenas as máquinas daquela empresa.</div>
+    <div id="lista-senhas-empresa" style="margin-bottom:12px;"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;">
+      <div class="field" style="margin:0"><label>Empresa</label><input type="text" id="nova-senha-empresa" placeholder="Ex: SCUP"></div>
+      <div class="field" style="margin:0"><label>Senha</label><input type="text" id="nova-senha-valor" placeholder="Ex: Scup@2026"></div>
+      <button class="btn btn-primary" onclick="adicionarSenhaEmpresa()" style="height:38px">+ Adicionar</button>
+    </div>
+  </div>
   <div class="card">
     <div class="card-title">&#128260; Migrar Dados Antigos</div>
     <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px;">Vincula os registros antigos as maquinas para o historico aparecer no QR Code.</div>
@@ -759,6 +769,15 @@ function removerFoto(tipo) {
   if (input) input.value = '';
 }
 let todosRegistros = [];
+function deduplicarRegistros(lista) {
+  var vistos = {};
+  return lista.filter(function(r) {
+    if (!r.fbKey) return true;
+    if (vistos[r.fbKey]) return false;
+    vistos[r.fbKey] = true;
+    return true;
+  });
+}
 function iniciarEscuta() {
   if(!window._fbReady) return;
   const { db, ref, onValue } = window._fb;
@@ -1003,22 +1022,82 @@ function checkURLParams() {
     abrirTelaPublica(maquina);
   }
 }
-var SENHA_CORRETA = 'Acesso2026';
-var SENHA_ADMIN   = 'Admin2026';
-function ativarAdmin() { document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){ el.style.display='flex'; el.style.gap='8px'; el.style.justifyContent='flex-end'; }); }
+var SENHA_ADMIN = 'Admin2026';
+var SENHAS_EMPRESA = {}; // { 'Scup@2026': 'SCUP', 'Merrow@2026': 'Merrow' }
+function carregarSenhasEmpresa() {
+  var s = localStorage.getItem('mgcity_senhas_empresa');
+  if (s) try { SENHAS_EMPRESA = JSON.parse(s); } catch(e){}
+}
+function salvarSenhasEmpresaStorage() {
+  localStorage.setItem('mgcity_senhas_empresa', JSON.stringify(SENHAS_EMPRESA));
+}
+function resolverEmpresaPorSenha(val) {
+  if (!val) return null;
+  for (var k in SENHAS_EMPRESA) { if (k === val) return SENHAS_EMPRESA[k]; }
+  return null;
+}
+function getSenhaEmpresaAtual() { return sessionStorage.getItem('empresa_restrita') || null; }
+var SENHA_CORRETA = 'Acesso2026'; // mantido para compatibilidade legada
+function ativarAdmin() {
+  document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){ el.style.display='flex'; el.style.gap='8px'; el.style.justifyContent='flex-end'; });
+  var card = document.getElementById('card-gerenciar-senhas');
+  if (card) card.style.display = 'block';
+  renderListaSenhas();
+}
+function renderListaSenhas() {
+  var lista = document.getElementById('lista-senhas-empresa');
+  if (!lista) return;
+  var keys = Object.keys(SENHAS_EMPRESA);
+  if (!keys.length) { lista.innerHTML = '<div style="font-size:.8rem;color:var(--muted);padding:8px 0;">Nenhuma senha cadastrada ainda.</div>'; return; }
+  lista.innerHTML = keys.map(function(senha) {
+    var emp = SENHAS_EMPRESA[senha];
+    return '<div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:.85rem;">' +
+      '<span><b>' + emp + '</b> <span style="color:var(--muted);font-size:.78rem;">→ senha: ' + senha + '</span></span>' +
+      '<button class="btn btn-danger btn-sm" onclick="removerSenhaEmpresa(\'' + senha.replace(/'/g,'') + '\')">Remover</button>' +
+      '</div>';
+  }).join('');
+}
+function adicionarSenhaEmpresa() {
+  var emp = (document.getElementById('nova-senha-empresa').value||'').trim();
+  var senha = (document.getElementById('nova-senha-valor').value||'').trim();
+  if (!emp || !senha) { alert('Preencha o nome da empresa e a senha.'); return; }
+  if (senha === SENHA_ADMIN) { alert('Essa senha é reservada para Admin.'); return; }
+  SENHAS_EMPRESA[senha] = emp;
+  salvarSenhasEmpresaStorage();
+  document.getElementById('nova-senha-empresa').value = '';
+  document.getElementById('nova-senha-valor').value = '';
+  renderListaSenhas();
+  alert('Senha adicionada para ' + emp + '!');
+}
+function removerSenhaEmpresa(senha) {
+  if (!confirm('Remover senha "' + senha + '"?')) return;
+  delete SENHAS_EMPRESA[senha];
+  salvarSenhasEmpresaStorage();
+  renderListaSenhas();
+}
 function verificarSenha() {
   var input = document.getElementById('campo-senha');
   var erro  = document.getElementById('senha-erro');
   var val   = input.value.trim();
-  if(val === SENHA_ADMIN) {
+  if (val === SENHA_ADMIN) {
     document.getElementById('tela-senha').style.display = 'none';
-    sessionStorage.setItem('auth', 'admin'); ativarAdmin();
-  } else if(val === SENHA_CORRETA) {
+    sessionStorage.setItem('auth', 'admin');
+    sessionStorage.removeItem('empresa_restrita');
+    ativarAdmin();
+  } else if (val === SENHA_CORRETA) {
     document.getElementById('tela-senha').style.display = 'none';
     sessionStorage.setItem('auth', '1');
+    sessionStorage.removeItem('empresa_restrita');
   } else {
-    input.classList.add('erro'); erro.style.display = 'block'; input.value = '';
-    setTimeout(function(){ input.classList.remove('erro'); }, 400);
+    var emp = resolverEmpresaPorSenha(val);
+    if (emp) {
+      document.getElementById('tela-senha').style.display = 'none';
+      sessionStorage.setItem('auth', 'empresa');
+      sessionStorage.setItem('empresa_restrita', emp);
+    } else {
+      input.classList.add('erro'); erro.style.display = 'block'; input.value = '';
+      setTimeout(function(){ input.classList.remove('erro'); }, 400);
+    }
   }
 }
 var auth = sessionStorage.getItem('auth');
@@ -1030,6 +1109,7 @@ if(auth === '1' || auth === 'admin') {
 }
 window.addEventListener('load', () => {
   carregarConfig();
+  carregarSenhasEmpresa();
   iniciarEscutaMaquinas();
   renderServicos();
   initCanvas('sig-tecnico');
@@ -1198,8 +1278,11 @@ function fecharModalSenhaTec() {
 }
 function verificarSenhaTec() {
   var val = document.getElementById('campo-senha-tec').value.trim();
-  if (val === SENHA_CORRETA || val === SENHA_ADMIN) {
-    sessionStorage.setItem('auth', val===SENHA_ADMIN ? 'admin' : '1');
+  var empTec = resolverEmpresaPorSenha(val);
+  if (val === SENHA_CORRETA || val === SENHA_ADMIN || empTec) {
+    if (val === SENHA_ADMIN) { sessionStorage.setItem('auth','admin'); sessionStorage.removeItem('empresa_restrita'); }
+    else if (empTec) { sessionStorage.setItem('auth','empresa'); sessionStorage.setItem('empresa_restrita', empTec); }
+    else { sessionStorage.setItem('auth','1'); sessionStorage.removeItem('empresa_restrita'); }
     fecharModalSenhaTec();
     document.getElementById('tela-qr-publica').style.display='none';
     history.replaceState({}, '', window.location.pathname);
@@ -1332,7 +1415,15 @@ function iniciarEscutaMaquinas() {
     todasMaquinas = [];
     snap.forEach(function(c){ var v=c.val(); v.fbKey=c.key; todasMaquinas.push(v); });
     todasMaquinas.sort(function(a,b){return (a.empresa||'').localeCompare(b.empresa||'');});
+    // Filtrar por empresa se logado com senha de empresa
+    var empRest = getSenhaEmpresaAtual();
+    if (empRest && sessionStorage.getItem('auth') === 'empresa') {
+      todasMaquinas = todasMaquinas.filter(function(m){
+        return normStr(m.empresa||'') === normStr(empRest);
+      });
+    }
     popularSelectPedido();
+    renderEmpresas();
   });
 }
 
