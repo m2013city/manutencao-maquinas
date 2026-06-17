@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove, get, update, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const firebaseConfig = {
   apiKey: "AIzaSyCuYQG4MqIo8xha1YDOcZ_Jqx-EsO4rw3Y",
   authDomain: "manutencao-maquina-cf53e.firebaseapp.com",
@@ -21,7 +21,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-window._fb = { db, ref, push, onValue, remove, get, update };
+window._fb = { db, ref, push, onValue, remove, get, update, set };
 window._fbReady = true;
 window.dispatchEvent(new Event('firebase-ready'));
 </script>
@@ -1027,7 +1027,7 @@ var SENHAS_EMPRESA = {}; // { 'Scup@2026': 'SCUP', 'Merrow@2026': 'Merrow' }
 function carregarSenhasEmpresa() {
   function doLoad() {
     var { get, ref, db } = window._fb;
-    get(ref(db, 'senhas_empresa')).then(function(snap) {
+    get(ref(db, 'config/senhas_empresa')).then(function(snap) {
       if (snap.exists()) {
         SENHAS_EMPRESA = snap.val() || {};
         renderListaSenhas();
@@ -1075,7 +1075,7 @@ function adicionarSenhaEmpresa() {
   if (senha === SENHA_ADMIN) { alert('Essa senha é reservada para Admin.'); return; }
   SENHAS_EMPRESA[senha] = emp;
   var { set, ref, db } = window._fb;
-  set(ref(db, 'senhas_empresa'), SENHAS_EMPRESA).then(function() {
+  set(ref(db, 'config/senhas_empresa'), SENHAS_EMPRESA).then(function() {
     document.getElementById('nova-senha-empresa').value = '';
     document.getElementById('nova-senha-valor').value = '';
     renderListaSenhas();
@@ -1086,7 +1086,7 @@ function removerSenhaEmpresa(senha) {
   if (!confirm('Remover senha "' + senha + '"?')) return;
   delete SENHAS_EMPRESA[senha];
   var { set, ref, db } = window._fb;
-  set(ref(db, 'senhas_empresa'), SENHAS_EMPRESA).then(function() {
+  set(ref(db, 'config/senhas_empresa'), SENHAS_EMPRESA).then(function() {
     renderListaSenhas();
   }).catch(function(e) { alert('Erro ao remover: ' + e); });
 }
