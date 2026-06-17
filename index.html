@@ -1025,11 +1025,21 @@ function checkURLParams() {
 var SENHA_ADMIN = 'Admin2026';
 var SENHAS_EMPRESA = {}; // { 'Scup@2026': 'SCUP', 'Merrow@2026': 'Merrow' }
 function carregarSenhasEmpresa() {
-  var s = localStorage.getItem('mgcity_senhas_empresa');
-  if (s) try { SENHAS_EMPRESA = JSON.parse(s); } catch(e){}
+  // Carregar do Firebase para funcionar em qualquer dispositivo
+  function doLoad() {
+    fb.get(fb.ref(fb.db, 'senhas_empresa')).then(function(snap) {
+      if (snap.exists()) {
+        SENHAS_EMPRESA = snap.val() || {};
+      }
+    }).catch(function(e){ console.log('Erro ao carregar senhas:', e); });
+  }
+  if (window._fbReady) { doLoad(); }
+  else { window.addEventListener('firebase-ready', doLoad); }
 }
 function salvarSenhasEmpresaStorage() {
-  localStorage.setItem('mgcity_senhas_empresa', JSON.stringify(SENHAS_EMPRESA));
+  // Salvar no Firebase para sincronizar em todos os dispositivos
+  fb.set(fb.ref(fb.db, 'senhas_empresa'), SENHAS_EMPRESA)
+    .catch(function(e){ console.log('Erro ao salvar senhas:', e); });
 }
 function resolverEmpresaPorSenha(val) {
   if (!val) return null;
