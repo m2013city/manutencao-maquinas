@@ -1073,17 +1073,19 @@ function adicionarSenhaEmpresa() {
   if (!emp || !senha) { alert('Preencha o nome da empresa e a senha.'); return; }
   if (senha === SENHA_ADMIN) { alert('Essa senha é reservada para Admin.'); return; }
   SENHAS_EMPRESA[senha] = emp;
-  salvarSenhasEmpresaStorage();
-  document.getElementById('nova-senha-empresa').value = '';
-  document.getElementById('nova-senha-valor').value = '';
-  renderListaSenhas();
-  alert('Senha adicionada para ' + emp + '!');
+  fb.set(fb.ref(fb.db, 'senhas_empresa'), SENHAS_EMPRESA).then(function() {
+    document.getElementById('nova-senha-empresa').value = '';
+    document.getElementById('nova-senha-valor').value = '';
+    renderListaSenhas();
+    alert('Senha adicionada para ' + emp + '!');
+  }).catch(function(e) { alert('Erro ao salvar: ' + e); });
 }
 function removerSenhaEmpresa(senha) {
   if (!confirm('Remover senha "' + senha + '"?')) return;
   delete SENHAS_EMPRESA[senha];
-  salvarSenhasEmpresaStorage();
-  renderListaSenhas();
+  fb.set(fb.ref(fb.db, 'senhas_empresa'), SENHAS_EMPRESA).then(function() {
+    renderListaSenhas();
+  }).catch(function(e) { alert('Erro ao remover: ' + e); });
 }
 function verificarSenha() {
   var input = document.getElementById('campo-senha');
