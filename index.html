@@ -1042,10 +1042,17 @@ function salvarSenhasEmpresaStorage() {
   fb.set(fb.ref(fb.db, 'senhas_empresa'), SENHAS_EMPRESA)
     .catch(function(e){ console.log('Erro ao salvar senhas:', e); });
 }
-function resolverEmpresaPorSenha(val) {
+async function resolverEmpresaPorSenha(val) {
   if (!val) return null;
-  for (var k in SENHAS_EMPRESA) { if (k === val) return SENHAS_EMPRESA[k]; }
-  return null;
+  try {
+    var { get, ref, db } = window._fb;
+    var snap = await get(ref(db, 'config/senhas_empresa/' + encodeURIComponent(val)));
+    return snap.exists() ? snap.val() : null;
+  } catch (e) {
+    console.log('Erro ao verificar senha:', e);
+    return null;
+  }
+}
 }
 function getSenhaEmpresaAtual() { return sessionStorage.getItem('empresa_restrita') || null; }
 var SENHA_CORRETA = 'Acesso2026'; // mantido para compatibilidade legada
@@ -1053,7 +1060,7 @@ function ativarAdmin() {
   document.querySelectorAll('.btn-excluir-wrap').forEach(function(el){ el.style.display='flex'; el.style.gap='8px'; el.style.justifyContent='flex-end'; });
   var card = document.getElementById('card-gerenciar-senhas');
   if (card) card.style.display = 'block';
-  renderListaSenhas();
+  carregarSenhasEmpresa();
 }
 function renderListaSenhas() {
   var lista = document.getElementById('lista-senhas-empresa');
@@ -1090,7 +1097,7 @@ function removerSenhaEmpresa(senha) {
     renderListaSenhas();
   }).catch(function(e) { alert('Erro ao remover: ' + e); });
 }
-function verificarSenha() {
+async function verificarSenha() {
   var input = document.getElementById('campo-senha');
   var erro  = document.getElementById('senha-erro');
   var val   = input.value.trim();
@@ -1104,7 +1111,7 @@ function verificarSenha() {
     sessionStorage.setItem('auth', '1');
     sessionStorage.removeItem('empresa_restrita');
   } else {
-    var emp = resolverEmpresaPorSenha(val);
+   var emp = await resolverEmpresaPorSenha(val);
     if (emp) {
       document.getElementById('tela-senha').style.display = 'none';
       sessionStorage.setItem('auth', 'empresa');
@@ -1124,7 +1131,7 @@ if(auth === '1' || auth === 'admin') {
 }
 window.addEventListener('load', () => {
   carregarConfig();
-  carregarSenhasEmpresa();
+ 
   iniciarEscutaMaquinas();
   renderServicos();
   initCanvas('sig-tecnico');
