@@ -798,7 +798,7 @@ function filtrarHistorico() {
   const filtroModelo  = document.getElementById('filtro-modelo')?.value.toLowerCase() || '';
   const filtroTipo    = document.getElementById('filtro-tipo')?.value || '';
   let regs = todosRegistros.filter(r => {
-    if(sessionStorage.getItem('auth')==='empresa' && normStr(r.empresa||'')!==normStr(getSenhaEmpresaAtual()||'')) return false; if(filtroEmpresa && !r.empresa?.toLowerCase().includes(filtroEmpresa)) return false;
+    if(sessionStorage.getItem('auth')==='empresa' && !normStr(r.empresa||'').includes(normStr(getSenhaEmpresaAtual()||''))) return false; if(filtroEmpresa && !r.empresa?.toLowerCase().includes(filtroEmpresa)) return false;
     if(filtroModelo  && !normStr(r.modelo).includes(normStr(filtroModelo)))  return false;
     if(filtroTipo    && r.tipo !== filtroTipo) return false;
     return true;
