@@ -1046,7 +1046,7 @@ async function resolverEmpresaPorSenha(val) {
   if (!val) return null;
   try {
     var { get, ref, db } = window._fb;
-    var snap = await get(ref(db, 'config/senhas_empresa/' + encodeURIComponent(val)));
+    var snap = await get(ref(db, 'config/senhas_empresa/' + val));
     return snap.exists() ? snap.val() : null;
   } catch (e) {
     console.log('Erro ao verificar senha:', e);
